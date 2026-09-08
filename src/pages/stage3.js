@@ -3,8 +3,8 @@ import { openLightbox } from '../core/lightbox.js';
 import { openModal } from '../core/modal.js';
 
 const IMG = {
-  north: './assets/photos/north-slope-track.jpg',
-  ridge: './assets/photos/jiuwan-ridge.jpg',
+  north: './assets/photos/north-slope-local.jpg',
+  ridge: './assets/photos/jiuwan-trail.jpg',
   watch4: './assets/photos/watchman-04-stage2.jpg',
 };
 
@@ -252,6 +252,7 @@ export function renderCache2017({ interludes, audio }) {
       el('strong', { text: '与现在页面的差异' }),
       el('p', { text: '现在的青垭游客页明确写着：北坡旧返程不开放、不维护，也不属于九弯主线。' }),
     ]),
+    el('a', { class: 'text-link', href: '#/zhou-cheng', text: '相关资料：2018 救援纪念补录' }),
     el('a', { class: 'text-link', href: '#/news-2017', text: '返回 2017 事故旧新闻' }),
     el('a', { class: 'text-link', href: '#/safety', text: '对照现在的北坡安全公告' }),
   );

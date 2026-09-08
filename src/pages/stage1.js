@@ -5,9 +5,9 @@ import { stage1 } from '../data/content.js';
 
 const IMG = {
   bus: './assets/photos/qingya-bus-stop.jpg',
-  village: './assets/photos/qingya-morning.jpg',
-  trail: './assets/photos/jiuwan-ridge.jpg',
-  wok: './assets/photos/qingya-food.jpg',
+  village: './assets/photos/qingya-village.jpg',
+  trail: './assets/photos/jiuwan-trail.jpg',
+  wok: './assets/photos/qingya-food-clean.jpg',
   watchman: './assets/photos/watchman-04.jpg',
 };
 
@@ -48,23 +48,35 @@ function renderTrailHeader(active = '') {
   return header;
 }
 
-function renderVillageHeader(active = '') {
+function renderVillageHeader(active = '', flow) {
   const header = el('header', { class: 'village-header' });
+  const utility = el('div', { class: 'village-utility' }, [
+    el('div', { class: 'village-utility__inner' }, [
+      el('span', { text: '青垭村旅游服务信息网' }),
+      el('span', { text: '游客服务电话 0836-7XXXXXX' }),
+    ]),
+  ]);
   const inner = el('div', { class: 'village-header__inner' });
+  const navItem = (id, label, key = '') => {
+    if (id === 'qingya' || id === 'jiuwan' || flow?.isUnlocked(id)) {
+      return el('a', { href: `#/${id}`, class: active === key ? 'is-active' : '', text: label });
+    }
+    return null;
+  };
   inner.append(
     el('a', { href: '#/qingya', class: 'village-brand' }, [
       el('strong', { text: '青垭村' }),
-      el('span', { text: '游客服务信息' }),
+      el('span', { text: '山里日子，也可以很好。' }),
     ]),
     el('nav', { class: 'village-nav', 'aria-label': '青垭村站点导航' }, [
-      el('a', { href: '#/qingya', class: active === 'home' ? 'is-active' : '', text: '首页' }),
-      el('a', { href: '#/jiuwan', class: active === 'route' ? 'is-active' : '', text: '徒步' }),
-      el('span', { text: '住宿' }),
-      el('span', { text: '吃饭' }),
-      el('span', { text: '到村' }),
+      navItem('qingya', '首页', 'home'),
+      navItem('jiuwan', '九弯徒步', 'route'),
+      navItem('food', '吃住青垭', 'food'),
+      navItem('service', '游客服务', 'service'),
+      navItem('watchmen', '旧物记', 'watchmen'),
     ]),
   );
-  header.append(inner);
+  header.append(utility, inner);
   return header;
 }
 
@@ -401,7 +413,7 @@ function openDraftPassword({ passwords, router }) {
       return;
     }
     close?.();
-    toast('草稿已解锁');
+    toast('口令已验证');
     router.navigate('draft-1');
   });
   close = openModal({ title: '未公开草稿', content });
@@ -477,7 +489,7 @@ export function renderProfile({ store, passwords, router }) {
   draftBox.append(
     el('div', {}, [
       el('strong', { text: '未公开草稿 · 1' }),
-      el('p', { text: store.getState().passwords.noweekend ? '已解锁。' : '仅自己可见。' }),
+      el('p', { text: store.getState().passwords.noweekend ? '口令已验证。' : '仅自己可见。' }),
     ])
   );
   const draftButton = el('button', { class: 'btn', type: 'button', text: store.getState().passwords.noweekend ? '打开草稿' : '输入口令' });
@@ -582,80 +594,146 @@ export function renderDraft1() {
 
 export function renderQingya({ flow }) {
   const main = el('main', { id: 'app-main', class: 'village-site', tabindex: '-1' });
-  main.append(renderVillageHeader('home'));
-  const hero = el('section', { class: 'village-hero' });
+  main.append(renderVillageHeader('home', flow));
+
+  const hero = el('section', { class: 'village-home-hero' });
   hero.append(
-    photo({ src: IMG.village, alt: '清晨山谷与山脊', caption: '青垭 · 北坡方向', className: 'photo--hero' }),
-    el('div', { class: 'village-hero__copy' }, [
-      el('p', { class: 'eyebrow', text: '青垭欢迎你' }),
-      el('h1', { text: '路不多，弯很多。' }),
-      el('p', { text: '青垭村位于县城北侧山区。来走九弯、吃灶台饭、住一晚。下山以后膝盖还能不能算自己的，本村不作保证。' }),
-      el('a', { class: 'btn btn--village', href: '#/jiuwan', text: '查看青垭九弯' }),
-    ])
+    photo({ src: IMG.village, alt: '清晨云雾里的青垭村和山谷', caption: '青垭村 · 九弯入口方向', className: 'photo--village-home' }),
+    el('div', { class: 'village-home-hero__copy' }, [
+      el('span', { class: 'village-home-hero__season', text: '九月 · 秋季徒步期' }),
+      el('h1', { text: '青垭村' }),
+      el('p', { text: '山不远，日子很近。来走九弯、吃顿热饭，天黑以前记得回到有路灯的地方。' }),
+    ]),
   );
 
-  const info = el('section', { class: 'village-grid' });
-  info.append(
-    el('article', { class: 'village-column' }, [
-      el('p', { class: 'eyebrow', text: '本周提示' }),
-      el('h2', { text: '北坡旧线路不开放' }),
-      el('p', { text: '“北坡返程线”为历史路线名称，目前不属于青垭开放徒步线路。请以九弯主线标识为准，不要跟随旧轨迹、旧路条进入北坡。' }),
-      pageLink('jiuwan', '九弯路线与难度说明'),
-    ]),
-    el('article', { class: 'village-column' }, [
-      el('p', { class: 'eyebrow', text: '吃饭' }),
-      el('h2', { text: '灶台饭' }),
-      el('p', { text: '两个人点小锅。三个人也点小锅。你非要点大锅，我们不拦。' }),
-      el('small', { text: '本店不再回答“一个人能不能吃完大锅”，上个月已经回答十七次。' }),
-      ...(flow?.isUnlocked('food') ? [pageLink('food', '查看店家页面')] : []),
-    ]),
-    el('article', { class: 'village-column' }, [
-      el('p', { class: 'eyebrow', text: '公共服务' }),
-      el('h2', { text: '游客中心卫生间' }),
-      el('p', { text: '冬季热水、免费厕纸、洗鞋水龙头，外墙附近手机信号相对稳定。' }),
-      el('small', { text: '山可以野，厕所不能野。' }),
-      ...(flow?.isUnlocked('service') ? [pageLink('service', '查看游客服务详情')] : []),
+  const portal = el('div', { class: 'village-home-body' });
+  const maincol = el('div', { class: 'village-home-main' });
+  const notices = el('section', { class: 'village-news-list' });
+  notices.append(el('div', { class: 'village-section-title' }, [
+    el('h2', { text: '通知公告' }),
+    el('span', { text: '更多信息以村口公告栏为准' }),
+  ]));
+  const noticeItems = [
+    ['2026-09-01', '北坡旧线路不开放', '历史路线名称仍会出现在旧帖子和轨迹里，请不要跟随旧路条进入北坡。'],
+    ['2026-08-28', '关于规范户外活动的提醒', '九弯主线雨后石阶较滑，建议穿防滑鞋。'],
+    ['2026-08-15', '青垭九弯环线线路简介', '开放线路约 16 公里，建议预留 5–7 小时。'],
+  ];
+  noticeItems.forEach(([date,title,desc],i) => {
+    const row = el('article', { class: 'village-news-row' });
+    const head = el('div', { class: 'village-news-row__head' }, [el('time', { text: date }), el('strong', { text: title })]);
+    row.append(head, el('p', { text: desc }));
+    if (i === 0 && flow?.isUnlocked('safety')) row.append(pageLink('safety', '查看安全公告'));
+    if (i === 2) row.append(pageLink('jiuwan', '查看九弯线路说明'));
+    notices.append(row);
+  });
+
+  const feature = el('section', { class: 'village-route-feature' });
+  feature.append(
+    el('div', { class: 'village-section-title' }, [el('h2', { text: '推荐线路' }), el('span', { text: '当天往返' })]),
+    el('div', { class: 'village-route-feature__body' }, [
+      photo({ src: IMG.trail, alt: '青垭九弯环线的山脊步道', caption: '青垭九弯环线 · 主线山脊段', className: 'photo--village-route' }),
+      el('div', { class: 'village-route-feature__copy' }, [
+        el('h3', { text: '青垭九弯环线' }),
+        el('p', { class: 'village-route-meta', text: '约 16 公里　累计爬升约 780 米　建议 5–7 小时' }),
+        el('p', { text: '村口起步，沿九弯主线绕山返回。路牌和里程标记以当前开放主线为准。' }),
+        pageLink('jiuwan', '路线详情与难度说明'),
+      ]),
     ]),
   );
-  main.append(hero, info);
+  maincol.append(notices, feature);
+
+  const aside = el('aside', { class: 'village-home-aside' });
+  aside.append(el('h2', { text: '到村以后' }));
+  const serviceRows = [
+    ['吃饭', '青垭人家 · 灶台饭', '柴火灶，按人数点锅。', 'food'],
+    ['游客中心', '公共卫生间与补给', '热水、洗鞋、充电、问路。', 'service'],
+    ['旧物记', '六尊“看路人”', '旧石料场留下的水泥指路人像。', 'watchmen'],
+  ];
+  serviceRows.forEach(([label,title,desc,id]) => {
+    const row = el('div', { class: 'village-service-row' }, [
+      el('span', { class: 'village-service-row__label', text: label }),
+      el('strong', { text: title }),
+      el('p', { text: desc }),
+    ]);
+    if (flow?.isUnlocked(id)) row.append(pageLink(id, '查看详情'));
+    aside.append(row);
+  });
+  aside.append(el('div', { class: 'village-contact' }, [
+    el('strong', { text: '游客中心值班' }),
+    el('p', { text: '06:30–20:30　村口公交站上方约 80 米' }),
+    el('small', { text: '进山前如需问路、补水或给手机充电，建议先在这里处理。' }),
+  ]));
+
+  portal.append(maincol, aside);
+  const footer = el('footer', { class: 'village-footer' }, [
+    el('span', { text: '青垭村村委会 · 游客服务信息' }),
+    el('span', { text: '网页内容更新：2026-09' }),
+  ]);
+  main.append(hero, portal, footer);
   return main;
 }
 
 export function renderJiuwan({ flow }) {
-  const main = el('main', { id: 'app-main', class: 'village-site', tabindex: '-1' });
-  main.append(renderVillageHeader('route'));
-  const wrap = el('div', { class: 'route-page' });
-  wrap.append(
-    el('section', { class: 'route-title' }, [
-      el('p', { class: 'eyebrow', text: '开放徒步线路' }),
-      el('h1', { text: '青垭九弯环线' }),
-      el('p', { text: '约 16 公里 · 累计爬升约 780 米 · 建议 5–7 小时。雨后下坡湿滑。' }),
+  const main = el('main', { id: 'app-main', class: 'route-guide-site', tabindex: '-1' });
+  main.append(renderVillageHeader('route', flow));
+
+  const wrap = el('article', { class: 'route-guide' });
+  const crumb = el('p', { class: 'route-guide__crumb', text: '首页 / 徒步线路 / 青垭九弯环线' });
+  const title = el('header', { class: 'route-guide__title' }, [
+    el('span', { text: '开放徒步线路 · QY-09' }),
+    el('h1', { text: '青垭九弯环线' }),
+    el('p', { text: '村口起步，沿山脊和老杉树林绕行后回到青垭。路程不算短，但岔口少，适合有日常徒步经验的人当天往返。' }),
+  ]);
+  const facts = el('div', { class: 'route-guide__facts' }, [
+    ['全程', '约 16 公里'], ['爬升', '约 780 米'], ['用时', '5–7 小时'], ['难度', '中等'],
+  ].map(([a,b]) => el('div', {}, [el('span', { text:a }), el('strong', { text:b })])));
+
+  const body = el('div', { class: 'route-guide__body' });
+  const article = el('div', { class: 'route-guide__article' });
+  article.append(
+    photo({ src: IMG.trail, alt: '青垭九弯环线山脊和林间主线', caption: '九弯主线 · 山脊段', className: 'photo--route-guide' }),
+    el('section', { class: 'route-guide__section' }, [
+      el('h2', { text: '怎么走' }),
+      el('p', { text: '从游客中心旁的主线路牌出发，依次经过一号弯、杉树林、观景台和南侧下坡。主线里程牌连续，雨后木阶和石阶会很滑。' }),
+      el('p', { text: '北坡旧返程不在当前开放范围内。不要因为旧帖子里写着“能省四公里”，就把历史路线当成今天的捷径。' }),
     ]),
-    photo({ src: IMG.trail, alt: '林间步道', caption: '九弯主线林间段', className: 'photo--route' }),
+    el('section', { class: 'route-levels' }, [
+      el('h2', { text: '本村徒步四级' }),
+      el('p', { class: 'route-levels__intro', text: '这个分级最早写在民宿前台的小黑板上，后来被游客拍得太多，索性整理到网站。' }),
+      ...[
+        ['一级', '还能一路聊天。'],
+        ['二级', '开始没人说话。'],
+        ['三级', '下坡的时候开始问还有多远。'],
+        ['四级', '回家以后想卖装备。'],
+      ].map(([level,text]) => el('div', { class: 'route-level-row' }, [el('strong', { text:level }), el('p', { text })])),
+      el('p', { class: 'route-levels__note', text: '本评价由本村民宿经营户、历年来访游客及两名膝关节长期不好的村民共同整理，仅作参考。北坡旧路线不参与评级。' }),
+    ]),
   );
 
-  const difficulty = el('section', { class: 'difficulty' });
-  difficulty.append(el('h2', { text: '青垭徒步四级' }));
-  const levels = [
-    ['一级', '还能一路聊天。'],
-    ['二级', '开始没人说话。'],
-    ['三级', '下坡的时候开始问还有多远。'],
-    ['四级', '回家以后想卖装备。'],
-  ];
-  for (const [a,b] of levels) difficulty.append(el('div', { class: 'difficulty-row' }, [el('strong', { text: a }), el('span', { text: b })]));
-  difficulty.append(el('p', { class: 'difficulty-note', text: '本评价由本村民宿经营户、历年来访游客及两名膝关节长期不好的村民共同整理，仅作参考。' }));
-
-  const safety = el('section', { class: 'route-safety' });
-  safety.append(
-    el('h2', { text: '路线范围' }),
-    el('p', { text: '当前开放线路为九弯环线主线。北坡旧返程不参与难度评级，也不属于开放路线。' }),
-    el('p', { text: '不要依据历史帖子、旧轨迹截图或树上的旧布条改变路线。遇到岔口时，以现有木牌和主线里程牌为准。' }),
-    ...(flow?.isUnlocked('watchmen') ? [pageLink('watchmen', '看路人专题')] : []),
-    ...(flow?.isUnlocked('safety') ? [pageLink('safety', '北坡安全公告')] : []),
-    el('a', { class: 'text-link', href: '#/profile', text: '返回“周末别找我”的轨迹记录' }),
-  );
-
-  wrap.append(difficulty, safety);
+  const aside = el('aside', { class: 'route-guide__aside' }, [
+    el('section', {}, [
+      el('h2', { text: '出发前' }),
+      el('dl', { class: 'route-guide__dl' }, [
+        el('dt', { text:'补水' }), el('dd', { text:'游客中心可补水' }),
+        el('dt', { text:'信号' }), el('dd', { text:'村口较稳定，山里不保证' }),
+        el('dt', { text:'返程' }), el('dd', { text:'请沿九弯主线回村' }),
+      ]),
+    ]),
+    el('section', { class: 'route-guide__warning' }, [
+      el('h2', { text: '关于北坡' }),
+      el('p', { text: '“北坡返程线”是历史路线名称。目前不维护、不开放，也不作为九弯环线的备用返程。' }),
+      ...(flow?.isUnlocked('safety') ? [pageLink('safety', '查看北坡安全公告')] : []),
+    ]),
+    ...(flow?.isUnlocked('watchmen') ? [el('section', {}, [
+      el('h2', { text: '路边旧物' }),
+      el('p', { text: '旧石料场附近还留着六尊水泥“看路人”。' }),
+      pageLink('watchmen', '看路人专题'),
+    ])] : []),
+    el('section', {}, [pageLink('profile', '返回“周末别找我”的公开主页')]),
+  ]);
+  body.append(article, aside);
+  wrap.append(crumb, title, facts, body);
   main.append(wrap);
   return main;
 }
+

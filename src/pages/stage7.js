@@ -2,12 +2,12 @@ import { el } from '../core/ui.js';
 import { openLightbox } from '../core/lightbox.js';
 
 const IMG = {
-  north: './assets/photos/north-slope-track.jpg',
+  north: './assets/photos/north-slope-local.jpg',
   toilet: './assets/photos/qingya-toilet-clean.jpg',
   watch4: './assets/photos/watchman-04-stage2.jpg',
   back: './assets/photos/watchman-04-back.jpg',
   book: './assets/photos/second-book.jpg',
-  village: './assets/photos/qingya-morning.jpg',
+  village: './assets/photos/qingya-village.jpg',
 };
 
 function rescueHeader() {

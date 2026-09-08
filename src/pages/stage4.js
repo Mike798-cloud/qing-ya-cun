@@ -3,7 +3,7 @@ import { openLightbox } from '../core/lightbox.js';
 
 const IMG = {
   rescue: './assets/photos/rescue-2017.jpg',
-  north: './assets/photos/north-slope-track.jpg',
+  north: './assets/photos/north-slope-local.jpg',
 };
 
 function photo({ src, alt, caption, className = '' }) {
@@ -238,6 +238,11 @@ export function renderZhouYougen({ store, audio }) {
       el('strong', { text: '帖子里反复提到的原因' }),
       el('p', { text: '开放主线有正式路牌。北坡没有。周有根在几次回复里都只说一件事：把布条和临时箭头连成一串，后来的人就会把它当成路。' }),
       el('a', { href: '#/zhou-cheng', text: '相关：周成资料补录' }),
+    ]),
+    el('section', { class: 'forum-side-note forum-side-note--chat' }, [
+      el('strong', { text: '消息' }),
+      el('p', { text: store.getState().flags.stage4MessageReady ? '周航的消息还在聊天里。' : '周航刚发来新消息。' }),
+      el('a', { href: '#/boot', text: '回到聊天' }),
     ]),
   );
 
