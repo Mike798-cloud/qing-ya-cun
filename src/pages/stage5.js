@@ -326,7 +326,6 @@ export function renderSecondBook({ store, audio }) {
       el('span', { text: '册子中重复最多的一句' }),
       el('blockquote', { text: '不要按旧线返回。' }),
     ]),
-    el('a', { class: 'text-link', href: '#/boot', text: '回到周航的聊天' }),
   ]);
 
   wrap.append(intro, cover, scan, conclusion);

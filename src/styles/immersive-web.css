@@ -1,0 +1,269 @@
+/* Full-site pseudo-internet reconstruction.
+   Each source has its own visual identity. This file intentionally overrides
+   earlier shared presentation rules so the project no longer reads as one UI kit. */
+
+body { background:#eceef0; }
+body::before { display:none !important; }
+.immersive-shell { min-height:100vh; }
+.game-tools { display:none !important; }
+.btn, .text-link, button, a { border-radius:0; }
+
+/* =========================
+   PRIVATE DEVICE / CHAT
+   ========================= */
+body[data-site="chat"], body[data-site="contact"], body[data-site="ending"] { background:#dfe2e5; }
+.chat-page,.contact-page { min-height:100vh; background:#dfe2e5; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; color:#191b1d; }
+.messenger-app,.contact-shell { width:min(100%,780px); min-height:100vh; margin:0 auto; background:#f4f5f6; border-left:1px solid #cfd3d6; border-right:1px solid #cfd3d6; box-shadow:none; }
+.chat-topbar,.contact-topbar { position:sticky; top:0; z-index:20; min-height:68px; padding:8px 16px; display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; background:rgba(248,249,250,.96); border-bottom:1px solid #d9dde0; backdrop-filter:blur(12px); }
+.chat-back,.contact-back { border:0; background:transparent; font-size:2rem; line-height:1; padding:4px 8px; color:#2b2f33; text-decoration:none; }
+.chat-person-link { min-width:0; display:flex; align-items:center; gap:10px; color:inherit; text-decoration:none; }
+.zhou-avatar { object-fit:cover; background:#d8dde0; }
+.chat-avatar { width:42px; height:42px; border-radius:50%; flex:0 0 42px; }
+.msg-avatar { width:34px; height:34px; border-radius:7px; flex:0 0 34px; margin-top:2px; }
+.chat-person { min-width:0; display:grid; gap:2px; }
+.chat-person strong { font-size:.96rem; font-weight:650; }
+.chat-person span { font-size:.69rem; color:#8b9298; }
+.chat-top-actions { display:flex; align-items:center; gap:18px; }
+.chat-top-icon { border:0; background:transparent; color:#30353a; font:600 1.06rem/1 ui-sans-serif,system-ui; text-decoration:none; letter-spacing:.08em; }
+.chat-list { min-height:calc(100vh - 132px); padding:18px 18px 28px; background:#eef0f1; }
+.chat-day-divider { width:max-content; max-width:90%; margin:10px auto 18px; padding:3px 8px; background:#d8dcdf; color:#858c92; font-size:.68rem; border-radius:4px; }
+.msg-row { display:flex; gap:8px; align-items:flex-start; margin:5px 0; }
+.msg-row--me { justify-content:flex-end; padding-left:15%; }
+.msg-row--other { padding-right:15%; }
+.msg-bubble { max-width:min(78%,520px); padding:8px 10px 6px; background:#fff; border:1px solid #e2e4e6; border-radius:5px; box-shadow:0 1px 1px rgba(0,0,0,.03); position:relative; }
+.msg-row--me .msg-bubble { background:#95e36f; border-color:#8bd568; }
+.msg-bubble p { margin:0; line-height:1.58; font-size:.93rem; white-space:pre-line; }
+.msg-time { display:block; margin-top:3px; text-align:right; color:#9aa0a5; font-size:.61rem; }
+.msg-row--me .msg-time { color:#5d8250; }
+.msg-row--image { align-items:flex-end; margin-top:8px; margin-bottom:8px; }
+.chat-image-wrap { position:relative; max-width:min(64%,360px); }
+.photo--chat-raw { display:block; width:100%; padding:0; overflow:hidden; border:0 !important; background:#cfd4d6; border-radius:5px; }
+.photo--chat-raw img { width:100%; aspect-ratio:4/3; object-fit:cover; }
+.photo--chat-wide img { aspect-ratio:5/3; }
+.photo--chat-portrait { max-width:245px; }
+.photo--chat-portrait img { aspect-ratio:3/4; }
+.photo--chat-raw .photo__caption { display:none !important; }
+.chat-image-time { position:absolute; right:7px; bottom:5px; padding:1px 4px; color:#fff; background:rgba(0,0,0,.38); border-radius:3px; font-size:.6rem; text-shadow:0 1px 2px #000; }
+.chat-composer { position:sticky; bottom:0; z-index:18; padding:max(6px,env(safe-area-inset-bottom)) 10px 8px; background:#f8f9fa; border-top:1px solid #d8dcdf; }
+.quick-replies { display:flex; gap:7px; overflow-x:auto; padding:5px 0 8px; scrollbar-width:none; }
+.quick-replies::-webkit-scrollbar { display:none; }
+.quick-reply { flex:0 0 auto; border:1px solid #cfd5d8; background:#fff; color:#2a2f33; padding:7px 11px; border-radius:15px; font-size:.76rem; box-shadow:none; }
+.chat-inputbar { display:grid; grid-template-columns:34px 1fr 34px 34px; align-items:center; gap:7px; }
+.chat-tool { width:32px; height:32px; border:0; background:transparent; font-size:1.2rem; color:#454b50; }
+.chat-inputfake { height:36px; display:flex; align-items:center; padding:0 12px; color:#acb1b5; background:#fff; border:1px solid #e0e3e5; border-radius:6px; font-size:.86rem; }
+.chat-bottom { height:1px; }
+
+.contact-topbar { grid-template-columns:44px 1fr 44px; text-align:center; }
+.contact-topbar strong { font-size:.94rem; }
+.contact-topbar>span { text-align:right; color:#555; }
+.contact-profile { padding:34px 20px 24px; text-align:center; background:#fff; border-bottom:9px solid #eef0f1; }
+.contact-avatar { width:88px; height:88px; border-radius:16px; margin:0 auto 12px; }
+.contact-profile h1 { margin:0 0 5px; font-size:1.28rem; }
+.contact-profile p { margin:0; color:#8c9297; font-size:.8rem; }
+.contact-actions { display:grid; grid-template-columns:repeat(3,1fr); margin:26px auto 0; max-width:360px; gap:4px; }
+.contact-actions a,.contact-actions span { display:block; padding:9px 4px; color:#4a9657; text-decoration:none; font-size:.78rem; }
+.contact-list { background:#fff; }
+.contact-row { min-height:56px; display:grid; grid-template-columns:110px 1fr auto; gap:12px; align-items:center; padding:10px 18px; border-bottom:1px solid #eceeef; color:inherit; text-decoration:none; }
+.contact-row>span { color:#6f767c; font-size:.82rem; }
+.contact-row strong { font-size:.84rem; font-weight:500; text-align:right; }
+.contact-row>div { display:grid; text-align:right; }
+.contact-row small { color:#9aa0a5; margin-top:2px; }
+.contact-row b { color:#b8bdc1; font-size:1.5rem; font-weight:400; }
+.contact-foot { margin-top:9px; background:#fff; text-align:center; }
+.contact-foot a { display:block; padding:16px; color:#d04c46; text-decoration:none; font-size:.85rem; }
+
+/* =========================
+   路迹 — contemporary UGC platform
+   ========================= */
+body[data-site="trail"], body[data-site="trail-cache"], body[data-site="draft-recovery"] { background:#f2f4f5; }
+.trail-site { min-height:100vh; background:#f2f4f5; color:#23272a; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
+.trail-header { background:#fff; border-bottom:1px solid #dfe3e6; }
+.trail-header__inner { width:min(calc(100% - 28px),1180px); min-height:58px; margin:auto; display:flex; align-items:center; gap:24px; }
+.trail-logo { font-size:1.3rem; font-weight:800; color:#1d5944; text-decoration:none; letter-spacing:.05em; }
+.trail-search { width:260px; height:34px; padding:0 12px; display:flex; align-items:center; color:#9aa0a5; background:#f2f4f5; border:1px solid #e2e5e7; border-radius:4px; font-size:.76rem; }
+.trail-nav { display:flex; gap:22px; margin-left:auto; font-size:.78rem; color:#666d72; }
+.trail-nav span { padding:20px 0 17px; }
+.trail-nav .is-active { color:#18533d; border-bottom:2px solid #18533d; }
+.trail-login { font-size:.72rem; color:#9aa0a5; }
+.trail-profile-grid { width:min(calc(100% - 28px),1180px); margin:22px auto 70px; display:grid; grid-template-columns:215px minmax(0,1fr) 250px; gap:18px; align-items:start; }
+.trail-profile-side,.trail-stream,.trail-profile-right { background:#fff; border:1px solid #e0e4e6; }
+.trail-profile-side { padding:22px 18px; }
+.profile-avatar-image { width:84px; height:84px; border-radius:50%; margin-bottom:12px; }
+.trail-profile-side h1 { margin:0 0 3px; font-size:1.2rem; }
+.profile-handle { margin:0 0 14px; color:#9aa1a6; font-size:.75rem; }
+.trail-profile-side>p:not(.profile-handle) { color:#596066; line-height:1.7; font-size:.78rem; }
+.trail-user-facts { display:grid; grid-template-columns:repeat(3,1fr); margin:20px -18px 0; padding:15px 12px; border-top:1px solid #eceeef; border-bottom:1px solid #eceeef; text-align:center; }
+.trail-user-facts dt { grid-row:2; color:#9aa1a6; font-size:.64rem; }
+.trail-user-facts dd { margin:0; font-weight:700; font-size:.84rem; }
+.plain-back-link { display:block; margin-top:16px; color:#718078; text-decoration:none; font-size:.72rem; }
+.trail-tabs { display:flex; border-bottom:1px solid #eceeef; padding:0 18px; gap:28px; font-size:.76rem; }
+.trail-tabs span { padding:15px 0 13px; }
+.trail-tabs .is-active { color:#18533d; border-bottom:2px solid #18533d; font-weight:650; }
+.trail-post-row { padding:18px; border-bottom:1px solid #eceeef; }
+.trail-post-row__head,.track-userline { display:flex; gap:9px; align-items:center; }
+.trail-post-avatar { width:36px; height:36px; border-radius:50%; }
+.trail-post-row__head>div,.track-userline>div { display:grid; gap:2px; }
+.trail-post-row__head span,.track-userline span { color:#9aa0a5; font-size:.68rem; }
+.trail-post-row>p { line-height:1.65; font-size:.86rem; }
+.photo--trail-stream { width:100%; border:0 !important; padding:0; }
+.photo--trail-stream img { width:100%; aspect-ratio:16/8; object-fit:cover; }
+.photo--trail-stream .photo__caption { display:none !important; }
+.trail-post-actions { display:flex; gap:20px; align-items:center; margin-top:10px; color:#92999e; font-size:.7rem; }
+.trail-post-actions .text-link { margin-left:auto; color:#27634d; text-decoration:none; }
+.trail-private-tools { padding:16px 18px 6px; }
+.trail-private-tools h2 { margin:0 0 8px; color:#8f969b; font-size:.72rem; font-weight:500; }
+.trail-private-row { min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:12px; border-top:1px solid #eceeef; }
+.trail-private-row>div { display:grid; gap:3px; }
+.trail-private-row strong { font-size:.83rem; }
+.trail-private-row small { color:#9aa0a5; font-size:.66rem; }
+.trail-row-button { border:0; background:transparent; color:#2a6b51; font-size:.74rem; }
+.trail-profile-right { padding:14px; }
+.trail-profile-right h2 { margin:4px 0 10px; font-size:.75rem; }
+.trail-place-row { display:grid; grid-template-columns:70px 1fr; gap:10px; color:inherit; text-decoration:none; padding-bottom:12px; border-bottom:1px solid #eceeef; }
+.photo--trail-place { border:0 !important; padding:0; }
+.photo--trail-place img { width:70px; height:56px; object-fit:cover; }
+.photo--trail-place .photo__caption { display:none !important; }
+.trail-place-row>div { display:grid; align-content:center; gap:3px; }
+.trail-place-row strong { font-size:.78rem; }
+.trail-place-row span,.trail-muted-row { color:#8f969b; font-size:.67rem; }
+.trail-muted-row { display:block; padding:8px 0; border-bottom:1px dotted #e2e5e7; }
+.track-layout { width:min(calc(100% - 28px),1060px); margin:24px auto 80px; display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:18px; align-items:start; }
+.track-article,.track-info-side { background:#fff; border:1px solid #e0e4e6; padding:20px; }
+.track-article h1 { margin:14px 0 3px; font-size:1.45rem; }
+.track-state { color:#969da1; font-size:.7rem; }
+.track-map { height:310px; margin:20px 0; position:relative; overflow:hidden; background:linear-gradient(155deg,#d7e1d2,#b8cbb3 40%,#dbe2d7 40%,#c7d1c5 65%,#aebfa9); border:1px solid #cdd5cf; }
+.track-map__terrain { position:absolute; inset:0; opacity:.35; background-image:radial-gradient(circle at 20% 25%,#5f755c 0 1px,transparent 2px),radial-gradient(circle at 70% 60%,#6a7f67 0 1px,transparent 2px); background-size:18px 18px,23px 23px; }
+.track-map__svg { position:absolute; inset:0; width:100%; height:100%; }
+.track-map__mainline,.track-map__oldline { fill:none; stroke:#f4a72c; stroke-width:6; stroke-linecap:round; stroke-dasharray:900; stroke-dashoffset:900; animation:routeDraw 1.5s ease-out forwards; }
+.track-map__oldline { stroke:#c95e46; stroke-width:4; stroke-dasharray:320; animation-delay:.6s; }
+.track-map__stop { fill:#fff; stroke:#c95e46; stroke-width:4; opacity:0; animation:mapStop .35s 1.55s forwards; }
+@keyframes routeDraw { to { stroke-dashoffset:0; } }
+@keyframes mapStop { to { opacity:1; } }
+.track-map__label { position:absolute; padding:3px 6px; background:rgba(255,255,255,.86); font-size:.66rem; }
+.track-map__label--start { right:24px; top:54px; }.track-map__label--four { left:56px; top:140px; }
+.track-data-table { width:100%; border-collapse:collapse; font-size:.74rem; margin-bottom:24px; }
+.track-data-table th,.track-data-table td { padding:9px; border:1px solid #e4e7e8; text-align:left; }.track-data-table th { width:18%; background:#f7f8f8; color:#788086; }
+.track-article h2,.track-info-side h2 { font-size:.9rem; margin:22px 0 9px; }
+.track-article>p { line-height:1.75; font-size:.86rem; }
+.track-quote { padding:10px 12px; background:#f5f7f6; color:#52605a; }
+.photo--track-raw { width:100%; border:0 !important; padding:0; }.photo--track-raw img { width:100%; aspect-ratio:16/9; object-fit:cover; }.photo--track-raw .photo__caption { display:none!important; }
+.track-points { margin:0; padding-left:20px; color:#565f64; font-size:.78rem; line-height:2; }
+.track-sync-box { margin:20px -4px; padding:12px; background:#f5f7f6; border-left:3px solid #6f9480; }
+.track-sync-box strong { font-size:.76rem; }.track-sync-box p { margin:5px 0 8px; color:#687079; font-size:.7rem; line-height:1.6; }.sync-pulse { font-size:.65rem; color:#4a735f; }.sync-pulse::before { content:""; display:inline-block; width:6px; height:6px; margin-right:6px; border-radius:50%; background:#5b9b70; animation:syncBlink 1.2s infinite; }
+@keyframes syncBlink { 50% { opacity:.25; } }
+.draft-page--platform { width:min(calc(100% - 28px),760px); margin:28px auto 70px; background:#fff; border:1px solid #e0e4e6; padding:28px 34px; }
+.draft-toolbar { display:flex; justify-content:space-between; padding-bottom:12px; border-bottom:1px solid #eceeef; color:#969da1; font-size:.7rem; }
+.draft-page--platform h1 { font-size:1.4rem; margin:24px 0; }.draft-page--platform>p { line-height:1.9; font-size:.9rem; }.draft-page--platform .draft-foot { border-top:1px solid #eceeef; margin-top:28px; padding-top:14px; display:flex; justify-content:space-between; color:#92999e; font-size:.72rem; }
+
+/* =========================
+   青垭村门户 — deliberately ordinary county/village portal
+   ========================= */
+body[data-site="village"] { background:#f1efe7; }
+.village-site,.public-service-site,.village-notice-site { font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif; color:#333; }
+.village-header--portal { background:#fff; border-bottom:0; }
+.village-datebar { min-height:27px; padding:0 max(12px,calc((100vw - 1040px)/2)); display:flex; align-items:center; gap:24px; background:#eeeeea; border-bottom:1px solid #d8d7cf; color:#777; font-size:11px; white-space:nowrap; overflow:hidden; }
+.village-datebar span:nth-child(2){ margin-left:auto; }
+.village-masthead { width:min(calc(100% - 24px),1040px); min-height:82px; margin:auto; display:flex; align-items:center; justify-content:space-between; }
+.village-brand { display:flex; align-items:baseline; gap:12px; color:#285941; text-decoration:none; }
+.village-brand strong { font-family:"STKaiti","KaiTi",serif; font-size:2.05rem; font-weight:700; letter-spacing:.12em; }.village-brand span { color:#737a72; font-size:.78rem; }
+.village-masthead__weather { display:grid; justify-items:end; gap:3px; }.village-masthead__weather strong { color:#4d6455; }.village-masthead__weather span { color:#8b8f8a; font-size:.7rem; }
+.village-nav--portal { height:39px; padding:0 max(12px,calc((100vw - 1040px)/2)); display:flex; gap:0; background:#3f694e; color:#fff; overflow-x:auto; white-space:nowrap; }
+.village-nav--portal a,.village-nav--portal span { min-width:110px; display:grid; place-items:center; padding:0 14px; color:inherit; text-decoration:none; font-size:.8rem; border-right:1px solid rgba(255,255,255,.14); }
+.village-nav--portal .is-active { background:#315841; }.village-nav--portal .is-disabled { opacity:.62; cursor:default; }
+.village-portal { width:min(calc(100% - 24px),1040px); margin:0 auto 50px; background:#fff; border-left:1px solid #dedbd0; border-right:1px solid #dedbd0; }
+.village-portal-banner { position:relative; height:240px; overflow:hidden; }.photo--portal-banner { width:100%; height:100%; border:0!important; padding:0; }.photo--portal-banner img { width:100%; height:240px; object-fit:cover; }.photo--portal-banner .photo__caption{display:none!important;}
+.village-portal-banner__text { position:absolute; left:34px; bottom:26px; padding:10px 15px; background:rgba(255,255,255,.86); border-left:5px solid #3f694e; display:grid; gap:2px; }.village-portal-banner__text strong { font-family:"STKaiti","KaiTi",serif; font-size:1.45rem; color:#244b37; }.village-portal-banner__text span { color:#727972; font-size:.7rem; }
+.portal-welcome { display:grid; grid-template-columns:190px 1fr; gap:20px; padding:20px 26px; border-bottom:1px solid #e4e0d5; }.portal-welcome strong { color:#315a42; font-size:.95rem; }.portal-welcome p { margin:0; color:#686a66; font-size:.78rem; line-height:1.8; }
+.village-portal-columns { display:grid; grid-template-columns:minmax(0,1fr) 270px; gap:26px; padding:24px 26px 32px; }
+.portal-news h2,.portal-route h2,.portal-box h2 { margin:0 0 10px; padding-left:9px; border-left:4px solid #4b7458; color:#344b3c; font-size:.92rem; }
+.portal-news-row { min-height:34px; display:grid; grid-template-columns:96px 1fr auto; gap:10px; align-items:center; border-bottom:1px dotted #cfcabf; font-size:.76rem; }.portal-news-row time{color:#92938e;}.portal-news-row a{color:#2f5f46;text-decoration:none;}.portal-news-row span{color:#555;}.portal-new { color:#d24a32; font-style:normal; font-size:.64rem; }
+.portal-route { margin-top:26px; }.portal-route__body { display:grid; grid-template-columns:220px 1fr; gap:14px; border-top:1px solid #d9d4c8; padding-top:12px; }.photo--portal-route{border:0!important;padding:0}.photo--portal-route img{width:220px;height:120px;object-fit:cover}.photo--portal-route .photo__caption{display:none!important}.portal-route__body strong{font-size:.9rem}.portal-route__body p{color:#777;font-size:.72rem}.portal-route__body a{color:#315f47;font-size:.74rem;}
+.portal-side { border-left:1px solid #e0ddd3; padding-left:18px; }.portal-box { padding:0 0 18px; margin-bottom:18px; border-bottom:1px solid #e5e1d7; }.portal-box strong{font-size:.86rem}.portal-box p{margin:5px 0;color:#6b6e69;font-size:.72rem;line-height:1.65}.portal-box a,.portal-box>span{display:block;padding:5px 0;color:#5c625e;font-size:.72rem;text-decoration:none}.portal-box a{color:#315f47}.portal-links { padding:12px 26px; border-top:1px solid #e4e0d5; color:#8c8d89; font-size:.68rem; }.portal-links strong{color:#666}.village-footer{padding:17px 26px;background:#efeee9;color:#96958e;font-size:.66rem;text-align:center}
+.route-guide--portal { width:min(calc(100% - 24px),920px); margin:18px auto 60px; background:#fff; border:1px solid #ddd8cb; padding:22px 34px 36px; }.route-guide__crumb{margin:0 0 18px;color:#8b8d88;font-size:.68rem}.route-article-head{border-bottom:2px solid #496a54;padding-bottom:12px;margin-bottom:18px}.route-article-head h1{margin:0 0 8px;font-family:"SimSun","STSong",serif;font-size:1.8rem;font-weight:700}.route-article-head p{margin:0;color:#999;font-size:.66rem}.photo--route-article{width:100%;border:0!important;padding:0;margin:10px 0 20px}.photo--route-article img{width:100%;max-height:400px;object-fit:cover}.photo--route-article .photo__caption{display:none!important}.route-fact-table,.route-level-table{width:100%;border-collapse:collapse;margin:12px 0 22px;font-size:.76rem}.route-fact-table th,.route-fact-table td,.route-level-table th,.route-level-table td{border:1px solid #cfc9bb;padding:9px 11px;text-align:left}.route-fact-table th,.route-level-table th{background:#f3f1eb;width:18%;color:#596259}.route-guide--portal h2{margin:27px 0 10px;padding-bottom:6px;border-bottom:1px solid #d8d4c9;font-size:1rem;color:#3f5948}.route-guide--portal>p{line-height:1.9;font-size:.82rem;color:#4f514e}.route-small-print{padding:10px 12px;background:#f6f4ee;color:#777!important;font-size:.72rem!important}.route-bullet-list{line-height:1.9;color:#555;font-size:.78rem}.route-attachments{margin-top:24px;padding:11px 12px;background:#f5f5f3;border:1px solid #dedbd4;display:flex;gap:14px;flex-wrap:wrap;font-size:.7rem;color:#777}.route-attachments strong{color:#555}
+
+/* =========================
+   FARM RESTAURANT — homemade, slightly dated independent site
+   ========================= */
+body[data-site="village"] .restaurant-site { background:#eee7d5; }
+.restaurant-site { min-height:100vh; background:#eee7d5; color:#382d24; font-family:"Microsoft YaHei","PingFang SC",sans-serif; }
+.restaurant-header--homemade { background:#5b3c24; color:#fff7e7; border-bottom:4px solid #a56c32; }.restaurant-strip{padding:4px max(12px,calc((100vw - 900px)/2));background:#2f241b;color:#e8d7bd;font-size:10px;letter-spacing:.03em}.restaurant-header__inner{width:min(calc(100% - 24px),900px);min-height:78px;margin:auto;display:flex;align-items:center;justify-content:space-between}.restaurant-brand{display:grid;color:#fff5df;text-decoration:none}.restaurant-brand strong{font-family:"STKaiti","KaiTi",serif;font-size:2rem;letter-spacing:.08em}.restaurant-brand span{font-size:.68rem;color:#d8bf9a}.restaurant-contact{display:grid;text-align:right}.restaurant-contact b{color:#ffd68d}.restaurant-contact small{font-size:.68rem;color:#dec6a3}.restaurant-nav{height:34px;display:flex;gap:0;padding:0 max(12px,calc((100vw - 900px)/2));background:#f4ead6;color:#5d4128;border-top:1px solid #9e754e;border-bottom:1px solid #bea784;overflow-x:auto;white-space:nowrap}.restaurant-nav a,.restaurant-nav span{display:grid;place-items:center;min-width:92px;padding:0 12px;border-right:1px solid #d6c4a6;color:inherit;text-decoration:none;font-size:.7rem}.restaurant-nav .is-active{background:#dfc798;font-weight:700}.restaurant-page{width:min(calc(100% - 24px),900px);margin:14px auto 50px;background:#fffdf5;border:1px solid #cbbb9c;box-shadow:none}.restaurant-photo-strip{display:grid;grid-template-columns:54% 1fr;border-bottom:1px solid #cbbb9c}.photo--restaurant-hero{width:100%;border:0!important;padding:0}.photo--restaurant-hero img{width:100%;height:260px;object-fit:cover}.photo--restaurant-hero .photo__caption{display:none!important}.restaurant-photo-strip__copy{display:grid;align-content:center;gap:6px;padding:22px}.restaurant-photo-strip__copy h1{margin:0;font-family:"STKaiti","KaiTi",serif;font-size:1.85rem}.restaurant-photo-strip__copy p{margin:0;color:#765f4b}.restaurant-photo-strip__copy span{font-size:.72rem;color:#927963}.restaurant-main-grid{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:0}.restaurant-content{padding:22px 24px;border-right:1px solid #d8ccb7}.restaurant-content h2,.restaurant-aside h2{margin:0 0 12px;padding-bottom:6px;border-bottom:2px solid #a57a46;font-size:.95rem;color:#5c3e24}.restaurant-menu-table{width:100%;border-collapse:collapse;font-size:.74rem}.restaurant-menu-table th,.restaurant-menu-table td{border:1px solid #cdbb9c;padding:8px;text-align:left}.restaurant-menu-table thead th{background:#efe0c5}.restaurant-menu-table tbody th{background:#f8f0df}.restaurant-menu-note{color:#866f59;font-size:.68rem}.restaurant-paper-note{margin:22px 0;padding:20px 22px;background:#f6edcf;border:1px solid #ceb887;box-shadow:2px 3px 0 #d7c9a8;transform:rotate(-.25deg);font-family:"KaiTi","STKaiti",serif}.restaurant-paper-note b{font-family:"Microsoft YaHei",sans-serif;font-size:.75rem;color:#8b6b38}.restaurant-paper-note p{margin:8px 0;line-height:1.75;font-size:1rem}.restaurant-paper-note small{color:#856f52}.restaurant-guestbook{margin-top:28px}.guestbook-note{color:#8c7b68;font-size:.68rem}.restaurant-comment{padding:11px 0;border-bottom:1px dotted #c9baa1}.restaurant-comment__meta{display:flex;justify-content:space-between;color:#8d7e6b;font-size:.66rem}.restaurant-comment__meta strong{color:#5a432f}.restaurant-comment p{margin:5px 0;font-size:.78rem;line-height:1.65}.restaurant-comment blockquote{margin:6px 0 0;padding:7px 9px;background:#f3ead8;color:#6c5744;font-size:.72rem;border-left:2px solid #a67b4c}.restaurant-aside{padding:20px 16px;background:#f7f0e3}.restaurant-aside dl{display:grid;grid-template-columns:55px 1fr;gap:6px;font-size:.7rem}.restaurant-aside dt{color:#957e68}.restaurant-aside dd{margin:0}.restaurant-aside p{font-size:.72rem;line-height:1.7}.restaurant-aside a,.restaurant-aside>span{display:block;padding:5px 0;color:#705134;font-size:.68rem}.restaurant-footer{padding:11px;text-align:center;border-top:1px solid #cbbb9c;background:#ead9bd;color:#7d684e;font-size:.65rem}
+
+/* =========================
+   PUBLIC SERVICE — utility / civic information
+   ========================= */
+.public-service-site { min-height:100vh; background:#f3f5f5; color:#283238; font-family:"Microsoft YaHei","PingFang SC",sans-serif; }.public-service-header{background:#fff;border-bottom:3px solid #1e6574}.public-service-header__top{width:min(calc(100% - 24px),1000px);min-height:76px;margin:auto;display:flex;align-items:center;justify-content:space-between}.public-service-brand{display:grid;text-decoration:none;color:#205f6e}.public-service-brand strong{font-size:1.35rem}.public-service-brand span{font-size:.68rem;letter-spacing:.12em;color:#8aa0a7}.public-service-tel{display:grid;text-align:right}.public-service-tel span{font-size:.65rem;color:#91a0a5}.public-service-tel strong{font-size:.9rem}.public-service-nav{height:36px;padding:0 max(12px,calc((100vw - 1000px)/2));display:flex;background:#e8eef0;border-top:1px solid #d4dfe2;overflow-x:auto;white-space:nowrap}.public-service-nav a,.public-service-nav span{display:grid;place-items:center;min-width:110px;padding:0 12px;color:#52666d;text-decoration:none;font-size:.72rem;border-right:1px solid #d6e0e2}.public-service-nav .is-active{background:#d2e0e4;color:#164f5c;font-weight:700}.public-service-page{width:min(calc(100% - 24px),1000px);margin:16px auto 55px;background:#fff;border:1px solid #d7dfe1}.public-service-breadcrumb{padding:10px 20px;margin:0;border-bottom:1px solid #edf0f1;color:#8b969a;font-size:.66rem}.service-article-head{padding:20px 24px 12px;border-bottom:1px solid #d9e1e3}.service-article-head h1{margin:0 0 8px;font-size:1.5rem;font-weight:600}.service-article-head p{margin:0;color:#9aa3a6;font-size:.68rem}.service-article-layout{display:grid;grid-template-columns:minmax(0,1fr) 230px}.public-service-article{padding:22px 24px;border-right:1px solid #e2e7e8}.photo--service-main{width:100%;border:0!important;padding:0}.photo--service-main img{width:100%;max-height:340px;object-fit:cover}.photo--service-main .photo__caption{display:none!important}.public-service-article>p{line-height:1.8;font-size:.8rem}.public-service-article h2{font-size:.95rem;margin:26px 0 10px;color:#285967}.public-service-table{width:100%;border-collapse:collapse;font-size:.73rem}.public-service-table th,.public-service-table td{border:1px solid #ccd8dc;padding:9px;text-align:left}.public-service-table th{width:120px;background:#eef4f5;color:#55717a}.service-slogan{margin:22px 0;padding:15px 18px;border-left:4px solid #287184;background:#eff5f6;display:grid;gap:3px}.service-slogan small{color:#819398}.service-slogan strong{font-family:"STKaiti","KaiTi",serif;font-size:1.25rem}.service-faq-list dt{margin-top:14px;font-size:.78rem;font-weight:700}.service-faq-list dd{margin:4px 0 0;color:#5c686d;font-size:.75rem;line-height:1.75}.service-info-side{padding:20px 16px;background:#f7f9f9}.service-info-side h2{font-size:.8rem;color:#285967;margin:0 0 8px}.service-info-side ul{padding-left:18px;font-size:.72rem;line-height:1.9}.service-info-side p{font-size:.7rem;line-height:1.7;color:#68777c}.service-info-small{padding-top:10px;border-top:1px solid #dfe6e8}.service-info-side .text-link{color:#276273;font-size:.7rem}.public-service-footer{padding:12px;text-align:center;background:#eef2f3;color:#8c989b;font-size:.64rem}
+
+/* =========================
+   LOCAL HERITAGE — long-form village record
+   ========================= */
+.heritage-site{min-height:100vh;background:#ece7dc;color:#342f29;font-family:"Noto Serif SC","Songti SC","STSong",serif}.heritage-header{background:#f7f3e8;border-bottom:1px solid #bcb2a1}.heritage-header__inner{width:min(calc(100% - 24px),980px);min-height:82px;margin:auto;display:flex;align-items:center;justify-content:space-between}.heritage-brand{display:grid;text-decoration:none;color:#3f4d3d}.heritage-brand strong{font-size:1.65rem;letter-spacing:.06em}.heritage-brand span{font-size:.7rem;color:#8c8273}.heritage-update{color:#948b7d;font-size:.66rem}.heritage-nav{height:36px;padding:0 max(12px,calc((100vw - 980px)/2));display:flex;background:#4c5a47;color:#ece9dd;overflow-x:auto;white-space:nowrap}.heritage-nav a,.heritage-nav span{display:grid;place-items:center;min-width:90px;padding:0 12px;color:inherit;text-decoration:none;font-size:.7rem;border-right:1px solid rgba(255,255,255,.12)}.heritage-nav .is-active{background:#394436}.heritage-page{width:min(calc(100% - 24px),980px);margin:20px auto 60px;display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:34px}.heritage-article{background:#f9f6ee;border:1px solid #cfc5b4;padding:28px 34px}.heritage-crumb{margin:0 0 20px!important;color:#948a7b;font-size:.65rem!important}.heritage-title{border-bottom:1px solid #bdb3a2;margin-bottom:22px;padding-bottom:12px}.heritage-title h1{margin:0 0 8px;font-size:2rem;line-height:1.35}.heritage-title p{margin:0!important;color:#958b7b!important;font-size:.66rem!important}.heritage-article>p{font-size:.91rem;line-height:2.05;color:#443f38}.heritage-article h2{font-size:1.08rem;margin:30px 0 10px;padding-left:10px;border-left:3px solid #6a7962}.photo--heritage-main{width:76%;margin:20px auto;border:0!important;padding:0}.photo--heritage-main img{width:100%;object-fit:cover}.photo--heritage-main .photo__caption{display:block;padding:7px 0;color:#8b8275;font-size:.65rem;text-align:center;background:transparent}.heritage-caption-note{margin:16px 0;padding:12px 14px;background:#efebdf;border-top:1px solid #ccc2b1;border-bottom:1px solid #ccc2b1}.heritage-caption-note strong{font-size:.75rem}.heritage-caption-note p{margin:4px 0 0;line-height:1.75;font-size:.78rem}.heritage-warning-line{font-weight:700;color:#4b4034!important}.heritage-side-index{padding-top:12px;font-family:"Microsoft YaHei",sans-serif}.heritage-side-index h2{margin:0 0 10px;font-size:.75rem;color:#55614f;border-bottom:1px solid #bdb5a7;padding-bottom:5px}.heritage-side-index span,.heritage-side-index strong{display:block;padding:6px 4px;border-bottom:1px dotted #c8c0b3;font-size:.68rem}.heritage-side-index strong{color:#475542}.heritage-footer{padding:13px;text-align:center;background:#dcd5c8;color:#7d756b;font-family:"Microsoft YaHei",sans-serif;font-size:.63rem}
+
+/* =========================
+   OFFICIAL NOTICE — document page, not a marketing component
+   ========================= */
+.village-notice-site{min-height:100vh;background:#f2f3f3;color:#2d3336}.notice-gov-header{background:#fff;border-bottom:1px solid #d4d8da}.notice-gov-top{min-height:26px;padding:0 max(12px,calc((100vw - 920px)/2));display:flex;align-items:center;justify-content:space-between;background:#eceeef;color:#7e8589;font-size:.63rem}.notice-gov-top a{color:#52696a;text-decoration:none}.notice-gov-brand{width:min(calc(100% - 24px),920px);min-height:72px;margin:auto;display:flex;align-items:baseline;gap:16px}.notice-gov-brand strong{color:#245b5a;font-size:1.4rem}.notice-gov-brand span{color:#8a9395;font-size:.7rem}.notice-gov-nav{height:35px;padding:0 max(12px,calc((100vw - 920px)/2));display:flex;background:#315f60;color:#fff;overflow-x:auto;white-space:nowrap}.notice-gov-nav a,.notice-gov-nav span{min-width:100px;display:grid;place-items:center;color:inherit;text-decoration:none;font-size:.69rem;border-right:1px solid rgba(255,255,255,.12)}.notice-gov-nav .is-active{background:#244c4d}.village-notice-page{width:min(calc(100% - 24px),840px);margin:18px auto 60px;background:#fff;border:1px solid #d9ddde;padding:18px 46px 42px}.village-notice-breadcrumb{margin:0 -28px 22px;padding:0 28px 12px;border-bottom:1px solid #e5e8e9;color:#8b9294;font-size:.64rem}.village-notice-title{text-align:center;border-bottom:1px solid #cfd4d5;padding-bottom:18px;margin-bottom:20px}.village-notice-title h1{font-family:"SimSun","STSong",serif;margin:0 0 12px;font-size:1.8rem;color:#222}.village-notice-title p{margin:0;color:#909699;font-size:.64rem}.notice-doc-number{text-align:right;color:#8b8f90;font-size:.66rem;margin-bottom:16px}.village-notice-page>p{font-family:"SimSun","STSong",serif;line-height:2.05;font-size:.93rem;text-indent:2em}.photo--notice-main{width:82%;margin:20px auto;border:0!important;padding:0}.photo--notice-main img{width:100%;object-fit:cover}.photo--notice-main .photo__caption{display:block;padding:6px 0;text-align:center;color:#8c9294;font:12px/1.4 "Microsoft YaHei",sans-serif;background:transparent}.old-warning-strip{margin:24px 0;padding:12px 14px;border:1px dashed #b6a986;background:#faf8ef}.notice-signature{white-space:pre-line!important;text-align:right;text-indent:0!important;margin-top:32px}.village-notice-foot{margin:30px -28px -24px;padding:12px 28px 0;border-top:1px solid #e3e6e7;display:flex;gap:18px;color:#7d8588;font:11px/1.4 "Microsoft YaHei",sans-serif}.village-notice-foot a{color:#476d6d;text-decoration:none}
+
+/* =========================
+   2017 COUNTY NEWS — conventional local news archive
+   ========================= */
+.county-site{min-height:100vh;background:#f4f4f3;color:#222;font-family:"Microsoft YaHei","PingFang SC",sans-serif}.county-header{background:#fff;border-bottom:1px solid #d8d8d6}.county-header__top{width:min(calc(100% - 24px),1030px);min-height:72px;margin:auto;display:flex;align-items:center;justify-content:space-between}.county-brand{font-family:"STKaiti","KaiTi",serif;font-size:1.7rem;color:#174f72;text-decoration:none}.county-header__top>span{color:#979b9e;font-size:.66rem}.county-nav{height:36px;padding:0 max(12px,calc((100vw - 1030px)/2));display:flex;background:#1e5c82;color:#fff}.county-nav span{min-width:94px;display:grid;place-items:center;border-right:1px solid rgba(255,255,255,.15);font-size:.7rem}.county-nav .is-active{background:#174b6b}.county-page{width:min(calc(100% - 24px),1030px);margin:20px auto 35px;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:32px;background:#fff;border:1px solid #ddd}.county-article{padding:25px 30px}.county-kicker{color:#7e8b92;font-size:.66rem}.county-article h1{font-family:"SimSun","STSong",serif;font-size:2rem;margin:9px 0 11px}.county-byline{display:flex;gap:16px;flex-wrap:wrap;color:#9aa0a3;font-size:.63rem;padding-bottom:14px;border-bottom:1px solid #e5e5e3}.photo--county{width:100%;margin:18px 0;border:0!important;padding:0}.photo--county img{width:100%;aspect-ratio:16/9;object-fit:cover}.photo--county .photo__caption{display:block;background:#f5f5f3;color:#8f9294;font-size:.62rem;padding:5px 7px}.county-article>p{font-family:"SimSun","STSong",serif;font-size:.9rem;line-height:2}.county-edit-note{padding:10px 12px;background:#f4f4f2;color:#7d8183!important;font:11px/1.6 "Microsoft YaHei",sans-serif!important}.county-side{padding:24px 18px;background:#fafafa;border-left:1px solid #e3e3e1}.county-side section{padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid #e3e3e1}.county-side h2{font-size:.83rem;line-height:1.6}.county-side p{color:#777;font-size:.7rem;line-height:1.7}.btn--archive{padding:6px 0!important;border:0!important;background:transparent!important;color:#1e5c82!important;text-decoration:underline!important;font-size:.7rem!important}.old-comments{width:min(calc(100% - 24px),1030px);margin:0 auto 70px;background:#fff;border:1px solid #ddd;padding:20px 28px}.old-comments__head{border-bottom:1px solid #ddd;padding-bottom:12px}.old-comments__head h2{font-size:1rem}.old-comment{padding:13px 0;border-bottom:1px dotted #ccc}.old-comment__meta{display:flex;justify-content:space-between;font-size:.66rem;color:#979b9e}.old-comment p{font-family:"SimSun","STSong",serif;margin:5px 0 0;line-height:1.8;font-size:.82rem}
+
+/* =========================
+   2016 OLD TOURISM PAGE — intentionally dated and animated
+   ========================= */
+.archive-site{min-height:100vh;background:#d7dfc9;color:#333;font-family:Arial,"SimSun",serif;padding-bottom:50px}.archive-header--2016,.archive-banner,.archive-body,.archive-footnote{width:min(calc(100% - 16px),960px)!important;margin-left:auto!important;margin-right:auto!important}.archive-header--2016{margin-top:8px;background:#fffef0;border:1px solid #879b68}.archive-old-utility{height:23px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;background:#ecf1dd;border-bottom:1px solid #b8c69c;font-size:10px;color:#66705b}.archive-brand{min-height:64px;padding:8px 12px!important;display:flex!important;align-items:baseline!important;gap:18px!important;background:linear-gradient(#fbfff3,#e4edd3)!important}.archive-brand strong{font-family:"STKaiti","KaiTi",serif!important;font-size:2rem!important;color:#2f6535!important;text-shadow:1px 1px #fff}.archive-brand span{font-size:12px!important;color:#718067!important}.archive-divider-gif{display:block;width:100%;height:22px;object-fit:fill;image-rendering:pixelated}.archive-tabs{height:31px!important;display:flex!important;padding:0!important;background:#5e7b43!important;border-top:1px solid #476235!important;border-bottom:1px solid #38562b!important;overflow-x:auto}.archive-tabs span{min-width:110px;display:grid;place-items:center;color:#fff!important;border-right:1px solid #829a69;font-size:12px!important}.archive-tabs .is-active{background:#365b2c!important;color:#fff!important;font-weight:bold}.archive-banner{position:relative!important;height:190px!important;margin-top:8px!important;border:1px solid #9bab7f!important;background:#fffef0}.photo--archive-banner{width:100%!important;height:100%!important;border:0!important;padding:0!important}.photo--archive-banner img{width:100%;height:188px!important;object-fit:cover;filter:saturate(.85)}.photo--archive-banner .photo__caption{display:none!important}.archive-banner__copy{position:absolute!important;left:12px!important;bottom:10px!important;right:auto!important;padding:8px 10px!important;background:rgba(255,255,232,.92)!important;border:1px solid #8ca070!important;color:#304329!important}.archive-banner__copy span,.archive-banner__copy p{color:#67735e!important;font-size:10px!important}.archive-banner__copy h1{margin:3px 0!important;font-family:"SimSun","STSong",serif!important;font-size:1.3rem!important;color:#2d4728!important}.archive-body{display:grid!important;grid-template-columns:minmax(0,1fr) 220px!important;gap:10px!important;margin-top:8px!important;background:#fffef0!important;border:1px solid #9bab7f!important;padding:10px!important}.archive-article{padding:10px 12px!important;border-right:1px dotted #9cac83!important}.archive-status{margin:0 0 10px!important;padding:5px 7px!important;background:#fff3c8!important;border:1px solid #e0c86d!important;color:#796a34!important;font-size:11px!important}.archive-old-heading{display:flex;align-items:center;gap:8px;border-bottom:2px solid #6c8a4d;margin-bottom:10px}.archive-old-heading h2{margin:0!important;padding:4px 0!important;color:#2d5b31!important;font-family:"SimSun","STSong",serif!important;font-size:1.05rem!important}.archive-new-gif{width:48px;height:18px;image-rendering:pixelated}.archive-article>p{font-family:"SimSun","STSong",serif!important;font-size:13px!important;line-height:1.8!important;color:#444!important}.archive-route-facts{display:block!important;border:1px solid #b6c49e!important;background:#f7faed!important;margin:10px 0!important}.archive-route-facts>div{display:grid!important;grid-template-columns:90px 1fr!important;padding:5px 8px!important;border-bottom:1px dotted #bcc9a8!important}.archive-route-facts>div:last-child{border-bottom:0!important}.archive-route-facts span{font-size:11px;color:#7b856f}.archive-route-facts strong{font-size:12px}.archive-note{margin:12px 0!important;padding:8px 10px!important;background:#f4f0d8!important;border:1px dashed #aa9e62!important;font-size:12px!important}.archived-photo-button{width:100%;display:grid!important;grid-template-columns:110px 1fr!important;gap:10px!important;border:1px solid #9dad82!important;background:#edf4df!important;padding:7px!important;text-align:left!important}.archived-photo-button__thumb{height:76px!important}.archive-side{border:0!important;padding:0 8px!important}.archive-side section{padding:8px 0!important;margin:0!important;border-bottom:1px dotted #aebc96!important}.archive-side strong{color:#3f6338;font-size:12px!important}.archive-side p{font-family:"SimSun",serif!important;font-size:11px!important;line-height:1.65!important}.archive-side .text-link{margin:7px 0!important;color:#245f9b!important;text-decoration:underline!important;font-size:11px!important}.archive-footnote{margin-top:8px!important;margin-bottom:0!important;padding:8px 10px!important;display:block!important;border:1px solid #9bab7f!important;background:#f2f6e8!important;font-size:10px!important}.archive-footnote strong{color:#49683e}.archive-footnote p{display:inline;margin-left:8px!important;font-size:10px!important}
+
+/* =========================
+   Later sources: stronger individual identities, less shared “card” language
+   ========================= */
+/* rescue memorial: white nonprofit archive, no floating card shadows */
+.memorial-site{background:#eef1ef!important}.memorial-page{background:#fff;border:1px solid #d7ded9;padding:28px 30px;grid-template-columns:minmax(0,1fr) 235px!important;gap:38px!important}.memorial-side{border-top:3px solid #4c6a57!important}.memorial-side section{background:transparent!important;border-radius:0!important;box-shadow:none!important}.responsibility-note{border-top:2px solid #607566!important}.memorial-fact{grid-template-columns:105px 1fr!important}
+/* old forum: 2010s BBS table feel */
+.local-forum-site{background:#d8d4cb!important}.forum-thread{box-shadow:none!important}.forum-post{grid-template-columns:110px 1fr!important;gap:0!important;padding:0!important}.forum-post>.forum-avatar{width:auto!important;height:auto!important;border-radius:0!important;background:#ebe7dc!important;border-right:1px solid #d3cec2!important;display:grid!important;place-items:start center!important;padding-top:18px!important;font-size:.8rem!important}.forum-post>div{padding:16px 18px!important}.forum-side{gap:10px!important}.forum-profile,.forum-side-note{border-radius:0!important;box-shadow:none!important}
+/* mountain archive: utilitarian database */
+.mountain-archive-site{background:#e9edf0!important;font-family:"Microsoft YaHei","PingFang SC",sans-serif!important}.mountain-record-page{background:#fff!important;border:1px solid #cfd7db!important;box-shadow:none!important}.mountain-photo-grid{grid-template-columns:1fr 1fr!important}.mountain-note{border-radius:0!important;box-shadow:none!important;background:#f4f6f7!important}.patrol-sheet{border-radius:0!important;box-shadow:none!important}
+/* raw ledger scan viewer */
+.field-ledger-site{background:#2f3132!important}.ledger-page{background:#f4efe2!important;box-shadow:0 8px 30px rgba(0,0,0,.28)!important;border-radius:0!important}.ledger-entry,.ledger-conclusion,.ledger-margin-note{border-radius:0!important;box-shadow:none!important}
+/* trail cache */
+.trail-cache-site{background:#f2f4f5!important}.trail-cache-page{background:#fff!important;border:1px solid #dde2e4!important;box-shadow:none!important}.trail-cache-note{border-radius:0!important;box-shadow:none!important}
+/* draft recovery as utility system */
+.draft-recovery-site{background:#eceff1!important;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace!important}.draft-recovery-page{background:#fff!important;border:1px solid #cfd6da!important;box-shadow:none!important}.recovery-fact{border-radius:0!important;box-shadow:none!important;background:#f6f7f8!important}
+/* government rescue page */
+.rescue-report-site{background:#f3f4f4!important}.rescue-report-page{background:#fff!important;border:1px solid #d6dadd!important;box-shadow:none!important}.rescue-summary{border-radius:0!important;box-shadow:none!important}.btn--rescue{border-radius:0!important}
+
+/* ending inherits the rebuilt messenger language */
+.ending-chat-page{background:#dfe2e5!important}.ending-chat-shell{width:min(100%,780px)!important;min-height:100vh!important;margin:0 auto!important;background:#eef0f1!important;border-left:1px solid #cfd3d6!important;border-right:1px solid #cfd3d6!important;border-radius:0!important;box-shadow:none!important}.ending-chat-list{min-height:calc(100vh - 68px)!important}
+
+@media (max-width: 900px){
+  .trail-profile-grid{grid-template-columns:190px minmax(0,1fr)}.trail-profile-right{display:none}
+  .track-layout,.village-portal-columns,.service-article-layout,.heritage-page,.restaurant-main-grid,.county-page,.archive-body{grid-template-columns:1fr!important}
+  .portal-side,.service-info-side,.heritage-side-index,.restaurant-aside,.county-side,.archive-side{border-left:0!important;border-top:1px solid #ddd!important;padding-left:0!important;padding-top:18px!important}
+  .restaurant-content,.public-service-article,.archive-article{border-right:0!important}
+  .restaurant-aside{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.restaurant-aside h2{grid-column:1/-1}
+  .heritage-side-index{display:grid;grid-template-columns:repeat(2,1fr);gap:0 16px}
+}
+@media (max-width: 640px){
+  .messenger-app,.contact-shell{border:0}.chat-topbar{min-height:62px;padding:7px 10px}.chat-list{padding:14px 10px 22px}.msg-row--other{padding-right:8%}.msg-row--me{padding-left:8%}.msg-bubble{max-width:82%}.chat-image-wrap{max-width:72%}
+  .trail-header__inner{width:calc(100% - 18px);gap:12px}.trail-search{display:none}.trail-nav{gap:12px;margin-left:auto}.trail-nav span:nth-child(n+3){display:none}.trail-profile-grid{width:100%;margin:0;display:block}.trail-profile-side{border-width:0 0 1px;padding:18px}.trail-stream{border-width:0}.track-layout{width:100%;margin:0;gap:0}.track-article,.track-info-side{border-width:0 0 1px;padding:16px}.track-map{height:250px}.draft-page--platform{width:100%;margin:0;border:0;padding:20px 16px}
+  .village-datebar{padding:0 10px}.village-datebar span:nth-child(2),.village-datebar span:nth-child(3){display:none}.village-masthead{width:calc(100% - 20px);min-height:68px}.village-brand strong{font-size:1.65rem}.village-masthead__weather{display:none}.village-nav--portal{padding:0}.village-nav--portal a,.village-nav--portal span{min-width:88px;font-size:.72rem}.village-portal{width:100%;border:0;margin:0}.village-portal-banner{height:180px}.photo--portal-banner img{height:180px}.village-portal-banner__text{left:16px;bottom:16px}.portal-welcome{grid-template-columns:1fr;padding:16px;gap:6px}.village-portal-columns{padding:18px 14px}.portal-route__body{grid-template-columns:120px 1fr}.photo--portal-route img{width:120px;height:90px}.portal-news-row{grid-template-columns:78px 1fr auto}.portal-links,.village-footer{padding-left:14px;padding-right:14px}.route-guide--portal{width:100%;margin:0;border:0;padding:16px}.route-article-head h1{font-size:1.5rem}.route-fact-table th,.route-fact-table td,.route-level-table th,.route-level-table td{padding:7px;font-size:.68rem}
+  .restaurant-strip{padding-left:8px}.restaurant-header__inner{width:calc(100% - 16px);min-height:64px}.restaurant-brand strong{font-size:1.55rem}.restaurant-contact{display:none}.restaurant-nav{padding:0}.restaurant-nav a,.restaurant-nav span{min-width:82px}.restaurant-page{width:100%;margin:0;border:0}.restaurant-photo-strip{grid-template-columns:1fr}.photo--restaurant-hero img{height:220px}.restaurant-photo-strip__copy{padding:16px}.restaurant-content{padding:18px 14px}.restaurant-aside{grid-template-columns:1fr;padding:16px}.restaurant-menu-table{font-size:.67rem}.restaurant-menu-table th,.restaurant-menu-table td{padding:6px 5px}
+  .public-service-header__top{width:calc(100% - 18px);min-height:66px}.public-service-brand strong{font-size:1.12rem}.public-service-tel{display:none}.public-service-nav{padding:0}.public-service-nav a,.public-service-nav span{min-width:96px}.public-service-page{width:100%;margin:0;border:0}.service-article-head,.public-service-article{padding:16px}.service-article-head h1{font-size:1.25rem}.public-service-table th{width:92px}.service-info-side{padding:16px}
+  .heritage-header__inner{width:calc(100% - 20px);min-height:70px}.heritage-brand strong{font-size:1.35rem}.heritage-update{display:none}.heritage-nav{padding:0}.heritage-page{width:100%;margin:0;gap:0}.heritage-article{border:0;padding:20px 16px}.heritage-title h1{font-size:1.55rem}.photo--heritage-main{width:100%}.heritage-side-index{padding:16px;grid-template-columns:1fr 1fr}
+  .notice-gov-brand{width:calc(100% - 20px);min-height:62px}.notice-gov-nav{padding:0}.village-notice-page{width:100%;margin:0;border:0;padding:16px}.village-notice-breadcrumb{margin:0 0 18px;padding:0 0 10px}.village-notice-title h1{font-size:1.45rem}.photo--notice-main{width:100%}.village-notice-foot{margin:24px 0 0;padding:10px 0 0}
+  .county-header__top{width:calc(100% - 20px);min-height:62px}.county-brand{font-size:1.35rem}.county-nav{padding:0;overflow-x:auto}.county-page,.old-comments{width:100%;margin:0;border:0}.county-article,.old-comments{padding:18px 14px}.county-article h1{font-size:1.55rem}.county-side{padding:16px!important}
+  .archive-header--2016,.archive-banner,.archive-body,.archive-footnote{width:100%!important;margin-top:0!important;border-left:0!important;border-right:0!important}.archive-old-utility span:nth-child(n+2){display:none}.archive-brand{min-height:56px!important}.archive-brand strong{font-size:1.55rem!important}.archive-divider-gif{height:18px}.archive-tabs span{min-width:94px}.archive-banner{height:160px!important}.photo--archive-banner img{height:158px!important}.archive-body{padding:6px!important}.archive-article{padding:8px!important}.archive-side{padding:12px!important}.archive-footnote{padding:8px!important}.archived-photo-button{grid-template-columns:90px 1fr!important}
+  .forum-post{grid-template-columns:64px 1fr!important}.forum-post>.forum-avatar{padding-top:14px!important}.forum-post>div{padding:14px 12px!important}
+}
+
+html[data-reduced-motion="true"] .track-map__mainline,
+html[data-reduced-motion="true"] .track-map__oldline,
+html[data-reduced-motion="true"] .track-map__stop,
+html[data-reduced-motion="true"] .sync-pulse::before { animation:none!important; stroke-dashoffset:0!important; opacity:1!important; }
+
+.device-notification{position:fixed;right:18px;bottom:18px;z-index:80;width:min(340px,calc(100% - 36px));display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid rgba(0,0,0,.12);background:rgba(248,249,250,.96);box-shadow:0 8px 28px rgba(0,0,0,.18);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;text-align:left;opacity:0;transform:translateY(10px);animation:deviceNotifyIn .35s 1.2s ease forwards}.device-notification__avatar{width:42px;height:42px;border-radius:9px;object-fit:cover}.device-notification__copy{display:grid;gap:1px}.device-notification__copy span{color:#7e858a;font-size:.62rem}.device-notification__copy strong{font-size:.84rem}.device-notification__copy p{margin:1px 0 0;color:#5f666b;font-size:.72rem}.device-notification time{align-self:start;color:#9aa0a5;font-size:.6rem}@keyframes deviceNotifyIn{to{opacity:1;transform:translateY(0)}}
+.ending-person-link{display:flex!important;align-items:center!important;gap:10px!important}
+.memorial-inline-link{color:#3e624d;text-decoration:underline;text-underline-offset:3px;font-size:.76rem}
+html[data-reduced-motion="true"] .device-notification{animation:none!important;opacity:1!important;transform:none!important}
+.toast-region{right:14px!important;bottom:14px!important;width:min(320px,calc(100vw - 28px))!important}.toast{background:rgba(248,249,250,.97)!important;color:#31363a!important;border:1px solid rgba(0,0,0,.12)!important;border-radius:8px!important;padding:10px 12px!important;box-shadow:0 8px 26px rgba(0,0,0,.16)!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif!important;font-size:.76rem!important}
+.restaurant-nav-button{min-width:92px;padding:0 12px;border:0;border-right:1px solid #d6c4a6;background:transparent;color:inherit;font-size:.7rem;cursor:pointer}
+@media(max-width:640px){.restaurant-nav-button{min-width:82px}}

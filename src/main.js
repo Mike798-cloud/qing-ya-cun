@@ -8,7 +8,7 @@ import { createInterludePlayer } from './core/interlude.js';
 import { openSettings } from './core/settings.js';
 import { el, icon, toast } from './core/ui.js';
 import { routeDefinitions, passwordDefinitions, stageRules, gates } from './data/content.js';
-import { renderBoot, renderProfile, renderPost, renderDraft1, renderQingya, renderJiuwan } from './pages/stage1.js';
+import { renderBoot, renderContact, renderProfile, renderPost, renderDraft1, renderQingya, renderJiuwan } from './pages/stage1.js';
 import { renderService, renderFood, renderWatchmen, renderSafety } from './pages/stage2.js';
 import { renderNews2017, renderCache2017 } from './pages/stage3.js';
 import { renderZhouCheng, renderZhouYougen } from './pages/stage4.js';
@@ -28,7 +28,7 @@ audio.register('interlude-3', './assets/audio/interlude-3.wav', { volume: 0.18 }
 const interludes = createInterludePlayer({ store, audio });
 
 const pageRenderers = new Map([
-  ['boot', renderBoot], ['profile', renderProfile], ['post', renderPost],
+  ['boot', renderBoot], ['contact', renderContact], ['profile', renderProfile], ['post', renderPost],
   ['draft-1', renderDraft1], ['qingya', renderQingya], ['jiuwan', renderJiuwan],
   ['service', renderService], ['food', renderFood], ['watchmen', renderWatchmen], ['safety', renderSafety],
   ['news-2017', renderNews2017], ['cache-2017', renderCache2017],
@@ -78,7 +78,7 @@ function render() {
   const renderer = pageRenderers.get(path) || renderBoot;
   const shell = el('div', { class: 'immersive-shell' });
   shell.append(renderer({ store, flow, passwords, audio, interludes, router }));
-  if (path !== 'ending') shell.append(renderTools());
+  if (path === 'boot') shell.append(renderTools());
   app.replaceChildren(shell);
   requestAnimationFrame(() => document.getElementById('app-main')?.focus({ preventScroll: true }));
 }

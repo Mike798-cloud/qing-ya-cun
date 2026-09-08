@@ -1,6 +1,8 @@
 import { el } from '../core/ui.js';
 import { openLightbox } from '../core/lightbox.js';
 
+const CHAT_AVATAR = './assets/photos/zhou-hang-avatar.jpg';
+
 const IMG = {
   north: './assets/photos/north-slope-local.jpg',
   toilet: './assets/photos/qingya-toilet-clean.jpg',
@@ -162,12 +164,18 @@ export function renderRescueResult({ store, interludes, audio, router }) {
     ]),
   ]);
 
-  const finish = el('button', { class: 'btn btn--rescue', type: 'button', text: '回到聊天' });
-  finish.addEventListener('click', () => goToEnding({ interludes, audio, router }));
-  side.append(finish);
-
   page.append(article, side);
-  main.append(page);
+  const notification = el('button', { class: 'device-notification', type: 'button', 'aria-label': '打开周航的新消息' }, [
+    el('img', { class: 'device-notification__avatar', src: CHAT_AVATAR, alt: '' }),
+    el('div', { class: 'device-notification__copy' }, [
+      el('span', { text: '消息' }),
+      el('strong', { text: '周航' }),
+      el('p', { text: '1 条新消息' }),
+    ]),
+    el('time', { text: '刚刚' }),
+  ]);
+  notification.addEventListener('click', () => goToEnding({ interludes, audio, router }));
+  main.append(page, notification);
 
   if (!store.getState().flags.stage7RescueSeen) {
     store.dispatch({ type: 'SET_FLAG', key: 'stage7RescueSeen', value: true });
@@ -186,13 +194,17 @@ function endingMessage(list, side, text, time) {
 
 export function renderEnding({ store }) {
   const main = el('main', { id: 'app-main', class: 'chat-page ending-chat-page', tabindex: '-1' });
-  const phone = el('section', { class: 'chat-shell ending-chat-shell', 'aria-label': '与周航的聊天' });
+  const phone = el('section', { class: 'messenger-app ending-chat-shell', 'aria-label': '与周航的聊天' });
   const top = el('header', { class: 'chat-topbar' }, [
-    el('div', { class: 'chat-avatar', text: '航' }),
-    el('div', { class: 'chat-person' }, [
-      el('strong', { text: '周航' }),
-      el('span', { text: '最后在线 9 月 14 日 11:18' }),
+    el('span', { class: 'chat-back', text: '‹', 'aria-hidden': 'true' }),
+    el('div', { class: 'chat-person-link ending-person-link' }, [
+      el('img', { class: 'zhou-avatar chat-avatar', src: CHAT_AVATAR, alt: '' }),
+      el('div', { class: 'chat-person' }, [
+        el('strong', { text: '周航' }),
+        el('span', { text: '最后在线 9月14日 11:18' }),
+      ]),
     ]),
+    el('span', { class: 'chat-top-icon', text: '•••', 'aria-hidden': 'true' }),
   ]);
   const list = el('div', { class: 'chat-list ending-chat-list' });
   endingMessage(list, 'other', '如果十二点前没回，你直接报警。', '9 月 14 日 10:26');

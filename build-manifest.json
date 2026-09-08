@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-08T00:43:58.679301Z",
+  "generatedAt": "2026-09-08T07:24:35.069964Z",
   "files": [
     "assets/audio/interlude-1.wav",
     "assets/audio/interlude-2.wav",
@@ -23,6 +23,9 @@
     "assets/photos/watchman-04-hd.jpg",
     "assets/photos/watchman-04-stage2.jpg",
     "assets/photos/watchman-04.jpg",
+    "assets/photos/zhou-hang-avatar.jpg",
+    "assets/ui/new-2016.gif",
+    "assets/ui/trail-divider-2016.gif",
     "index.html",
     "src/core/audio.js",
     "src/core/flow.js",
@@ -48,6 +51,7 @@
     "src/pages/stage7.js",
     "src/styles/base.css",
     "src/styles/components.css",
+    "src/styles/immersive-web.css",
     "src/styles/layout.css"
   ]
 }

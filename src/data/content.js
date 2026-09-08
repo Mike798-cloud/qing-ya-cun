@@ -1,5 +1,6 @@
 export const routeDefinitions = new Map([
   ['boot', { id: 'boot', title: '周航', kind: 'chat' }],
+  ['contact', { id: 'contact', title: '周航 · 联系人资料', kind: 'contact' }],
   ['profile', { id: 'profile', title: '周末别找我', kind: 'trail' }],
   ['post', { id: 'post', title: '青垭九弯 · 轨迹记录', kind: 'trail' }],
   ['draft-1', { id: 'draft-1', title: '未公开草稿', kind: 'trail' }],
@@ -29,7 +30,7 @@ export const passwordDefinitions = {
 };
 
 export const stageRules = [
-  { stage: 1, when: state => state.visited.includes('boot'), unlock: ['profile', 'qingya', 'jiuwan', 'post'] },
+  { stage: 1, when: state => state.visited.includes('boot'), unlock: ['contact','profile', 'qingya', 'jiuwan', 'post'] },
   { stage: 2, when: state => Boolean(state.passwords.noweekend) && state.visited.includes('draft-1') && ['post','qingya','jiuwan'].every(id=>state.visited.includes(id)), unlock: ['service','food','watchmen','safety'] },
   { stage: 3, when: state => state.stage >= 2 && Boolean(state.choices.stage2) && ['watchmen','safety'].every(id => state.visited.includes(id)), unlock: ['news-2017'] },
   { stage: 4, when: state => state.stage >= 3 && Boolean(state.passwords.noback) && ['news-2017','cache-2017'].every(id => state.visited.includes(id)), unlock: ['zhou-cheng'] },

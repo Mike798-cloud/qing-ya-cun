@@ -76,8 +76,8 @@ export function renderZhouCheng() {
   const article = el('article', { class: 'memorial-article' });
   article.append(
     el('p', { class: 'memorial-kicker', text: '2018 年补录 · 公开救援纪念资料' }),
-    el('h1', { text: '周成：那天他不是第一次走北坡' }),
-    el('p', { class: 'memorial-lead', text: '事故后的新闻只留下“本地带路人员死亡”几个字。后来的救援纪念资料把当日经过补得更完整。' }),
+    el('h1', { text: '周成（1989—2017）' }),
+    el('p', { class: 'memorial-lead', text: '青垭山地救援志愿队 2018 年整理的公开纪念资料。本文依据当年参与搜救人员口述、公开通报和家属同意公开的部分记录编写。' }),
     photo({
       src: IMG.rescue,
       alt: '雨天山沟中几名救援人员沿湿滑石地前行',
@@ -106,7 +106,7 @@ export function renderZhouCheng() {
       el('span', { class: 'memorial-side__label', text: '相关人物' }),
       el('strong', { text: '周有根' }),
       el('p', { text: '周成的父亲。事故后多年在北坡附近拆游客绑的路条和旧标记。' }),
-      el('a', { class: 'btn btn--memorial', href: '#/zhou-yougen', text: '看他的公开留言' }),
+      el('a', { class: 'memorial-inline-link', href: '#/zhou-yougen', text: '相关：周有根在青垭村民交流板的公开回复 ›' }),
     ]),
     el('section', {}, [
       el('span', { class: 'memorial-side__label', text: '对照材料' }),
@@ -235,14 +235,9 @@ export function renderZhouYougen({ store, audio }) {
       el('p', { class: 'forum-profile__plain', text: '他不是巡山管理员，也没有后台权限。大部分时候只是自己去拆。' }),
     ]),
     el('section', { class: 'forum-side-note' }, [
-      el('strong', { text: '帖子里反复提到的原因' }),
-      el('p', { text: '开放主线有正式路牌。北坡没有。周有根在几次回复里都只说一件事：把布条和临时箭头连成一串，后来的人就会把它当成路。' }),
+      el('strong', { text: '版主补充' }),
+      el('p', { text: '北坡不是当前开放线路。帖子里提到的红布条、自制箭头均不属于村里设置的正式标记。' }),
       el('a', { href: '#/zhou-cheng', text: '相关：周成资料补录' }),
-    ]),
-    el('section', { class: 'forum-side-note forum-side-note--chat' }, [
-      el('strong', { text: '消息' }),
-      el('p', { text: store.getState().flags.stage4MessageReady ? '周航的消息还在聊天里。' : '周航刚发来新消息。' }),
-      el('a', { href: '#/boot', text: '回到聊天' }),
     ]),
   );
 

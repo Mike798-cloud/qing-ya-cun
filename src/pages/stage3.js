@@ -6,6 +6,8 @@ const IMG = {
   north: './assets/photos/north-slope-local.jpg',
   ridge: './assets/photos/jiuwan-trail.jpg',
   watch4: './assets/photos/watchman-04-stage2.jpg',
+  oldNew: './assets/ui/new-2016.gif',
+  oldDivider: './assets/ui/trail-divider-2016.gif',
 };
 
 function photo({ src, alt, caption, className = '' }) {
@@ -42,16 +44,24 @@ function renderCountyHeader() {
 }
 
 function renderArchiveHeader() {
-  return el('header', { class: 'archive-header' }, [
+  return el('header', { class: 'archive-header archive-header--2016' }, [
+    el('div', { class: 'archive-old-utility' }, [
+      el('span', { text: '青垭乡村旅游信息站' }),
+      el('span', { text: '建议使用 1024×768 分辨率浏览' }),
+      el('span', { text: '您是第 03816 位访客' }),
+    ]),
     el('div', { class: 'archive-brand' }, [
       el('strong', { text: '青垭乡村游' }),
-      el('span', { text: '网页快照 · 2016 年 6 月' }),
+      el('span', { text: '吃农家饭 · 走山里路 · 住一晚也行' }),
     ]),
+    el('img', { class: 'archive-divider-gif', src: IMG.oldDivider, alt: '', 'aria-hidden': 'true' }),
     el('div', { class: 'archive-tabs' }, [
-      el('span', { text: '首页' }),
+      el('span', { text: '网站首页' }),
       el('span', { class: 'is-active', text: '徒步线路' }),
-      el('span', { text: '住宿' }),
-      el('span', { text: '农家饭' }),
+      el('span', { text: '农家乐' }),
+      el('span', { text: '住宿电话' }),
+      el('span', { text: '游客留言' }),
+      el('span', { text: '联系我们' }),
     ]),
   ]);
 }
@@ -206,17 +216,17 @@ export function renderCache2017({ interludes, audio }) {
   const banner = el('section', { class: 'archive-banner' }, [
     photo({ src: IMG.ridge, alt: '山脊和山谷', caption: '青垭九弯 · 2016 资料图', className: 'photo--archive-banner' }),
     el('div', { class: 'archive-banner__copy' }, [
-      el('span', { text: '2016 夏季线路' }),
+      el('span', { text: '青垭徒步线路推荐' }),
       el('h1', { text: '九弯环线 · 两种返程走法' }),
-      el('p', { text: '网页快照时间：2016-06-12 09:31' }),
+      el('p', { text: '页面更新：2016-06-12　天气好再走北坡' }),
     ]),
   ]);
 
   const body = el('div', { class: 'archive-body' });
   const article = el('article', { class: 'archive-article' });
   article.append(
-    el('p', { class: 'archive-status', text: '旧页面内容 · 已下线 · 仅供历史查阅' }),
-    el('h2', { text: '北坡快捷返程' }),
+    el('p', { class: 'archive-status', text: '※ 以下内容来自 2016 年网页镜像。页面链接和电话已停止使用。' }),
+    el('div', { class: 'archive-old-heading' }, [el('h2', { text: '北坡快捷返程' }), el('img', { src: IMG.oldNew, class: 'archive-new-gif', alt: 'NEW' })]),
     el('p', { text: '九弯环线全程约 16 公里。走到北岔口后，如体力不足或需要赶下午班车，可改走北坡快捷返程，较主线约缩短 4 公里。' }),
     el('p', { text: '北坡返程经过旧石料场、二号避险棚和“看路人”旧设施，最后接回村口方向。晴天可走；连续降雨、石沟涨水时不建议进入。' }),
     el('div', { class: 'archive-route-facts' }, [
@@ -241,8 +251,8 @@ export function renderCache2017({ interludes, audio }) {
   const side = el('aside', { class: 'archive-side' });
   side.append(
     el('section', {}, [
-      el('strong', { text: '页面发布方' }),
-      el('p', { text: '青垭乡村旅游经营户联合信息页' }),
+      el('strong', { text: '本站说明' }),
+      el('p', { text: '本页由青垭村几家民宿和农家乐共同整理，路线情况以当天村口问询为准。' }),
     ]),
     el('section', {}, [
       el('strong', { text: '页面状态' }),

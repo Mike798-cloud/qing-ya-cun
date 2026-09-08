@@ -4,6 +4,7 @@ import { openModal } from '../core/modal.js';
 import { stage1 } from '../data/content.js';
 
 const IMG = {
+  avatar: './assets/photos/zhou-hang-avatar.jpg',
   bus: './assets/photos/qingya-bus-stop.jpg',
   village: './assets/photos/qingya-village.jpg',
   trail: './assets/photos/jiuwan-trail.jpg',
@@ -11,8 +12,8 @@ const IMG = {
   watchman: './assets/photos/watchman-04.jpg',
 };
 
-function photo({ src, alt, caption, className = '' }) {
-  const btn = el('button', { class: `photo ${className}`.trim(), type: 'button', 'aria-label': `${caption}，打开大图` });
+function photo({ src, alt, caption = '', className = '' }) {
+  const btn = el('button', { class: `photo ${className}`.trim(), type: 'button', 'aria-label': caption ? `${caption}，打开大图` : '打开图片' });
   const image = el('img', { src, alt, loading: 'lazy', decoding: 'async' });
   image.addEventListener('error', () => {
     btn.classList.add('photo--failed');
@@ -32,14 +33,20 @@ function pageLink(href, label, note = '') {
   return a;
 }
 
+function avatar(className = '') {
+  return el('img', { class: `zhou-avatar ${className}`.trim(), src: IMG.avatar, alt: '', loading: 'eager', decoding: 'async' });
+}
+
 function renderTrailHeader(active = '') {
   const header = el('header', { class: 'trail-header' });
   const inner = el('div', { class: 'trail-header__inner' });
   inner.append(
     el('a', { href: '#/profile', class: 'trail-logo', text: '路迹' }),
+    el('div', { class: 'trail-search', text: '搜索路线 / 地点 / 用户' }),
     el('nav', { class: 'trail-nav', 'aria-label': '路迹站点导航' }, [
       el('span', { class: active === 'discover' ? 'is-active' : '', text: '发现' }),
       el('span', { text: '路线' }),
+      el('span', { text: '社区' }),
       el('span', { text: '装备' }),
     ]),
     el('span', { class: 'trail-login', text: '游客浏览' }),
@@ -49,691 +56,458 @@ function renderTrailHeader(active = '') {
 }
 
 function renderVillageHeader(active = '', flow) {
-  const header = el('header', { class: 'village-header' });
-  const utility = el('div', { class: 'village-utility' }, [
-    el('div', { class: 'village-utility__inner' }, [
-      el('span', { text: '青垭村旅游服务信息网' }),
-      el('span', { text: '游客服务电话 0836-7XXXXXX' }),
-    ]),
+  const header = el('header', { class: 'village-header village-header--portal' });
+  const today = el('div', { class: 'village-datebar' }, [
+    el('span', { text: '青垭村旅游服务信息网' }),
+    el('span', { text: '2026年9月14日　星期一' }),
+    el('span', { text: '游客咨询：0836-7XXXXXX' }),
   ]);
-  const inner = el('div', { class: 'village-header__inner' });
-  const navItem = (id, label, key = '') => {
-    if (id === 'qingya' || id === 'jiuwan' || flow?.isUnlocked(id)) {
-      return el('a', { href: `#/${id}`, class: active === key ? 'is-active' : '', text: label });
-    }
-    return null;
-  };
-  inner.append(
+  const mast = el('div', { class: 'village-masthead' }, [
     el('a', { href: '#/qingya', class: 'village-brand' }, [
       el('strong', { text: '青垭村' }),
-      el('span', { text: '山里日子，也可以很好。' }),
+      el('span', { text: '旅游服务信息网' }),
     ]),
-    el('nav', { class: 'village-nav', 'aria-label': '青垭村站点导航' }, [
-      navItem('qingya', '首页', 'home'),
-      navItem('jiuwan', '九弯徒步', 'route'),
-      navItem('food', '吃住青垭', 'food'),
-      navItem('service', '游客服务', 'service'),
-      navItem('watchmen', '旧物记', 'watchmen'),
+    el('div', { class: 'village-masthead__weather' }, [
+      el('strong', { text: '17–24℃' }),
+      el('span', { text: '多云　山脊风大' }),
     ]),
-  );
-  header.append(utility, inner);
+  ]);
+  const navItem = (id, label, key = '') => {
+    if (id === 'qingya' || id === 'jiuwan' || flow?.isUnlocked(id)) return el('a', { href: `#/${id}`, class: active === key ? 'is-active' : '', text: label });
+    return el('span', { text: label, class: 'is-disabled' });
+  };
+  const nav = el('nav', { class: 'village-nav village-nav--portal', 'aria-label': '青垭村站点导航' }, [
+    navItem('qingya', '首页', 'home'), navItem('jiuwan', '九弯徒步', 'route'), navItem('food', '吃住青垭', 'food'),
+    navItem('service', '游客服务', 'service'), navItem('watchmen', '村志旧物', 'watchmen'), navItem('safety', '通知公告', 'safety'),
+  ]);
+  header.append(today, mast, nav);
   return header;
 }
 
-function addMessage(list, side, text, meta = '') {
+function chatMessage(list, side, text, time = '') {
   const row = el('div', { class: `msg-row msg-row--${side}` });
+  if (side === 'other') row.append(avatar('msg-avatar'));
   const bubble = el('div', { class: 'msg-bubble' });
   bubble.append(el('p', { text }));
-  if (meta) bubble.append(el('span', { class: 'msg-time', text: meta }));
+  if (time) bubble.append(el('span', { class: 'msg-time', text: time }));
   row.append(bubble);
   list.append(row);
 }
 
+function chatImage(list, src, alt, time, cls = '') {
+  const row = el('div', { class: 'msg-row msg-row--other msg-row--image' });
+  row.append(avatar('msg-avatar'));
+  const wrap = el('div', { class: 'chat-image-wrap' });
+  wrap.append(photo({ src, alt, className: `photo--chat-raw ${cls}`.trim() }), el('span', { class: 'chat-image-time', text: time }));
+  row.append(wrap);
+  list.append(row);
+}
 
-function refreshChat(router) {
+function chatDay(list, label) { list.append(el('div', { class: 'chat-day-divider', text: label })); }
+
+function rerenderChat(router) {
   router?.navigate?.('boot');
-  requestAnimationFrame(() => document.querySelector('.chat-composer')?.scrollIntoView({ block: 'end', behavior: 'smooth' }));
+  requestAnimationFrame(() => document.querySelector('.chat-bottom')?.scrollIntoView({ block: 'end', behavior: 'smooth' }));
+}
+
+function quickReply(composer, options, onPick) {
+  const strip = el('div', { class: 'quick-replies', 'aria-label': '快捷回复' });
+  options.forEach(([id, label]) => {
+    const b = el('button', { class: 'quick-reply', type: 'button', text: label });
+    b.addEventListener('click', () => onPick(id));
+    strip.append(b);
+  });
+  composer.append(strip);
+}
+
+function appendChatComposer(composer) {
+  composer.append(el('div', { class: 'chat-inputbar' }, [
+    el('button', { type: 'button', class: 'chat-tool chat-tool--voice', 'aria-label': '语音', text: '⌁' }),
+    el('div', { class: 'chat-inputfake', text: '发送消息…' }),
+    el('button', { type: 'button', class: 'chat-tool', 'aria-label': '表情', text: '☺' }),
+    el('button', { type: 'button', class: 'chat-tool', 'aria-label': '更多', text: '＋' }),
+  ]));
+}
+
+function chooseActiveReply(state) {
+  if (!state.choices.stage1) return { key: 'stage1', options: [['small-pot','你不是一个人吗'],['avoid-side','先别乱走偏线'],['more-photos','多拍点图']] };
+  if (state.flags.stage2MessageReady && !state.choices.stage2) return { key: 'stage2', options: [['come-back','你先回来'],['send-photo','拍照给我看'],['what-things','什么叫“东西还在”？']] };
+  if (state.flags.stage4MessageReady && !state.choices.stage4) return { key: 'stage4', options: [['where-now','你现在到底在哪'],['just-sent','你是刚发的吗'],['how-know','你怎么知道我查到哪了']] };
+  if (state.flags.stage5MessageReady && !state.choices.stage5) return { key: 'stage5', options: [['what-book','第二本是什么'],['are-you','你到底是不是我哥'],['saw-yougen','我已经看到周有根的留言了']] };
+  if (state.flags.stage6MessageReady && !state.choices.stage6) return { key: 'stage6', options: [['bring-rescue','我会带人去找你'],['wait-me','你等我'],['who-maintains','到底是谁在维护北坡']] };
+  return null;
 }
 
 export function renderBoot({ store, flow, audio, router }) {
   const main = el('main', { id: 'app-main', class: 'chat-page', tabindex: '-1' });
-  const phone = el('section', { class: 'chat-shell', 'aria-label': '与周航的聊天' });
-  const choice = store.getState().choices.stage1 || '';
-  const top = el('header', { class: 'chat-topbar' });
-  top.append(
-    el('div', { class: 'chat-avatar', text: '航' }),
-    el('div', { class: 'chat-person' }, [
-      el('strong', { text: '周航' }),
-      el('span', { text: choice ? '最后在线 10:26' : '手机在线' }),
+  const app = el('section', { class: 'messenger-app', 'aria-label': '与周航的聊天' });
+  const state = store.getState();
+  const top = el('header', { class: 'chat-topbar' }, [
+    el('button', { class: 'chat-back', type: 'button', 'aria-label': '返回', text: '‹' }),
+    el('a', { href: '#/contact', class: 'chat-person-link', 'aria-label': '打开周航联系人资料' }, [
+      avatar('chat-avatar'),
+      el('div', { class: 'chat-person' }, [
+        el('strong', { text: '周航' }),
+        el('span', { text: state.meta.endingReached ? '最后在线 9月14日 11:18' : (state.choices.stage1 ? '最后在线 11:44' : '手机在线') }),
+      ]),
     ]),
-    el('a', { href: '#/profile', class: 'chat-profile-link', 'aria-label': '打开周航的公开主页' }, icon('help')),
-  );
+    el('div', { class: 'chat-top-actions' }, [
+      el('span', { class: 'chat-top-icon', text: '⌕', 'aria-hidden': 'true' }),
+      el('a', { href: '#/contact', class: 'chat-top-icon', 'aria-label': '联系人详情', text: '•••' }),
+    ]),
+  ]);
 
   const list = el('div', { class: 'chat-list' });
-  addMessage(list, 'other', '到了。', '08:41');
-  const busWrap = el('div', { class: 'msg-row msg-row--other' });
-  busWrap.append(photo({ src: IMG.bus, alt: '山村路边的旧公交站', caption: '青垭公交站 · 08:42', className: 'photo--chat' }));
-  list.append(busWrap);
-  addMessage(list, 'other', '这个公交比我年龄大。', '08:42');
-  addMessage(list, 'other', '村里饭量是不是对城市人有什么意见。', '09:17');
-  const wokWrap = el('div', { class: 'msg-row msg-row--other' });
-  wokWrap.append(photo({ src: IMG.wok, alt: '灶台上一口很大的铁锅', caption: '老板说这是“小锅” · 09:17', className: 'photo--chat photo--wide' }));
-  list.append(wokWrap);
+  chatDay(list, '今天 08:41');
+  chatMessage(list, 'other', '到了。');
+  chatImage(list, IMG.bus, '青垭村公交站旁的旧公交车与站牌', '08:42');
+  chatMessage(list, 'other', '这个公交比我年龄大。');
+  chatMessage(list, 'other', '村里饭量是不是对城市人有什么意见。', '09:17');
+  chatImage(list, IMG.wok, '山村饭馆灶台上的大铁锅', '09:17', 'photo--chat-wide');
 
-  const composer = el('div', { class: 'chat-composer' });
-  if (!choice) {
-    composer.append(el('p', { class: 'chat-composer__label', text: '回复' }));
-    const options = [
-      ['small-pot', '你不是一个人吗'],
-      ['avoid-side', '先别乱走偏线'],
-      ['more-photos', '多拍点图'],
-    ];
-    for (const [id, label] of options) {
-      const b = el('button', { class: 'reply-option', type: 'button', text: label });
-      b.addEventListener('click', () => {
-        store.dispatch({ type: 'SET_CHOICE', key: 'stage1', value: id });
-        flow.unlock(['profile', 'post', 'qingya', 'jiuwan']);
-        audio.tone({ frequency: 510, duration: .07, volume: .018 });
-        refreshChat(router);
-      });
-      composer.append(b);
-    }
-  } else {
+  if (state.choices.stage1) {
     const labels = { 'small-pot': '你不是一个人吗', 'avoid-side': '先别乱走偏线', 'more-photos': '多拍点图' };
-    addMessage(list, 'me', labels[choice], '09:18');
-    addMessage(list, 'other', stage1.choiceReplies[choice], '09:18');
-    addMessage(list, 'other', '今天九弯线。北边有条老返程，我顺便看看。不一定走。', '09:26');
-    addMessage(list, 'other', '北坡这个路现场基本没了。但一路还能看到以前的东西。', '10:03');
+    chatMessage(list, 'me', labels[state.choices.stage1], '09:18');
+    chatMessage(list, 'other', stage1.choiceReplies[state.choices.stage1]);
+    chatMessage(list, 'other', '今天九弯线。北边有条老返程，我顺便看看。', '09:26');
+    chatMessage(list, 'other', '不一定走。');
+    chatMessage(list, 'other', '北坡这个路现场基本没了。');
+    chatMessage(list, 'other', '但一路还能看到以前的东西。', '10:03');
+    chatImage(list, IMG.watchman, '树林里一尊旧水泥指路人像，手臂朝外平伸', '10:08', 'photo--chat-portrait');
+    chatMessage(list, 'other', '到四号了。后面不走了。路完全烂掉。', '10:09');
+    chatMessage(list, 'other', '艹。', '10:24');
+    chatMessage(list, 'other', '在吗');
+    chatMessage(list, 'other', '我刚看到评论。有人看了我刚才那条动态，也进北坡了。', '10:25');
+    chatMessage(list, 'other', '他说看到我走到四号，觉得能过。');
+    chatMessage(list, 'other', '别按我发的轨迹进来。');
+    chatMessage(list, 'other', '我回去找他。');
+    chatMessage(list, 'other', '如果十二点前没回，你直接报警。', '10:26');
+  }
 
-    const watchWrap = el('div', { class: 'msg-row msg-row--other' });
-    watchWrap.append(photo({ src: IMG.watchman, alt: '树林边一尊旧灰色人像，手臂朝外平伸', caption: '四号看路人 · 10:08', className: 'photo--chat photo--portrait photo--watchman' }));
-    list.append(watchWrap);
-    addMessage(list, 'other', '到四号了。后面不走了。路完全烂掉。', '10:09');
-    addMessage(list, 'other', '艹。', '10:24');
-    addMessage(list, 'other', '在吗', '10:24');
-    addMessage(list, 'other', '我刚看到评论。有人看了我刚才那条动态，也进北坡了。', '10:25');
-    addMessage(list, 'other', '他说看到我走到四号，觉得能过。', '10:25');
-    addMessage(list, 'other', '别按我发的轨迹进来。', '10:25');
-    addMessage(list, 'other', '我回去找他。', '10:26');
-    addMessage(list, 'other', '如果十二点前没回，你直接报警。', '10:26');
-
-    if (store.getState().flags.stage2MessageReady) {
-      addMessage(list, 'other', '四号这边有点怪。', '10:37');
-      addMessage(list, 'other', '路没了，但是东西还在。', '10:37');
-      addMessage(list, 'other', '像有人不想让你找路，又不想让你彻底找不到。', '10:38');
-      const bChoice = store.getState().choices.stage2 || '';
-      if (!bChoice) {
-        const stage2Box = el('div', { class: 'stage-message-choice' });
-        [['come-back','你先回来'],['send-photo','拍照给我看'],['what-things','什么叫“东西还在”？']].forEach(([id,label])=>{
-          const b=el('button',{class:'reply-option',type:'button',text:label});
-          b.addEventListener('click',()=>{ store.dispatch({type:'SET_CHOICE',key:'stage2',value:id}); refreshChat(router); });
-          stage2Box.append(b);
-        });
-        list.append(stage2Box);
-      } else {
-        const labels2={'come-back':'你先回来','send-photo':'拍照给我看','what-things':'什么叫“东西还在”？'};
-        const replies2={'come-back':'准备撤。先把那个人找到。','send-photo':'等会发。别放大看，四号后面那块蓝铁皮有点怪。','what-things':'路条没了，箭头有人翻过来，棚子里还有新水。'};
-        addMessage(list,'me',labels2[bChoice],'10:38');
-        addMessage(list,'other',replies2[bChoice],'10:39');
-      }
-    }
-
-    let state = store.getState();
-    if (state.flags.stage4MessageReady) {
-      addMessage(list, 'other', '你别再往下翻了。', '11:07');
-      addMessage(list, 'other', '翻到周成就够了。', '11:07');
-      addMessage(list, 'other', '再往后不是给你看的。', '11:08');
-      const cChoice = state.choices.stage4 || '';
-      if (!cChoice) {
-        const stage4Box = el('div', { class: 'stage-message-choice' });
-        [['where-now','你现在到底在哪'],['just-sent','你是刚发的吗'],['how-know','你怎么知道我查到哪了']].forEach(([id,label]) => {
-          const b = el('button', { class: 'reply-option', type: 'button', text: label });
-          b.addEventListener('click', () => {
-            store.dispatch({ type: 'SET_CHOICE', key: 'stage4', value: id });
-            refreshChat(router);
-          });
-          stage4Box.append(b);
-        });
-        list.append(stage4Box);
-      } else {
-        const labels4 = {
-          'where-now': '你现在到底在哪',
-          'just-sent': '你是刚发的吗',
-          'how-know': '你怎么知道我查到哪了',
-        };
-        const replies4 = {
-          'where-now': '我在路上。不是回来的路。',
-          'just-sent': '信号会晚一点到。人也会。',
-          'how-know': '你看见第四个的时候就该停了。',
-        };
-        addMessage(list, 'me', labels4[cChoice], '11:08');
-        addMessage(list, 'other', replies4[cChoice], '11:09');
-      }
-      state = store.getState();
-    }
-
-    if (state.flags.stage5MessageReady) {
-      addMessage(list, 'other', '不要去找第二本。', '11:26');
-      addMessage(list, 'other', '第二本是给回来的人看的。', '11:26');
-      addMessage(list, 'other', '你不是回来的人。', '11:27');
-      const dChoice = state.choices.stage5 || '';
-      if (!dChoice) {
-        const stage5Box = el('div', { class: 'stage-message-choice' });
-        [['what-book','第二本是什么'],['are-you','你到底是不是我哥'],['saw-yougen','我已经看到周有根的留言了']].forEach(([id,label]) => {
-          const b = el('button', { class: 'reply-option', type: 'button', text: label });
-          b.addEventListener('click', () => {
-            store.dispatch({ type: 'SET_CHOICE', key: 'stage5', value: id });
-            refreshChat(router);
-          });
-          stage5Box.append(b);
-        });
-        list.append(stage5Box);
-      } else {
-        const labels5 = {
-          'what-book': '第二本是什么',
-          'are-you': '你到底是不是我哥',
-          'saw-yougen': '我已经看到周有根的留言了',
-        };
-        const replies5 = {
-          'what-book': '你已经知道它在什么地方了，你只是还没承认。',
-          'are-you': '我是。只是现在说出来不太像。',
-          'saw-yougen': '他拆的是给活人看的。留下的不是。',
-        };
-        addMessage(list, 'me', labels5[dChoice], '11:27');
-        addMessage(list, 'other', replies5[dChoice], '11:28');
-      }
-      state = store.getState();
-    }
-
-    if (state.flags.stage6MessageReady) {
-      addMessage(list, 'other', '别来四号后面。', '11:42');
-      addMessage(list, 'other', '不是找不到。', '11:42');
-      addMessage(list, 'other', '是会看见。', '11:43');
-      addMessage(list, 'other', '路不是错的。', '11:43');
-      addMessage(list, 'other', '错的是有人把它又走成路了。', '11:43');
-      const eChoice = state.choices.stage6 || '';
-      if (!eChoice) {
-        const stage6Box = el('div', { class: 'stage-message-choice' });
-        [['bring-rescue','我会带人去找你'],['wait-me','你等我'],['who-maintains','到底是谁在维护北坡']].forEach(([id,label]) => {
-          const b = el('button', { class: 'reply-option', type: 'button', text: label });
-          b.addEventListener('click', () => {
-            store.dispatch({ type: 'SET_CHOICE', key: 'stage6', value: id });
-            refreshChat(router);
-          });
-          stage6Box.append(b);
-        });
-        list.append(stage6Box);
-      } else {
-        const labels6 = {
-          'bring-rescue': '我会带人去找你',
-          'wait-me': '你等我',
-          'who-maintains': '到底是谁在维护北坡',
-        };
-        const replies6 = {
-          'bring-rescue': '别按旧线带。',
-          'wait-me': '来不及了。',
-          'who-maintains': '先是他们。后来是谁都行。',
-        };
-        addMessage(list, 'me', labels6[eChoice], '11:44');
-        addMessage(list, 'other', replies6[eChoice], '11:44');
-      }
-      state = store.getState();
-    }
-
-    if (state.meta.endingReached) {
-      list.append(el('div', { class: 'chat-day-divider', text: '9 月 18 日' }));
-      addMessage(list, 'other', '别再让它像一条路。', '06:18');
-    }
-
-    const stage7Ready = state.stage >= 7;
-    const stage6Ready = state.stage >= 6;
-    const stage5Ready = state.stage >= 5;
-    const stage4Ready = state.stage >= 4;
-    const stage3Ready = state.stage >= 3 && Boolean(state.choices.stage2);
-    const stage4Replied = Boolean(state.choices.stage4);
-    const stage5Replied = Boolean(state.choices.stage5);
-    const stage6Replied = Boolean(state.choices.stage6);
-    const finalDraftUnlocked = Boolean(state.passwords.noreturn);
-    const finalDraftSeen = Boolean(state.flags.stage6DraftSeen);
-    const endingReached = Boolean(state.meta.endingReached);
-    let nextTitle = '周航 · 公开主页';
-    let nextText = '今天 10:09 的轨迹还在。最后能直接确认的位置是“四号”。';
-    let nextHref = '#/profile';
-    let nextLabel = '打开公开主页';
-
-    if (endingReached) {
-      nextTitle = '';
-      nextText = '';
-      nextHref = '';
-      nextLabel = '';
-      composer.classList.add('chat-composer--ending');
-    } else if (stage7Ready) {
-      nextTitle = '青垭县应急信息公开';
-      nextText = '搜救联合信息已更新至 9 月 17 日 18:40。';
-      nextHref = '#/rescue-result';
-      nextLabel = '查看搜救通报';
-    } else if (stage6Ready && state.flags.stage6MessageReady && !stage6Replied) {
-      nextTitle = '周航 · 新消息';
-      nextText = '5 条未读。';
-      nextHref = '';
-      nextLabel = '';
-    } else if (stage6Ready && stage6Replied && finalDraftSeen) {
-      nextTitle = '未发布草稿 · 已恢复';
-      nextText = '最后本地保存：11:18。';
-      nextHref = '#/final-draft';
-      nextLabel = '打开恢复条目';
-    } else if (stage6Ready && stage6Replied && finalDraftUnlocked) {
-      nextTitle = '未发布草稿 · 已恢复';
-      nextText = '设备同步队列找到 1 条未发送记录。';
-      nextHref = '#/final-draft';
-      nextLabel = '打开恢复条目';
-    } else if (stage6Ready && stage6Replied) {
-      nextTitle = '周末别找我 · 草稿恢复';
-      nextText = '主页出现 1 条设备同步恢复记录。';
-      nextHref = '#/profile';
-      nextLabel = '打开周航主页';
-    } else if (stage6Ready) {
-      nextTitle = '路迹 · 评论缓存';
-      nextText = '10:21，账号“阿纪”在周航的北坡动态下留过一张附件。';
-      nextHref = '#/aji-comment';
-      nextLabel = '查看当天评论';
-    } else if (stage5Ready && state.flags.stage5MessageReady && !stage5Replied) {
-      nextTitle = '周航 · 新消息';
-      nextText = '3 条未读。';
-      nextHref = '';
-      nextLabel = '';
-    } else if (stage5Ready && stage5Replied) {
-      nextTitle = '北坡巡查资料 · 第二本册子';
-      nextText = '扫描附件仍可回看。';
-      nextHref = '#/second-book';
-      nextLabel = '打开扫描件';
-    } else if (stage5Ready) {
-      nextTitle = '青垭村 · 山地环境资料库';
-      nextText = '四号看路人：旧设施编号 QY-BP-04，含历年巡查照片。';
-      nextHref = '#/watchman-04-detail';
-      nextLabel = '打开四号资料';
-    } else if (stage4Ready && state.flags.stage4MessageReady && !stage4Replied) {
-      nextTitle = '周航 · 新消息';
-      nextText = '3 条未读。';
-      nextHref = '';
-      nextLabel = '';
-    } else if (stage4Ready && stage4Replied) {
-      nextTitle = '青垭村民交流板';
-      nextText = '“北坡的路条到底能不能留？” · 旧帖仍可访问。';
-      nextHref = '#/zhou-yougen';
-      nextLabel = '回到旧帖';
-    } else if (stage4Ready) {
-      nextTitle = '青垭山地救援资料页';
-      nextText = '2018 年补录：周成与 2017 北坡事故。';
-      nextHref = '#/zhou-cheng';
-      nextLabel = '打开补录资料';
-    } else if (stage3Ready) {
-      nextTitle = '青垭县融媒体资料库';
-      nextText = '搜索结果：北坡 / 2017 · 历史公开稿件 1 条。';
-      nextHref = '#/news-2017';
-      nextLabel = '打开 2017 旧新闻';
-    }
-
-    if (!endingReached) {
-      const nextChildren = [
-        el('div', {}, [
-          el('strong', { text: nextTitle }),
-          el('p', { text: nextText }),
-        ]),
-      ];
-      if (nextHref) nextChildren.push(el('a', { class: 'btn btn--primary', href: nextHref, text: nextLabel }));
-      composer.append(el('div', { class: 'chat-next chat-next--source' }, nextChildren));
+  if (state.flags.stage2MessageReady) {
+    chatMessage(list, 'other', '四号这边有点怪。', '10:37');
+    chatMessage(list, 'other', '路没了，但是东西还在。');
+    chatMessage(list, 'other', '像有人不想让你找路，又不想让你彻底找不到。', '10:38');
+    if (state.choices.stage2) {
+      const labels={'come-back':'你先回来','send-photo':'拍照给我看','what-things':'什么叫“东西还在”？'};
+      const replies={'come-back':'准备撤。先把那个人找到。','send-photo':'等会发。别放大看，四号后面那块蓝铁皮有点怪。','what-things':'路条没了，箭头有人翻过来，棚子里还有新水。'};
+      chatMessage(list,'me',labels[state.choices.stage2],'10:38');
+      chatMessage(list,'other',replies[state.choices.stage2],'10:39');
     }
   }
 
-  phone.append(top, list, composer);
-  main.append(phone);
+  if (state.flags.stage4MessageReady) {
+    chatMessage(list, 'other', '你别再往下翻了。', '11:07');
+    chatMessage(list, 'other', '翻到周成就够了。');
+    chatMessage(list, 'other', '再往后不是给你看的。', '11:08');
+    if (state.choices.stage4) {
+      const labels={'where-now':'你现在到底在哪','just-sent':'你是刚发的吗','how-know':'你怎么知道我查到哪了'};
+      const replies={'where-now':'我在路上。不是回来的路。','just-sent':'信号会晚一点到。人也会。','how-know':'你看见第四个的时候就该停了。'};
+      chatMessage(list,'me',labels[state.choices.stage4],'11:08');
+      chatMessage(list,'other',replies[state.choices.stage4],'11:09');
+    }
+  }
+
+  if (state.flags.stage5MessageReady) {
+    chatMessage(list, 'other', '不要去找第二本。', '11:26');
+    chatMessage(list, 'other', '第二本是给回来的人看的。');
+    chatMessage(list, 'other', '你不是回来的人。', '11:27');
+    if (state.choices.stage5) {
+      const labels={'what-book':'第二本是什么','are-you':'你到底是不是我哥','saw-yougen':'我已经看到周有根的留言了'};
+      const replies={'what-book':'你已经知道它在什么地方了，你只是还没承认。','are-you':'我是。只是现在说出来不太像。','saw-yougen':'他拆的是给活人看的。留下的不是。'};
+      chatMessage(list,'me',labels[state.choices.stage5],'11:27');
+      chatMessage(list,'other',replies[state.choices.stage5],'11:28');
+    }
+  }
+
+  if (state.flags.stage6MessageReady) {
+    chatMessage(list, 'other', '别来四号后面。', '11:42');
+    chatMessage(list, 'other', '不是找不到。');
+    chatMessage(list, 'other', '是会看见。');
+    chatMessage(list, 'other', '路不是错的。');
+    chatMessage(list, 'other', '错的是有人把它又走成路了。', '11:43');
+    if (state.choices.stage6) {
+      const labels={'bring-rescue':'我会带人去找你','wait-me':'你等我','who-maintains':'到底是谁在维护北坡'};
+      const replies={'bring-rescue':'别按旧线带。','wait-me':'来不及了。','who-maintains':'先是他们。后来是谁都行。'};
+      chatMessage(list,'me',labels[state.choices.stage6],'11:44');
+      chatMessage(list,'other',replies[state.choices.stage6],'11:44');
+    }
+  }
+
+  if (state.meta.endingReached) {
+    chatDay(list, '9 月 18 日');
+    chatMessage(list, 'other', '别再让它像一条路。', '06:18');
+  }
+
+  const composer = el('footer', { class: 'chat-composer' });
+  const pending = chooseActiveReply(state);
+  if (pending) quickReply(composer, pending.options, id => {
+    store.dispatch({ type: 'SET_CHOICE', key: pending.key, value: id });
+    if (pending.key === 'stage1') flow.unlock(['contact','profile','post','qingya','jiuwan']);
+    audio.play?.('message');
+    rerenderChat(router);
+  });
+  if (!state.meta.endingReached) appendChatComposer(composer);
+  const bottom = el('div', { class: 'chat-bottom', 'aria-hidden': 'true' });
+  app.append(top, list, composer, bottom);
+  main.append(app);
+  return main;
+}
+
+export function renderContact() {
+  const main = el('main', { id: 'app-main', class: 'contact-page', tabindex: '-1' });
+  const shell = el('section', { class: 'contact-shell' });
+  shell.append(
+    el('header', { class: 'contact-topbar' }, [
+      el('a', { href: '#/boot', class: 'contact-back', text: '‹' }),
+      el('strong', { text: '联系人资料' }),
+      el('span', { text: '•••' }),
+    ]),
+    el('section', { class: 'contact-profile' }, [
+      avatar('contact-avatar'),
+      el('h1', { text: '周航' }),
+      el('p', { text: '备注：哥' }),
+      el('div', { class: 'contact-actions' }, [
+        el('a', { href: '#/boot', text: '消息' }), el('span', { text: '语音通话' }), el('span', { text: '视频通话' }),
+      ]),
+    ]),
+    el('div', { class: 'contact-list' }, [
+      el('div', { class: 'contact-row' }, [el('span', { text: '手机号' }), el('strong', { text: '138 •••• 9217' })]),
+      el('a', { href: '#/profile', class: 'contact-row contact-row--link' }, [
+        el('span', { text: '公开主页' }), el('div', {}, [el('strong', { text: '路迹 · 周末别找我' }), el('small', { text: '@noweekend' })]), el('b', { text: '›' }),
+      ]),
+      el('div', { class: 'contact-row' }, [el('span', { text: '共享位置' }), el('strong', { text: '暂不可用' })]),
+      el('div', { class: 'contact-row' }, [el('span', { text: '媒体、链接和文件' }), el('strong', { text: '18' })]),
+    ]),
+    el('footer', { class: 'contact-foot' }, [el('a', { href: '#/boot', text: '返回聊天' })]),
+  );
+  main.append(shell);
   return main;
 }
 
 function openDraftPassword({ passwords, router }) {
-  const content = el('form', { class: 'password-form' });
-  const info = el('p', { text: '草稿箱由账号本人设置了一个本地口令。页面没有“提示问题”。' });
-  const handle = el('p', { class: 'password-clue', text: '账号：周末别找我 · @noweekend' });
+  const content = el('form', { class: 'password-form password-form--trail' });
+  content.append(
+    el('p', { text: '草稿箱启用了本机口令。' }),
+    el('p', { class: 'password-clue', text: '账号：周末别找我　@noweekend' }),
+  );
   const field = el('div', { class: 'field' });
   const label = el('label', { for: 'draft-password', text: '口令' });
   const input = el('input', { id: 'draft-password', class: 'input', autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', placeholder: '输入口令' });
   const error = el('p', { class: 'form-error', role: 'status' });
   field.append(label, input, error);
-  const submit = el('button', { class: 'btn btn--primary', type: 'submit', text: '打开草稿' });
-  content.append(info, handle, field, submit);
+  const submit = el('button', { class: 'btn btn--primary', type: 'submit', text: '验证' });
+  content.append(field, submit);
   let close;
   content.addEventListener('submit', e => {
     e.preventDefault();
     const result = passwords.verify('noweekend', input.value);
-    if (!result.ok) {
-      input.setAttribute('aria-invalid', 'true');
-      error.textContent = '口令不对。';
-      input.select();
-      return;
-    }
-    close?.();
-    toast('口令已验证');
-    router.navigate('draft-1');
+    if (!result.ok) { input.setAttribute('aria-invalid', 'true'); error.textContent = '口令不对。'; input.select(); return; }
+    close?.(); router.navigate('draft-1');
   });
-  close = openModal({ title: '未公开草稿', content });
+  close = openModal({ title: '私密草稿', content });
   setTimeout(() => input.focus(), 0);
 }
 
 function openFinalDraftPassword({ passwords, router }) {
   const content = el('form', { class: 'password-form final-draft-password' });
   content.append(
-    el('p', { text: '设备同步恢复出一条没有发布成功的草稿。恢复标签来自周航当天自己写的撤退备注，不沿用青垭旧公告的代码。' }),
+    el('p', { text: '设备同步记录里找到一条未发送草稿。恢复标签来自周航当天自己的撤退备注。' }),
     el('p', { class: 'password-clue', text: '别按旧线返回。' }),
-    el('p', { class: 'fine-note', text: '标签格式：NO + 一个英文单词，不加空格。' }),
+    el('p', { class: 'fine-note', text: '标签格式：NO + 一个英文单词。' }),
   );
   const field = el('div', { class: 'field' });
   const label = el('label', { for: 'final-draft-password', text: '恢复标签' });
   const input = el('input', { id: 'final-draft-password', class: 'input', autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', placeholder: 'NO…' });
   const error = el('p', { class: 'form-error', role: 'status' });
   field.append(label, input, error);
-  const submit = el('button', { class: 'btn btn--primary', type: 'submit', text: '恢复草稿' });
+  const submit = el('button', { class: 'btn btn--primary', type: 'submit', text: '恢复' });
   content.append(field, submit);
   let close;
   content.addEventListener('submit', event => {
     event.preventDefault();
     const result = passwords.verify('noreturn', input.value);
-    if (!result.ok) {
-      input.setAttribute('aria-invalid', 'true');
-      error.textContent = '这不是旧公告编号。看周航当天自己写的那句“别按旧线返回”。';
-      input.select();
-      return;
-    }
-    close?.();
-    toast('最后草稿已恢复');
-    router.navigate('final-draft');
+    if (!result.ok) { input.setAttribute('aria-invalid', 'true'); error.textContent = '标签不匹配。'; input.select(); return; }
+    close?.(); router.navigate('final-draft');
   });
-  close = openModal({ title: '未发布草稿 · 恢复', content });
+  close = openModal({ title: '草稿恢复', content });
   setTimeout(() => input.focus(), 0);
 }
 
 export function renderProfile({ store, passwords, router }) {
   const main = el('main', { id: 'app-main', class: 'trail-site', tabindex: '-1' });
   main.append(renderTrailHeader('discover'));
-  const wrap = el('div', { class: 'trail-wrap' });
-  const profile = el('section', { class: 'profile-hero' });
-  profile.append(
-    el('div', { class: 'profile-avatar', text: '周' }),
-    el('div', { class: 'profile-meta' }, [
-      el('h1', { text: '周末别找我' }),
-      el('p', { class: 'profile-handle', text: '@noweekend' }),
-      el('p', { text: '普通上班族。周末走路。路线只记补给、岔口和哪里容易走错。' }),
-      el('div', { class: 'profile-stats' }, [
-        el('span', { text: '37 条轨迹' }),
-        el('span', { text: '1,284 km' }),
-        el('span', { text: '最后活跃 今天 10:26' }),
-      ]),
-    ])
-  );
+  const grid = el('div', { class: 'trail-profile-grid' });
+  const left = el('aside', { class: 'trail-profile-side' }, [
+    avatar('profile-avatar-image'),
+    el('h1', { text: '周末别找我' }),
+    el('p', { class: 'profile-handle', text: '@noweekend' }),
+    el('p', { text: '普通上班族。周末走路。主要记补给、岔口和哪里容易走错。' }),
+    el('dl', { class: 'trail-user-facts' }, [
+      el('dt', { text: '关注' }), el('dd', { text: '72' }),
+      el('dt', { text: '粉丝' }), el('dd', { text: '1.4万' }),
+      el('dt', { text: '轨迹' }), el('dd', { text: '37' }),
+    ]),
+    el('a', { href: '#/contact', class: 'plain-back-link', text: '‹ 联系人资料' }),
+  ]);
+  const stream = el('section', { class: 'trail-stream' });
+  stream.append(el('nav', { class: 'trail-tabs' }, [el('span', { class: 'is-active', text: '动态' }), el('span', { text: '轨迹' }), el('span', { text: '收藏' }), el('span', { text: '关于' })]));
+  const post = el('article', { class: 'trail-post-row' }, [
+    el('div', { class: 'trail-post-row__head' }, [avatar('trail-post-avatar'), el('div', {}, [el('strong', { text: '周末别找我' }), el('span', { text: '今天 10:09 · 青垭村' })])]),
+    el('p', { text: '青垭九弯主线正常。北坡老返程我只走到四号，后段废掉，正在撤。别照这个轨迹走。' }),
+    photo({ src: IMG.trail, alt: '青垭九弯山路', className: 'photo--trail-stream' }),
+    el('div', { class: 'trail-post-actions' }, [el('span', { text: '♡ 312' }), el('span', { text: '评论 46' }), pageLink('post', '轨迹详情')]),
+  ]);
+  stream.append(post);
 
-  const feed = el('section', { class: 'feed' });
-  feed.append(el('h2', { text: '最近动态' }));
-  const post = el('article', { class: 'feed-post' });
-  post.append(
-    el('div', { class: 'feed-post__meta', text: '今天 · 青垭村' }),
-    el('h3', { text: '青垭九弯，北坡旧返程顺便看了一眼' }),
-    el('p', { text: '主线正常。北坡那条老返程现场基本没了，后段废掉，我到四号折返。别照这个轨迹走。' }),
-    photo({ src: IMG.trail, alt: '林间山路', caption: '轨迹记录中的现场图', className: 'photo--feed' }),
-    el('div', { class: 'feed-actions' }, [
-      pageLink('post', '查看完整轨迹', '5.02 h · 14.8 km'),
-    ])
-  );
-  feed.append(post);
-
-  const draftBox = el('section', { class: 'draft-entry' });
-  draftBox.append(
-    el('div', {}, [
-      el('strong', { text: '未公开草稿 · 1' }),
-      el('p', { text: store.getState().passwords.noweekend ? '口令已验证。' : '仅自己可见。' }),
-    ])
-  );
-  const draftButton = el('button', { class: 'btn', type: 'button', text: store.getState().passwords.noweekend ? '打开草稿' : '输入口令' });
-  draftButton.addEventListener('click', () => {
-    if (store.getState().passwords.noweekend) router.navigate('draft-1');
-    else openDraftPassword({ passwords, router });
-  });
-  draftBox.append(draftButton);
-
-  let recoveredDraftBox = null;
+  const privateArea = el('section', { class: 'trail-private-tools' });
+  privateArea.append(el('h2', { text: '仅自己可见' }));
+  const draftRow = el('div', { class: 'trail-private-row' }, [
+    el('div', {}, [el('strong', { text: '私密草稿' }), el('small', { text: store.getState().passwords.noweekend ? '1 条 · 已解锁' : '1 条 · 本机口令' })]),
+  ]);
+  const draftButton = el('button', { type: 'button', class: 'trail-row-button', text: store.getState().passwords.noweekend ? '打开 ›' : '验证 ›' });
+  draftButton.addEventListener('click', () => store.getState().passwords.noweekend ? router.navigate('draft-1') : openDraftPassword({ passwords, router }));
+  draftRow.append(draftButton); privateArea.append(draftRow);
   if (store.getState().stage >= 6 && store.getState().choices.stage6) {
-    recoveredDraftBox = el('section', { class: 'draft-entry draft-entry--recovered' });
-    recoveredDraftBox.append(
-      el('div', {}, [
-        el('strong', { text: '未发布草稿 · 恢复 1' }),
-        el('p', { text: store.getState().passwords.noreturn ? '已恢复 · 最后本地保存 11:18' : '设备同步队列 · 需要恢复标签' }),
-      ]),
-    );
-    const recoveredButton = el('button', { class: 'btn', type: 'button', text: store.getState().passwords.noreturn ? '打开草稿' : '输入恢复标签' });
-    recoveredButton.addEventListener('click', () => {
-      if (store.getState().passwords.noreturn) router.navigate('final-draft');
-      else openFinalDraftPassword({ passwords, router });
-    });
-    recoveredDraftBox.append(recoveredButton);
+    const rec = el('div', { class: 'trail-private-row' }, [el('div', {}, [el('strong', { text: '设备恢复草稿' }), el('small', { text: store.getState().passwords.noreturn ? '1 条 · 已恢复' : '1 条 · 需要恢复标签' })])]);
+    const b = el('button', { type: 'button', class: 'trail-row-button', text: store.getState().passwords.noreturn ? '打开 ›' : '恢复 ›' });
+    b.addEventListener('click', () => store.getState().passwords.noreturn ? router.navigate('final-draft') : openFinalDraftPassword({ passwords, router }));
+    rec.append(b); privateArea.append(rec);
   }
+  stream.append(privateArea);
+  const right = el('aside', { class: 'trail-profile-right' }, [
+    el('h2', { text: '地点' }),
+    el('a', { href: '#/qingya', class: 'trail-place-row' }, [photo({ src: IMG.village, alt: '青垭村山谷', className: 'photo--trail-place' }), el('div', {}, [el('strong', { text: '青垭村' }), el('span', { text: '热门路线：青垭九弯环线' })])]),
+    el('h2', { text: '附近路线' }),
+    el('span', { class: 'trail-muted-row', text: '青垭九弯环线 · 16.0 km' }),
+    el('span', { class: 'trail-muted-row', text: '南坡林道 · 8.4 km' }),
+  ]);
+  grid.append(left, stream, right); main.append(grid); return main;
+}
 
-  const aside = el('aside', { class: 'trail-aside' });
-  aside.append(
-    el('p', { class: 'eyebrow', text: '地点资料' }),
-    el('h2', { text: '青垭村' }),
-    el('p', { text: '县城北面约 42 公里，近几年因为“青垭九弯环线”在徒步圈里有一点热度。' }),
-    pageLink('qingya', '查看青垭游客服务页'),
+function routeMap() {
+  const map = el('div', { class: 'track-map', 'aria-label': '青垭九弯轨迹示意' });
+  map.append(
+    el('div', { class: 'track-map__terrain' }),
+    el('div', { class: 'track-map__svg-wrap', html: '<svg class="track-map__svg" viewBox="0 0 600 300" role="img" aria-label="九弯主线和北坡探路轨迹"><path class="track-map__mainline" d="M70,235 C110,175 160,85 240,92 C330,100 350,195 445,160 C500,140 525,105 548,80"></path><path class="track-map__oldline" d="M239,92 C220,55 175,48 145,65 C110,86 104,130 92,152"></path><circle cx="92" cy="152" r="7" class="track-map__stop"></circle></svg>' }),
+    el('span', { class: 'track-map__label track-map__label--start', text: '青垭村' }),
+    el('span', { class: 'track-map__label track-map__label--four', text: '四号 · 折返' }),
   );
-
-  wrap.append(el('div', { class: 'trail-maincol' }, [profile, feed, draftBox, recoveredDraftBox].filter(Boolean)), aside);
-  main.append(wrap);
-  return main;
+  return map;
 }
 
 export function renderPost() {
   const main = el('main', { id: 'app-main', class: 'trail-site', tabindex: '-1' });
   main.append(renderTrailHeader());
-  const wrap = el('div', { class: 'track-page' });
-  const head = el('section', { class: 'track-head' });
-  head.append(
-    el('p', { class: 'eyebrow', text: '周末别找我 · 今天' }),
-    el('h1', { text: '青垭九弯 / 北坡旧返程探路' }),
-    el('p', { class: 'track-lead', text: '公开轨迹记录。主线完成；北坡旧返程仅走到四号看路人，后段终止。' }),
-  );
-  const stats = el('div', { class: 'track-stats' }, [
-    ['14.8', '公里'], ['5:02', '用时'], ['742', '累计爬升 / m'], ['10:34', '最后同步'],
-  ].map(([n,l]) => el('div', {}, [el('strong', { text: n }), el('span', { text: l })])));
-
-  const body = el('div', { class: 'track-body' });
-  const article = el('article', { class: 'track-note' });
+  const wrap = el('div', { class: 'track-layout' });
+  const article = el('article', { class: 'track-article' });
   article.append(
+    el('div', { class: 'track-userline' }, [avatar('trail-post-avatar'), el('div', {}, [el('strong', { text: '周末别找我' }), el('span', { text: '今天 10:09 · 青垭村' })])]),
+    el('h1', { text: '青垭九弯 / 北坡旧返程探路' }),
+    el('p', { class: 'track-state', text: '公开轨迹 · 最后同步 10:34' }),
+    routeMap(),
+    el('table', { class: 'track-data-table' }, [el('tbody', {}, [
+      el('tr', {}, [el('th', { text: '距离' }), el('td', { text: '14.8 km' }), el('th', { text: '用时' }), el('td', { text: '5:02' })]),
+      el('tr', {}, [el('th', { text: '累计爬升' }), el('td', { text: '742 m' }), el('th', { text: '最后同步' }), el('td', { text: '10:34' })]),
+    ])]),
     el('h2', { text: '现场备注' }),
     el('p', { text: '九弯主线没问题。北坡入口还能认出来，进去以后旧路断得很厉害，前几年留下的东西倒是还在。' }),
-    el('blockquote', { text: '10:09 · 到四号了。后面不走了。路完全烂掉。' }),
+    el('p', { class: 'track-quote', text: '10:09　到四号了。后面不走了。路完全烂掉。' }),
+    photo({ src: IMG.watchman, alt: '树林里一尊旧水泥指路人像', className: 'photo--track-raw' }),
     el('p', { text: '这一段不是推荐路线，也不要拿本条轨迹做导航。' }),
-    photo({ src: IMG.watchman, alt: '树木前一尊旧灰色人像，手臂朝外平伸', caption: '轨迹点 04 · “四号看路人”', className: 'photo--track photo--watchman' }),
-    el('p', { class: 'sync-note', text: '同步说明：青垭北坡部分区域没有稳定移动信号，轨迹可能在回到有信号区域后才批量同步。' }),
   );
-  const side = el('aside', { class: 'track-side' });
-  side.append(
-    el('div', { class: 'route-summary' }, [
-      el('h2', { text: '经过点' }),
-      el('ol', {}, [
-        el('li', { text: '青垭游客中心' }),
-        el('li', { text: '九弯主线北岔口' }),
-        el('li', { text: '旧石料场口' }),
-        el('li', { class: 'is-last', text: '四号看路人 · 折返' }),
-      ]),
-    ]),
-    pageLink('jiuwan', '查看青垭九弯官方路线'),
-  );
-  body.append(article, side);
-  wrap.append(head, stats, body);
-  main.append(wrap);
-  return main;
+  const side = el('aside', { class: 'track-info-side' }, [
+    el('h2', { text: '经过点' }),
+    el('ol', { class: 'track-points' }, [el('li', { text: '青垭游客中心' }), el('li', { text: '九弯主线北岔口' }), el('li', { text: '旧石料场口' }), el('li', { text: '四号看路人 · 折返' })]),
+    el('div', { class: 'track-sync-box' }, [el('strong', { text: '轨迹同步' }), el('p', { text: '北坡部分区域信号不稳定，离线轨迹会在重新联网后批量上传。' }), el('span', { class: 'sync-pulse', text: '同步记录已完成' })]),
+    pageLink('jiuwan', '青垭九弯官方线路'),
+  ]);
+  wrap.append(article, side); main.append(wrap); return main;
 }
 
 export function renderDraft1() {
-  const main = el('main', { id: 'app-main', class: 'trail-site', tabindex: '-1' });
+  const main = el('main', { id: 'app-main', class: 'trail-site trail-private-page', tabindex: '-1' });
   main.append(renderTrailHeader());
-  const wrap = el('article', { class: 'draft-page' });
+  const wrap = el('article', { class: 'draft-page draft-page--platform' });
   wrap.append(
-    el('p', { class: 'draft-label', text: '未公开草稿 · 自动保存 10:11' }),
+    el('div', { class: 'draft-toolbar' }, [el('span', { text: '私密草稿' }), el('span', { text: '自动保存 10:11' })]),
     el('h1', { text: '青垭九弯 / 北坡返程线（别跟）' }),
     el('p', { text: '九弯主线正常。北坡那个老返程现在基本不算路。' }),
     el('p', { text: '我从北岔口进去，能认出旧石料场、看路人和一截蓝铁皮。到四号以后路面已经散了，我在这里折返。' }),
     el('p', { text: '如果轨迹同步出去，别把北坡这一截当成推荐。后段废掉，正在撤。' }),
     el('p', { text: '回去以后把这段从公开轨迹里裁掉。' }),
-    el('div', { class: 'draft-foot' }, [
-      el('span', { text: '状态：未发布' }),
-      el('a', { href: '#/post', text: '返回公开动态' }),
-    ]),
+    el('footer', { class: 'draft-foot' }, [el('span', { text: '未发布' }), el('a', { href: '#/profile', text: '返回草稿箱' })]),
   );
-  main.append(wrap);
-  return main;
+  main.append(wrap); return main;
 }
 
 export function renderQingya({ flow }) {
-  const main = el('main', { id: 'app-main', class: 'village-site', tabindex: '-1' });
+  const main = el('main', { id: 'app-main', class: 'village-site village-portal-site', tabindex: '-1' });
   main.append(renderVillageHeader('home', flow));
-
-  const hero = el('section', { class: 'village-home-hero' });
-  hero.append(
-    photo({ src: IMG.village, alt: '清晨云雾里的青垭村和山谷', caption: '青垭村 · 九弯入口方向', className: 'photo--village-home' }),
-    el('div', { class: 'village-home-hero__copy' }, [
-      el('span', { class: 'village-home-hero__season', text: '九月 · 秋季徒步期' }),
-      el('h1', { text: '青垭村' }),
-      el('p', { text: '山不远，日子很近。来走九弯、吃顿热饭，天黑以前记得回到有路灯的地方。' }),
-    ]),
-  );
-
-  const portal = el('div', { class: 'village-home-body' });
-  const maincol = el('div', { class: 'village-home-main' });
-  const notices = el('section', { class: 'village-news-list' });
-  notices.append(el('div', { class: 'village-section-title' }, [
-    el('h2', { text: '通知公告' }),
-    el('span', { text: '更多信息以村口公告栏为准' }),
-  ]));
-  const noticeItems = [
-    ['2026-09-01', '北坡旧线路不开放', '历史路线名称仍会出现在旧帖子和轨迹里，请不要跟随旧路条进入北坡。'],
-    ['2026-08-28', '关于规范户外活动的提醒', '九弯主线雨后石阶较滑，建议穿防滑鞋。'],
-    ['2026-08-15', '青垭九弯环线线路简介', '开放线路约 16 公里，建议预留 5–7 小时。'],
-  ];
-  noticeItems.forEach(([date,title,desc],i) => {
-    const row = el('article', { class: 'village-news-row' });
-    const head = el('div', { class: 'village-news-row__head' }, [el('time', { text: date }), el('strong', { text: title })]);
-    row.append(head, el('p', { text: desc }));
-    if (i === 0 && flow?.isUnlocked('safety')) row.append(pageLink('safety', '查看安全公告'));
-    if (i === 2) row.append(pageLink('jiuwan', '查看九弯线路说明'));
-    notices.append(row);
-  });
-
-  const feature = el('section', { class: 'village-route-feature' });
-  feature.append(
-    el('div', { class: 'village-section-title' }, [el('h2', { text: '推荐线路' }), el('span', { text: '当天往返' })]),
-    el('div', { class: 'village-route-feature__body' }, [
-      photo({ src: IMG.trail, alt: '青垭九弯环线的山脊步道', caption: '青垭九弯环线 · 主线山脊段', className: 'photo--village-route' }),
-      el('div', { class: 'village-route-feature__copy' }, [
-        el('h3', { text: '青垭九弯环线' }),
-        el('p', { class: 'village-route-meta', text: '约 16 公里　累计爬升约 780 米　建议 5–7 小时' }),
-        el('p', { text: '村口起步，沿九弯主线绕山返回。路牌和里程标记以当前开放主线为准。' }),
-        pageLink('jiuwan', '路线详情与难度说明'),
-      ]),
-    ]),
-  );
-  maincol.append(notices, feature);
-
-  const aside = el('aside', { class: 'village-home-aside' });
-  aside.append(el('h2', { text: '到村以后' }));
-  const serviceRows = [
-    ['吃饭', '青垭人家 · 灶台饭', '柴火灶，按人数点锅。', 'food'],
-    ['游客中心', '公共卫生间与补给', '热水、洗鞋、充电、问路。', 'service'],
-    ['旧物记', '六尊“看路人”', '旧石料场留下的水泥指路人像。', 'watchmen'],
-  ];
-  serviceRows.forEach(([label,title,desc,id]) => {
-    const row = el('div', { class: 'village-service-row' }, [
-      el('span', { class: 'village-service-row__label', text: label }),
-      el('strong', { text: title }),
-      el('p', { text: desc }),
-    ]);
-    if (flow?.isUnlocked(id)) row.append(pageLink(id, '查看详情'));
-    aside.append(row);
-  });
-  aside.append(el('div', { class: 'village-contact' }, [
-    el('strong', { text: '游客中心值班' }),
-    el('p', { text: '06:30–20:30　村口公交站上方约 80 米' }),
-    el('small', { text: '进山前如需问路、补水或给手机充电，建议先在这里处理。' }),
-  ]));
-
-  portal.append(maincol, aside);
-  const footer = el('footer', { class: 'village-footer' }, [
-    el('span', { text: '青垭村村委会 · 游客服务信息' }),
-    el('span', { text: '网页内容更新：2026-09' }),
+  const shell = el('div', { class: 'village-portal' });
+  const banner = el('div', { class: 'village-portal-banner' }, [
+    photo({ src: IMG.village, alt: '青垭村山谷与村落', className: 'photo--portal-banner' }),
+    el('div', { class: 'village-portal-banner__text' }, [el('strong', { text: '青山不远　日子很近' }), el('span', { text: '青垭村欢迎您' })]),
   ]);
-  main.append(hero, portal, footer);
-  return main;
+  const columns = el('div', { class: 'village-portal-columns' });
+  const news = el('section', { class: 'portal-news' }, [el('h2', { text: '最新公告' })]);
+  const notices = [
+    ['09-01','北坡旧线路不开放','safety','新'], ['08-28','九弯环线雨后安全提醒','',''], ['08-15','2026 年秋季民宿联系电话汇总','',''],
+    ['07-31','关于游客车辆停放的说明','',''], ['07-18','村口公交站候车点临时调整','',''], ['06-29','九弯沿线饮水点维护完成','',''],
+    ['05-12','关于文明采摘野果的提醒','',''], ['04-30','五一假期游客服务时间延长','',''],
+  ];
+  notices.forEach(([date,title,id,badge]) => {
+    const row = el('div', { class: 'portal-news-row' }, [el('time', { text: `2026-${date}` })]);
+    if (id && flow?.isUnlocked(id)) row.append(el('a', { href: `#/${id}`, text: title })); else row.append(el('span', { text: title }));
+    if (badge) row.append(el('em', { class: 'portal-new', text: badge }));
+    news.append(row);
+  });
+  const route = el('section', { class: 'portal-route' }, [
+    el('h2', { text: '推荐线路' }),
+    el('div', { class: 'portal-route__body' }, [photo({ src: IMG.trail, alt: '青垭九弯山脊路线', className: 'photo--portal-route' }), el('div', {}, [el('strong', { text: '青垭九弯环线' }), el('p', { text: '约16公里　5–7小时　难度：中等' }), el('a', { href: '#/jiuwan', text: '线路介绍 ›' })])]),
+  ]);
+  const left = el('div', { class: 'portal-maincol' }, [news, route]);
+  const side = el('aside', { class: 'portal-side' }, [
+    el('section', { class: 'portal-box portal-weather' }, [el('h2', { text: '今日青垭' }), el('strong', { text: '17–24℃　多云' }), el('p', { text: '山脊阵风 4–5 级。下午局部有短时阵雨。' })]),
+    el('section', { class: 'portal-box' }, [el('h2', { text: '便民信息' }),
+      flow?.isUnlocked('service') ? el('a', { href: '#/service', text: '游客中心 / 公共卫生间' }) : el('span', { text: '游客中心 / 公共卫生间' }),
+      flow?.isUnlocked('food') ? el('a', { href: '#/food', text: '吃饭：青垭人家农家乐' }) : el('span', { text: '吃饭：青垭人家农家乐' }),
+      el('span', { text: '村口停车：小车 38 位' }), el('span', { text: '末班公交：18:20' })]),
+    el('section', { class: 'portal-box' }, [el('h2', { text: '常用电话' }), el('p', { text: '游客服务　0836-7XXXXXX' }), el('p', { text: '村卫生室　0836-7XXXX12' }), el('p', { text: '公交问询　0836-7XXXX35' })]),
+    flow?.isUnlocked('watchmen') ? el('section', { class: 'portal-box' }, [el('h2', { text: '村志资料' }), el('a', { href: '#/watchmen', text: '旧石料场“看路人” ›' })]) : null,
+  ].filter(Boolean));
+  columns.append(left, side);
+  shell.append(banner, el('div', { class: 'portal-welcome' }, [el('strong', { text: '青垭村 · 山与人的相遇' }), el('p', { text: '青垭村位于群山之间，海拔约 980 米。村里有农田、溪谷、老杉树林，以及一条沿山脊绕行的九弯环线。' })]), columns,
+    el('section', { class: 'portal-links' }, [el('strong', { text: '友情链接：' }), el('span', { text: '青垭县文旅信息　|　天气服务　|　公交查询　|　森林防火' })]),
+    el('footer', { class: 'village-footer', text: '青垭村村民委员会　网页维护：游客服务中心　最后更新 2026-09-01' }));
+  main.append(shell); return main;
 }
 
 export function renderJiuwan({ flow }) {
-  const main = el('main', { id: 'app-main', class: 'route-guide-site', tabindex: '-1' });
+  const main = el('main', { id: 'app-main', class: 'village-site route-guide-site', tabindex: '-1' });
   main.append(renderVillageHeader('route', flow));
-
-  const wrap = el('article', { class: 'route-guide' });
-  const crumb = el('p', { class: 'route-guide__crumb', text: '首页 / 徒步线路 / 青垭九弯环线' });
-  const title = el('header', { class: 'route-guide__title' }, [
-    el('span', { text: '开放徒步线路 · QY-09' }),
-    el('h1', { text: '青垭九弯环线' }),
-    el('p', { text: '村口起步，沿山脊和老杉树林绕行后回到青垭。路程不算短，但岔口少，适合有日常徒步经验的人当天往返。' }),
-  ]);
-  const facts = el('div', { class: 'route-guide__facts' }, [
-    ['全程', '约 16 公里'], ['爬升', '约 780 米'], ['用时', '5–7 小时'], ['难度', '中等'],
-  ].map(([a,b]) => el('div', {}, [el('span', { text:a }), el('strong', { text:b })])));
-
-  const body = el('div', { class: 'route-guide__body' });
-  const article = el('div', { class: 'route-guide__article' });
-  article.append(
-    photo({ src: IMG.trail, alt: '青垭九弯环线山脊和林间主线', caption: '九弯主线 · 山脊段', className: 'photo--route-guide' }),
-    el('section', { class: 'route-guide__section' }, [
-      el('h2', { text: '怎么走' }),
-      el('p', { text: '从游客中心旁的主线路牌出发，依次经过一号弯、杉树林、观景台和南侧下坡。主线里程牌连续，雨后木阶和石阶会很滑。' }),
-      el('p', { text: '北坡旧返程不在当前开放范围内。不要因为旧帖子里写着“能省四公里”，就把历史路线当成今天的捷径。' }),
-    ]),
-    el('section', { class: 'route-levels' }, [
-      el('h2', { text: '本村徒步四级' }),
-      el('p', { class: 'route-levels__intro', text: '这个分级最早写在民宿前台的小黑板上，后来被游客拍得太多，索性整理到网站。' }),
-      ...[
-        ['一级', '还能一路聊天。'],
-        ['二级', '开始没人说话。'],
-        ['三级', '下坡的时候开始问还有多远。'],
-        ['四级', '回家以后想卖装备。'],
-      ].map(([level,text]) => el('div', { class: 'route-level-row' }, [el('strong', { text:level }), el('p', { text })])),
-      el('p', { class: 'route-levels__note', text: '本评价由本村民宿经营户、历年来访游客及两名膝关节长期不好的村民共同整理，仅作参考。北坡旧路线不参与评级。' }),
-    ]),
+  const wrap = el('article', { class: 'route-guide route-guide--portal' });
+  wrap.append(
+    el('p', { class: 'route-guide__crumb', text: '首页 ＞ 旅游线路 ＞ 徒步线路 ＞ 青垭九弯环线' }),
+    el('header', { class: 'route-article-head' }, [el('h1', { text: '青垭九弯环线' }), el('p', { text: '发布时间：2026-08-15　来源：青垭村游客服务中心　浏览：1826' })]),
+    photo({ src: IMG.trail, alt: '青垭九弯山脊路线', className: 'photo--route-article' }),
+    el('table', { class: 'route-fact-table' }, [el('tbody', {}, [
+      el('tr', {}, [el('th', { text: '线路里程' }), el('td', { text: '约 16 公里' }), el('th', { text: '建议用时' }), el('td', { text: '5–7 小时' })]),
+      el('tr', {}, [el('th', { text: '累计爬升' }), el('td', { text: '约 780 米' }), el('th', { text: '适合季节' }), el('td', { text: '3–11 月' })]),
+      el('tr', {}, [el('th', { text: '起终点' }), el('td', { text: '青垭村游客中心' }), el('th', { text: '难度' }), el('td', { text: '中等' })]),
+    ])]),
+    el('h2', { text: '线路说明' }),
+    el('p', { text: '从游客中心旁主线路牌出发，依次经过一号弯、老杉树林、山脊观景点和南侧下坡后回村。开放主线路牌连续，雨后木阶和石阶较滑。' }),
+    el('p', { text: '“北坡返程线”为历史路线名称，不属于当前开放线路，也不作为九弯环线的备用返程。' }),
+    el('h2', { text: '青垭徒步四级（村民版）' }),
+    el('table', { class: 'route-level-table' }, [el('tbody', {}, [
+      ['一级','还能一路聊天。'],['二级','开始没人说话。'],['三级','下坡的时候开始问还有多远。'],['四级','回家以后想卖装备。']
+    ].map(([a,b]) => el('tr', {}, [el('th', { text: a }), el('td', { text: b })])))]),
+    el('p', { class: 'route-small-print', text: '本评价由本村民宿经营户、历年来访游客及两名膝关节长期不好的村民共同整理，仅作参考。北坡旧路线不参与评级。' }),
+    el('h2', { text: '出发前' }),
+    el('ul', { class: 'route-bullet-list' }, [el('li', { text: '村口游客中心可补水、充电并询问当天路况。' }), el('li', { text: '山区移动信号不连续，请提前下载离线地图。' }), el('li', { text: '如遇降雨或天色较晚，请沿当前开放主线返回。' })]),
+    el('div', { class: 'route-attachments' }, [el('strong', { text: '附件下载' }), el('span', { text: '青垭九弯线路图（PDF）' }), el('span', { text: '公交时刻表（2026.08）' })]),
+    flow?.isUnlocked('safety') ? el('p', {}, [el('a', { href: '#/safety', text: '相关：北坡旧返程线路安全提醒 ›' })]) : null,
   );
-
-  const aside = el('aside', { class: 'route-guide__aside' }, [
-    el('section', {}, [
-      el('h2', { text: '出发前' }),
-      el('dl', { class: 'route-guide__dl' }, [
-        el('dt', { text:'补水' }), el('dd', { text:'游客中心可补水' }),
-        el('dt', { text:'信号' }), el('dd', { text:'村口较稳定，山里不保证' }),
-        el('dt', { text:'返程' }), el('dd', { text:'请沿九弯主线回村' }),
-      ]),
-    ]),
-    el('section', { class: 'route-guide__warning' }, [
-      el('h2', { text: '关于北坡' }),
-      el('p', { text: '“北坡返程线”是历史路线名称。目前不维护、不开放，也不作为九弯环线的备用返程。' }),
-      ...(flow?.isUnlocked('safety') ? [pageLink('safety', '查看北坡安全公告')] : []),
-    ]),
-    ...(flow?.isUnlocked('watchmen') ? [el('section', {}, [
-      el('h2', { text: '路边旧物' }),
-      el('p', { text: '旧石料场附近还留着六尊水泥“看路人”。' }),
-      pageLink('watchmen', '看路人专题'),
-    ])] : []),
-    el('section', {}, [pageLink('profile', '返回“周末别找我”的公开主页')]),
-  ]);
-  body.append(article, aside);
-  wrap.append(crumb, title, facts, body);
-  main.append(wrap);
-  return main;
+  main.append(wrap); return main;
 }
-

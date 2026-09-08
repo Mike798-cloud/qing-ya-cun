@@ -103,9 +103,9 @@ export function renderAjiComment({ store, audio }) {
 
   const side = el('aside', { class: 'trail-cache-side' }, [
     el('section', { class: 'trail-cache-note' }, [
-      el('span', { text: '缓存时间' }),
+      el('span', { text: '缓存区间' }),
       el('strong', { text: '10:21 → 10:33' }),
-      el('p', { text: '阿纪先留言称自己“也从一号进来了”；4 分钟后，周航公开回复“能退就退，我回去找你”。' }),
+      el('p', { text: '本页仅保留这 12 分钟内的评论正文与回复关系。' }),
     ]),
     el('section', { class: 'trail-cache-note' }, [
       el('span', { text: '附件状态' }),
@@ -115,7 +115,6 @@ export function renderAjiComment({ store, audio }) {
       el('span', { text: '关联记录' }),
       el('p', { text: '周航主页另有 1 条设备同步草稿记录，目前仍未恢复。' }),
     ]),
-    el('a', { class: 'text-link', href: '#/boot', text: '回到周航的聊天' }),
   ]);
 
   page.append(thread, side);
@@ -199,13 +198,13 @@ export function renderFinalDraft({ store }) {
   const side = el('aside', { class: 'draft-recovery-side' }, [
     el('section', { class: 'recovery-fact' }, [
       el('span', { text: '10:54–11:03' }),
-      el('strong', { text: '二号旧避险棚附近' }),
-      el('p', { text: '草稿先记录“找到人了”，随后写明把阿纪留在棚附近并给他留灯。' }),
+      el('strong', { text: '本地保存片段 A' }),
+      el('p', { text: '连续 3 次自动保存。文本完整，未发现对应图片附件。' }),
     ]),
     el('section', { class: 'recovery-fact' }, [
       el('span', { text: '11:09–11:11' }),
-      el('strong', { text: '四号方向的灯光' }),
-      el('p', { text: '草稿随后记录“四号那边还有一盏头灯”，两分钟后写下“我再回一次”。' }),
+      el('strong', { text: '本地保存片段 B' }),
+      el('p', { text: '2 次自动保存。服务器端没有同步成功记录。' }),
     ]),
     el('section', { class: 'recovery-fact recovery-fact--uncertain' }, [
       el('span', { text: '缺失附件' }),
@@ -213,7 +212,6 @@ export function renderFinalDraft({ store }) {
     ]),
     recoveryPhoto(),
     ...(store.getState().stage >= 7 ? [el('a', { class: 'btn btn--rescue-link', href: '#/rescue-result', text: '查看搜救信息' })] : []),
-    el('a', { class: 'text-link', href: '#/boot', text: '回到周航的聊天' }),
   ]);
 
   page.append(article, side);
