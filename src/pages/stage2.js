@@ -64,44 +64,60 @@ function villageNoticeHeader(){
 }
 
 export function renderService(){
-  const main=el('main',{id:'app-main',class:'public-service-site',tabindex:'-1'}); main.append(serviceHeader());
+  const main=el('main',{id:'app-main',class:'public-service-site public-service-site--old',tabindex:'-1'}); main.append(serviceHeader());
   const wrap=el('div',{class:'public-service-page'});
-  const hero=el('section',{class:'service-home-hero'},[
-    photo(IMG.trail,'青垭村远山与九弯山脊','','photo--service-hero'),
-    el('div',{class:'service-home-hero__copy'},[el('strong',{text:'山可以野，厕所不能野'}),el('span',{text:'文明出行 · 保护环境 · 安全第一'})])
-  ]);
-  const shortcuts=el('section',{class:'service-shortcuts','aria-label':'游客服务快捷入口'},[
-    el('div',{class:'service-shortcut'},[el('b',{class:'service-shortcut__icon',text:'▣'}),el('strong',{text:'公交问询'}),el('span',{text:'发车时间 / 线路信息 / 票价查询'})]),
-    el('div',{class:'service-shortcut'},[el('b',{class:'service-shortcut__icon',text:'WC'}),el('strong',{text:'公共厕所'}),el('span',{text:'位置指引 / 开放时间 / 卫生情况'})]),
-    el('div',{class:'service-shortcut'},[el('b',{class:'service-shortcut__icon',text:'☎'}),el('strong',{text:'应急联系'}),el('span',{text:'遇到困难 / 紧急求助 / 相关电话'})])
-  ]);
-  wrap.append(hero,shortcuts,el('p',{class:'public-service-breadcrumb',text:'首页 ＞ 公共设施 ＞ 公共卫生间'}));
-  const title=el('header',{class:'service-article-head'},[el('h1',{text:'青垭村游客服务中心公共卫生间'}),el('p',{text:'更新：2026-08-30　位置：村口游客中心一层'})]);
-  const body=el('div',{class:'service-article-layout'});
+  wrap.append(
+    el('div',{class:'service-old-tools'},[el('span',{text:'当前位置：首页 > 便民服务 > 公共设施'}),el('span',{text:'加入收藏　|　打印本页　|　服务台意见簿'})]),
+    el('div',{class:'service-bulletin-strip'},[el('b',{text:'滚动公告：'}),el('span',{text:'九弯主线正常开放；下午山脊阵风较大。北坡旧返程不开放。公交末班 18:20，以站牌手写通知为准。'})]),
+    el('section',{class:'service-old-banner'},[
+      photo(IMG.trail,'青垭村远山与九弯山脊','','photo--service-hero'),
+      el('p',{text:'文明旅游　安全第一　有事先到服务台问'}),
+    ]),
+    el('h1',{class:'service-page-title',text:'便民服务 / 公共设施'}),
+    el('table',{class:'service-directory-table'},[
+      el('thead',{},el('tr',{},[el('th',{text:'服务项目'}),el('th',{text:'地点'}),el('th',{text:'时间'}),el('th',{text:'电话 / 说明'})])),
+      el('tbody',{},[
+        ['公交问询','一层服务台','06:20–20:40','0836-7XXXX35'],
+        ['公共厕所','一层东侧','06:20–20:40','免费'],
+        ['饮用热水','一层服务台','开放时间内','请自带水杯'],
+        ['手机充电','服务台右侧','开放时间内','插座数量有限'],
+        ['失物登记','一层服务台','06:20–20:40','写登记簿'],
+        ['应急联系','值班室','全天电话','0836-7XXXXXX'],
+      ].map(row=>el('tr',{},row.map((x,i)=>el(i===0?'th':'td',{text:x})))))
+    ])
+  );
+  const body=el('div',{class:'service-old-columns'});
   const article=el('article',{class:'public-service-article'});
   article.append(
+    el('h2',{text:'公共卫生间'}),
     photo(IMG.toilet,'青垭村游客中心公共卫生间','游客中心一层公共卫生间','photo--service-main'),
-    el('p',{text:'游客中心位于公交站上方约 80 米。公共卫生间和补水点在一层，开放时间会随末班公交略有调整。'}),
-    el('h2',{text:'设施与开放情况'}),
+    el('p',{text:'游客中心在公交站上方约 80 米。厕所、补水和充电都在一层。晚上跟末班公交差不多时间关门，节假日看客流延长。'}),
     el('table',{class:'public-service-table'},[el('tbody',{},[
-      ['开放时间','06:20–20:40（节假日视客流延长）'],['夜间照明','开放时间内保持照明'],['冬季热水','11 月至次年 3 月开放'],['免费厕纸','每日三次补充'],['洗鞋水龙头','外墙北侧，请勿在洗手池刷鞋'],['手机信号','外墙东侧相对稳定，山区不作保证']
+      ['夜间照明','开放时间内有'],['冬季热水','11 月至次年 3 月'],['免费厕纸','每日补充'],['洗鞋水龙头','外墙北侧'],['手机信号','外墙东侧相对稳定']
     ].map(([a,b])=>el('tr',{},[el('th',{text:a}),el('td',{text:b})])))]),
-    el('div',{class:'service-slogan'},[el('small',{text:'2025 年游客服务宣传语'}),el('strong',{text:'山可以野，厕所不能野。'})]),
-    el('h2',{text:'游客问答（摘录）'}),
+    el('p',{class:'service-slogan service-slogan--plain',text:'山可以野，厕所不能野。—— 2025 年游客服务宣传语'}),
+    el('h2',{text:'最近失物登记（未认领）'}),
+    el('ul',{class:'service-lost-list'},[
+      el('li',{text:'9月12日　黑色折叠伞 1 把　游客中心门口'}),
+      el('li',{text:'9月10日　灰色保温杯 1 个　公交候车点'}),
+      el('li',{text:'9月08日　登山杖单支　九弯起点牌旁'}),
+      el('li',{text:'9月06日　儿童蓝色帽子　村口停车场'}),
+    ]),
+    el('h2',{text:'常见问题'}),
     el('dl',{class:'service-faq-list'},[
-      el('dt',{text:'为什么厕所外墙经常有人举着手机？'}),el('dd',{text:'值班员：东侧信号相对稳定。有人发照片，有人等轨迹同步，不是在拍厕所。'}),
-      el('dt',{text:'山里也有 4G 吗？'}),el('dd',{text:'值班员：村口大多时候有。北坡、旧石料场和沟谷不稳定，上传时间不能当实时位置看。'}),
-      el('dt',{text:'能不能接热水泡面？'}),el('dd',{text:'前台有饮水机。卫生间热水别拿来泡面。去年已经说过。'}),
-      el('dt',{text:'晚上回来太晚还能充电吗？'}),el('dd',{text:'游客中心关门后不提供室内充电。出发前先把充电宝充满。'}),
+      el('dt',{text:'山里也有 4G 吗？'}),el('dd',{text:'村口大多时候有。沟谷和北坡不稳定，照片或轨迹显示的上传时间不能当成实时位置。'}),
+      el('dt',{text:'晚上回来还能充电吗？'}),el('dd',{text:'游客中心关门后不提供室内充电。出发前先充好。'}),
+      el('dt',{text:'能不能问北坡怎么走？'}),el('dd',{text:'工作人员只提供当前开放路线信息。旧路线不做方向指引。'}),
     ])
   );
   const aside=el('aside',{class:'service-info-side'},[
-    el('h2',{text:'游客中心一层'}),el('ul',{},[el('li',{text:'卫生间'}),el('li',{text:'补水'}),el('li',{text:'手机 / 充电宝充电'}),el('li',{text:'公交时刻查询'}),el('li',{text:'失物登记'})]),
-    el('h2',{text:'当天提醒'}),el('p',{text:'九弯主线可正常通行。下午山脊风较大。北坡旧返程不开放。'}),
-    el('p',{class:'service-info-small',text:'工作人员不为非开放旧线路提供方向指引。'}),
-    el('div',{class:'service-side-directory'},[el('span',{text:'周边信息'}),el('p',{text:'餐饮与住宿电话请在游客中心前台查询，当天营业情况以店家为准。'})])
+    el('h2',{text:'公交时刻（村口）'}),
+    el('table',{class:'service-mini-table'},[el('tbody',{},[['06:40','县城→青垭'],['09:20','县城→青垭'],['13:10','青垭→县城'],['18:20','青垭→县城']].map(x=>el('tr',{},[el('td',{text:x[0]}),el('td',{text:x[1]})])))]),
+    el('h2',{text:'值班电话'}),el('p',{text:'游客服务　0836-7XXXXXX'}),el('p',{text:'村卫生室　0836-7XXXX12'}),el('p',{text:'公交问询　0836-7XXXX35'}),
+    el('h2',{text:'网页说明'}),el('p',{text:'页面由服务台电脑维护，营业时间或班次临时变化时，以门口手写牌为准。'}),
+    el('p',{class:'service-old-small',text:'最后修改：2026-09-13 18:02　维护人：小罗'})
   ]);
-  body.append(article,aside); wrap.append(title,body,el('footer',{class:'public-service-footer',text:'青垭村游客服务中心　网页维护：值班室　最后更新 2026-08-30'})); main.append(wrap); return main;
+  body.append(article,aside); wrap.append(body,el('footer',{class:'public-service-footer',text:'青垭村游客服务中心　地址：青垭村口公交站上行80米　本站内容仅作便民查询'})); main.append(wrap); return main;
 }
 
 function foodComment(name,date,text,reply=''){
@@ -114,13 +130,14 @@ export function renderFood(){
   const main=el('main',{id:'app-main',class:'restaurant-site',tabindex:'-1'}); main.append(restaurantHeader());
   const shell=el('div',{class:'restaurant-page'});
   shell.append(
+    el('div',{class:'restaurant-flash-line'},[el('b',{text:'★ 今日正常营业 ★'}),el('span',{text:'土鸡要现烧，赶时间的请先电话说。'})]),
     el('div',{class:'restaurant-photo-strip'},[photo(IMG.food,'柴火灶上的一口大铁锅','','photo--restaurant-hero'),el('div',{class:'restaurant-photo-strip__copy'},[el('h1',{text:'青垭人家农家乐'}),el('p',{text:'柴火灶台饭　土鸡　腊肉　时蔬'}),el('strong',{text:'订桌：13X-XXXX-2876'}),el('span',{text:'地址：青垭村公交站往里约120米'})])]),
     el('div',{class:'restaurant-main-grid'},[
       el('div',{class:'restaurant-content'},[
         el('section',{id:'menu',class:'restaurant-menu'},[
           el('h2',{text:'菜单价目（2026 年秋）'}),
           el('table',{class:'restaurant-menu-table'},[el('thead',{},el('tr',{},[el('th',{text:'锅'}),el('th',{text:'建议人数'}),el('th',{text:'内容'}),el('th',{text:'价格'})])),el('tbody',{},[
-            ['小锅','2–3 人','土鸡 / 排骨任选 + 两样时蔬','88 元起'],['大锅','4–6 人','肉菜加量 + 豆腐 + 时蔬','148 元起'],['加大锅','6 人以上','提前半小时说，临时不保证','到店问']
+            ['小锅','2–3 人','土鸡 / 排骨任选 + 两样时蔬','88 元起'],['大锅','4–6 人','肉菜加量 + 豆腐 + 时蔬','148 元起'],['加大锅','6 人以上','提前半小时说，临时不保证','到店问'],['腊肉炒笋','1–3 人','本地笋干，咸淡可说','48 元'],['野菜炒蛋','1–3 人','当天有什么炒什么','28 元'],['家常豆腐','1–3 人','不辣也可以','22 元']
           ].map(row=>el('tr',{},row.map((x,i)=>el(i===0?'th':'td',{text:x})))))]),
           el('p',{class:'restaurant-menu-note',text:'米饭免费续。腊肉和香肠按当天有货情况。一个人来也有炒菜。'})
         ]),
@@ -139,15 +156,23 @@ export function renderFood(){
           foodComment('小孟','2026-09-10','停车收费吗？','店门口别停。村口停车场问游客中心。'),
           foodComment('远山','2026-09-12','早上七点能吃早餐吗？','住宿客人可以。路过的不一定。'),
           foodComment('膝盖已废','2026-09-13','九弯走完回来还能点大锅吗？','先坐下。你现在问什么我都说能。'),
+          foodComment('匿名游客','2026-08-02','老板能开发票吗？','能，吃完跟收银说。'),
+          foodComment('一家四口','2026-08-05','小朋友不吃辣。','提前说，辣椒最后放。'),
+          foodComment('骑车路过','2026-08-09','有打气筒吗？','有一个旧的，在门后面。'),
         ])
       ]),
       el('aside',{class:'restaurant-aside'},[
         el('h2',{text:'本店信息'}),el('dl',{},[el('dt',{text:'午饭'}),el('dd',{text:'10:30–14:00'}),el('dt',{text:'晚饭'}),el('dd',{text:'16:30–20:00'}),el('dt',{text:'付款'}),el('dd',{text:'现金 / 手机支付'}),el('dt',{text:'停车'}),el('dd',{text:'村口停车场'})]),
         el('h2',{text:'老板说'}),el('p',{text:'赶早爬山可以来装一壶热水。晚上回得太晚就别问还能不能开火，能开也不一定等你。'}),
+        el('h2',{text:'网站公告'}),el('p',{class:'restaurant-aside-oldnote',text:'2018-06：手机订餐二维码已失效，别扫。电话没变。'}),
         el('h2',{text:'友情链接'}),el('span',{text:'青垭村旅游服务信息网'}),el('span',{text:'青垭公交时刻（村口公告）'}),el('span',{text:'附近民宿电话汇总'})
       ])
     ]),
-    el('footer',{class:'restaurant-footer',text:'青垭人家农家乐　网页由侄子帮忙维护　最后改：2026-09-02'})
+    el('footer',{class:'restaurant-footer'},[
+      el('span',{text:'青垭人家农家乐　网页由侄子帮忙维护　最后改：2026-09-02'}),
+      el('span',{text:'您是第 012883 位来访者　　QQ 留言功能 2019 年起停用'}),
+      el('small',{text:'网页有问题不要留言，直接跟老板说，老板再找我。—— 网站维护'}),
+    ])
   );
   main.append(shell); return main;
 }
@@ -173,7 +198,7 @@ export function renderWatchmen(){
     el('p',{class:'heritage-warning-line',text:'可以拍照。不要攀爬。不要搂脖子。水泥的，倒下来比人重。'}),
     textLink('safety','安全资料：北坡旧返程线路安全提醒')
   );
-  const side=el('aside',{class:'heritage-side-index'},[el('h2',{text:'本页目录'}),el('span',{text:'一至三号'}),el('strong',{text:'四号'}),el('span',{text:'五号和六号'}),el('span',{text:'游客须知'}),el('h2',{text:'其他旧物'}),el('span',{text:'旧石料场铁牌'}),el('span',{text:'村口旧广播喇叭'}),el('span',{text:'九弯老里程碑'})]);
+  const side=el('aside',{class:'heritage-side-index'},[el('h2',{text:'本页目录'}),el('span',{text:'一至三号'}),el('strong',{text:'四号'}),el('span',{text:'五号和六号'}),el('span',{text:'游客须知'}),el('h2',{text:'其他旧物'}),el('span',{text:'旧石料场铁牌'}),el('span',{text:'村口旧广播喇叭'}),el('span',{text:'九弯老里程碑'}),el('span',{text:'村口旧电影海报框'}),el('span',{text:'老供销社木牌'}),el('span',{text:'1987年修桥纪念碑'})]);
   page.append(article,side); main.append(page,el('footer',{class:'heritage-footer',text:'青垭村志资料　仅作地方旧物记录　如有旧照片可联系游客服务中心'})); return main;
 }
 
@@ -196,6 +221,7 @@ export function renderSafety({store,audio}){
       el('a',{href:'#/news-2017',text:'2017-08-20　北坡户外事故搜救工作结束'}),
       el('span',{text:'2018-05-11　旧返程线路停止推荐说明（原链接已失效）'})
     ]),
+    el('section',{class:'notice-normal-list'},[el('strong',{text:'近期安全提醒'}),el('span',{text:'2026-08-28　九弯环线雨后木阶湿滑提醒'}),el('span',{text:'2026-08-19　山区雷雨天气临时避让说明'}),el('span',{text:'2026-07-31　暑期游客车辆停放与夜间进山提醒'}),el('span',{text:'2026-07-09　森林防火期禁止携带明火进山'})]),
     el('p',{class:'notice-signature',text:'青垭村游客服务中心\n2026年9月1日'}),
     el('footer',{class:'village-notice-foot'},[el('span',{text:'返回通知列表'}),el('span',{text:'打印本页'}),el('span',{text:'关闭窗口'})])
   );

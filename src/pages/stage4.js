@@ -41,6 +41,7 @@ function memorialHeader() {
 
 function forumHeader() {
   return el('header', { class: 'local-forum-header' }, [
+    el('div',{class:'forum-old-utility'},[el('span',{text:'欢迎回来，游客'}),el('span',{text:'论坛搜索　|　帮助　|　收藏本版　|　RSS'}),el('span',{text:'在线 23 人　今日 12 帖'})]),
     el('div', { class: 'local-forum-header__hero' }, [
       el('div',{class:'forum-logo-lockup'},[el('strong', { text: '周有根的山里论坛' }),el('small',{text:'bbs.qyshan.com'})]),
       el('span', { text: '本地人 · 本地事 · 本地话' }),
@@ -110,6 +111,7 @@ export function renderZhouCheng() {
       el('p', { text: '周成的父亲。事故后多年在北坡附近拆游客绑的路条和旧标记。' }),
       el('a', { class: 'memorial-inline-link', href: '#/zhou-yougen', text: '查看：周有根关于北坡路条的公开回复 ›' }),
     ]),
+    el('section',{class:'memorial-side__plainlist'},[el('span',{class:'memorial-side__label',text:'同类公开资料'}),el('p',{text:'2019 夏季山地救援演练记录'}),el('p',{text:'2020 九弯失温游客救助简报'}),el('p',{text:'2022 雨季石沟水位观察记录'}),el('p',{text:'2024 秋季志愿队培训名单'})]),
     el('section', { class: 'memorial-side__context' }, [
       el('span', { class: 'memorial-side__label', text: '补录范围' }),
       el('p', { text: '本页只整理已公开的路线背景、责任记录与救援经过，不对事故之外的传闻作判断。' }),
@@ -124,16 +126,18 @@ export function renderZhouCheng() {
 function forumPost({ name, badge = '', date, text, quote = '', likes = '' }) {
   const post = el('article', { class: 'forum-post' });
   const avatar = el('div', { class: 'forum-avatar', text: name.slice(0, 1) });
+  const userMeta = el('small',{class:'forum-user-meta',text: badge ? '注册：2013-05　来自：青垭　积分：286' : '注册：2018-09　积分：43'});
   const head = el('div', { class: 'forum-post__head' }, [
-    el('strong', { text: name }),
+    el('span',{class:'forum-floor',text:'发表于'}),
     badge ? el('span', { class: 'forum-badge', text: badge }) : null,
     el('time', { text: date }),
+    el('span',{text:'　只看该作者　回复　引用'}),
   ].filter(Boolean));
   const body = el('div', { class: 'forum-post__body' });
   if (quote) body.append(el('blockquote', { class: 'forum-quote', text: quote }));
   body.append(el('p', { text }));
   if (likes) body.append(el('span', { class: 'forum-likes', text: likes }));
-  post.append(avatar, el('div', {}, [head, body]));
+  post.append(el('aside',{class:'forum-user-cell'},[avatar,el('strong',{text:name}),userMeta]), el('div', {class:'forum-post-cell'}, [head, body]));
   return post;
 }
 
@@ -141,6 +145,18 @@ export function renderZhouYougen({ store, audio }) {
   const main = el('main', { id: 'app-main', class: 'local-forum-site', tabindex: '-1' });
   main.append(forumHeader());
 
+  const board = el('section',{class:'forum-board-index'},[
+    el('div',{class:'forum-board-title'},[el('strong',{text:'青垭闲话 » 户外徒步'}),el('span',{text:'今日：12　主题：286　帖子：1943'})]),
+    el('table',{class:'forum-topic-table'},[el('tbody',{},[
+      ['[置顶] 九弯雨后路况集中帖','版主小杨','2024-10-08','88 / 3120'],
+      ['山顶看日出几点出发合适','小满','2024-10-08','14 / 506'],
+      ['公交末班到底是18:10还是18:20','走不动了','2024-10-08','21 / 788'],
+      ['北坡的路条到底能不能留？','山里慢点','2024-10-07','36 / 4211'],
+      ['谁捡到一根黑色登山杖','小陈','2024-10-06','7 / 260'],
+      ['今年蜂蜜有人团吗','阿姨来了','2024-10-05','19 / 633'],
+      ['九弯有没有蛇（认真问）','不怕但怕','2024-10-04','31 / 1102'],
+    ].map((r,i)=>el('tr',{class:i===3?'is-current':''},[el('td',{text:r[0]}),el('td',{text:r[1]}),el('td',{text:r[2]}),el('td',{text:r[3]})])))]),
+  ]);
   const thread = el('div', { class: 'forum-thread' });
   const threadHead = el('header', { class: 'forum-thread__head' }, [
     el('div', {}, [
@@ -244,7 +260,7 @@ export function renderZhouYougen({ store, audio }) {
   );
 
   const layout = el('div', { class: 'forum-layout' }, [thread, side]);
-  main.append(layout);
+  main.append(board,layout,el('footer',{class:'forum-old-footer',text:'Powered by QYBBS 2.1　GMT+8　页面生成 0.021 秒　联系我们 | 清除Cookies | 手机版'}));
 
   return main;
 }

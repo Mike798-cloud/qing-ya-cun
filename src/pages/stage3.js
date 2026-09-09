@@ -30,7 +30,7 @@ function renderCountyHeader() {
   return el('header', { class: 'county-header' }, [
     el('div', { class: 'county-header__top' }, [
       el('a', { href: '#/news-2017', class: 'county-brand' }, [el('strong',{text:'青垭县融媒体中心'}),el('small',{text:'QINGYA COUNTY MEDIA CENTER'})]),
-      el('span', { text: '2024年6月14日　星期五' }),
+      el('div',{class:'county-top-tools'},[el('span',{text:'2024年6月14日　星期五'}),el('span',{text:'多云 22℃　|　新闻热线 0836-7XXXX01'}),el('span',{text:'设为首页　加入收藏　投稿邮箱'})]),
     ]),
     el('nav', { class: 'county-nav', 'aria-label': '资料库栏目' }, [
       el('span', { text: '首页' }),
@@ -38,7 +38,7 @@ function renderCountyHeader() {
       el('span', { class: 'is-active', text: '社会' }),
       el('span', { text: '旅游' }),
       el('span', { text: '文化' }),
-      el('span', { text: '视频' }),
+      el('span', { text: '民生' }),el('span', { text: '乡镇' }),el('span', { text: '专题' }),el('span', { text: '视频' }),
     ]),
   ]);
 }
@@ -79,27 +79,34 @@ function oldComment(name, date, text) {
 function archiveSearch({ store, router }) {
   const form = el('form', { class: 'county-archive-search', role: 'search' });
   form.append(
-    el('label', { for: 'archive-query', text: '历史页面检索' }),
-    el('p', { text: '可按旧页面标题、编号或安全告示短码查询。' }),
+    el('label', { for: 'archive-query', text: '站内历史搜索' }),
+    el('p', { text: '可搜年份、地点、标题关键词或旧页面编号。' }),
   );
   const row = el('div', { class: 'county-archive-search__row' });
-  const input = el('input', { id: 'archive-query', type: 'search', autocomplete: 'off', placeholder: '例如：北坡 / QY-NB-2018' });
-  const button = el('button', { type: 'submit', text: '搜索' });
+  const input = el('input', { id: 'archive-query', type: 'search', autocomplete: 'off', placeholder: '输入：北坡 / 2017 / 失联 / 页面编号' });
+  const button = el('button', { type: 'submit', text: '搜 索' });
   row.append(input, button);
   const result = el('div', { class: 'county-archive-results', 'aria-live': 'polite' });
   form.append(row, result);
   form.addEventListener('submit', event => {
     event.preventDefault();
-    const q = input.value.trim().toUpperCase().replace(/\s+/g, '');
+    const raw = input.value.trim();
+    const q = raw.toUpperCase().replace(/\s+/g, '');
     result.replaceChildren();
-    if (q.includes('NOBACK') || q.includes('QY-NB-2018') || q.includes('北坡')) {
+    const relevant = ['北坡','2017','失联','搜救','QY-NB-2018','NOBACK'].some(k => q.includes(k));
+    if (relevant) {
       store.dispatch({ type: 'SET_FLAG', key: 'nobackFound', value: true });
       result.append(
-        el('p', { text: '找到 1 条已下线页面镜像：' }),
-        el('a', { href: '#/cache-2017', text: '2016-06-12　九弯环线 · 北坡快捷返程（网页镜像）' }),
+        el('p', { text: `“${raw || '北坡'}” 共找到 6 条历史结果：` }),
+        el('div',{class:'county-search-row'},[el('span',{text:'2025-11-03'}),el('span',{text:'北坡林区秋冬季森林防火巡查'}),el('small',{text:'社会'})]),
+        el('div',{class:'county-search-row'},[el('span',{text:'2023-07-18'}),el('span',{text:'关于北坡区域禁止游客进入的再次提醒'}),el('small',{text:'旅游'})]),
+        el('div',{class:'county-search-row'},[el('span',{text:'2017-08-20'}),el('span',{text:'北坡户外事故搜救工作结束'}),el('small',{text:'社会'})]),
+        el('div',{class:'county-search-row county-search-row--old'},[el('span',{text:'2016-06-12'}),el('a',{href:'#/cache-2017',text:'九弯环线 · 北坡快捷返程（旧网页镜像）'}),el('small',{text:'已下线'})]),
+        el('div',{class:'county-search-row'},[el('span',{text:'2016-04-02'}),el('span',{text:'青垭春季乡村游线路推荐'}),el('small',{text:'旅游'})]),
+        el('div',{class:'county-search-row'},[el('span',{text:'2015-10-09'}),el('span',{text:'九弯秋季摄影路线进入最佳观赏期'}),el('small',{text:'文化'})]),
       );
     } else {
-      result.append(el('p', { text: '没有找到匹配结果。可尝试旧公告里保留的页面编号或英文短码。' }));
+      result.append(el('p', { text: `“${raw}” 没有找到相关历史页面。可换地点、年份或标题词。` }));
     }
   });
   return form;
@@ -109,6 +116,10 @@ export function renderNews2017({ store, router }) {
   const main = el('main', { id: 'app-main', class: 'county-site', tabindex: '-1' });
   main.append(renderCountyHeader());
 
+  const crumb = el('div', { class: 'county-breadcrumb' }, [
+    el('span', { text: '当前位置：首页 > 社会 > 户外安全 > 正文' }),
+    el('span', { text: '网站编辑部值班电话：0836-7XXXX01' }),
+  ]);
   const page = el('div', { class: 'county-page' });
   const article = el('article', { class: 'county-article' });
   article.append(
@@ -129,10 +140,16 @@ export function renderNews2017({ store, router }) {
     el('p', { text: '当地组织人员与社会救援力量连夜开展搜寻。事故造成多人伤亡。参与带路的本地青年周成也在事故中死亡。' }),
     el('p', { text: '公开通报将事发区域表述为“未开发、未开放的北坡山地”，并再次提醒游客不要离开现有开放线路。有关经营活动与带队责任问题，由相关部门继续调查处理。' }),
     el('p', { class: 'county-edit-note', text: '编辑说明：本文为 2017 年网站留存版本。事故伤亡人员姓名按当年公开口径未完整刊载。' }),
+    el('div',{class:'county-article-tools'},[el('span',{text:'【字体：大 中 小】'}),el('span',{text:'打印'}),el('span',{text:'关闭窗口'}),el('span',{text:'编辑：李明'})]),
   );
 
   const side = el('aside', { class: 'county-side' });
   side.append(
+    el('section',{class:'county-normal-news'},[
+      el('h2',{text:'本地新闻'}),
+      ...['青垭县部署秋季森林防火工作','县医院新增周末门诊号源','东桥道路施工本周五结束','三河镇稻谷进入集中收割期','青垭村丰收节下周开幕','县城2路公交调整末班时间'].map((x,i)=>el('p',{},[el('span',{text:`09-${12-i}`}),el('span',{text:x})]))
+    ]),
+    el('section',{class:'county-ranking'},[el('h2',{text:'一周排行'}),...['暴雨蓝色预警解除','开学季校车线路公布','九弯步道雨后恢复开放','县图书馆延长开放时间','老年食堂试运行'].map((x,i)=>el('p',{text:`${i+1}. ${x}`}))]),
     el('section', { class: 'archive-index' }, [
       el('p', { class: 'county-kicker', text: '旧页面索引' }),
       el('h2', { text: '2016 年“徒步线路”分类仍有旧索引' }),
@@ -161,7 +178,11 @@ export function renderNews2017({ store, router }) {
     oldComment('麦穗', '2016-10-02', '民宿墙上以前贴过九弯的两种返程走法，北坡写的是“快捷返程”。后来再去就没看见那张纸了。'),
   );
 
-  main.append(page, comments);
+  main.append(crumb, page, comments, el('footer',{class:'county-old-footer'},[
+    el('span',{text:'青垭县融媒体中心版权所有　未经许可不得转载'}),
+    el('span',{text:'网站建设：青垭县信息中心　建议 1024×768 以上分辨率'}),
+    el('span',{text:'旧稿件存档系统保留历史页面，内容以原发布时间为准'}),
+  ]));
   return main;
 }
 
@@ -253,6 +274,8 @@ export function renderCache2017({ store, interludes, audio }) {
       el('strong', { text: '镜像信息' }),
       el('p', { text: '原页面所属栏目：徒步线路。页面标题与正文按最后一次抓取版本保留。' }),
     ]),
+    el('section',{class:'archive-old-list'},[el('strong',{text:'同栏目还有'}),el('p',{text:'九弯环线一日走法（2016-05-20）'}),el('p',{text:'老杉树林拍照点（2016-04-11）'}),el('p',{text:'村口到观景台怎么走（2015-10-03）'}),el('p',{text:'雨天别走石沟（2015-07-19）'})]),
+    el('section',{class:'archive-old-list'},[el('strong',{text:'住宿电话（旧）'}),el('p',{text:'青垭人家　138****6658'}),el('p',{text:'山腰客栈　139****2180'}),el('p',{text:'老街民宿　135****4902'})]),
     el('section', { class: 'archive-next-record' }, [
       el('strong', { text: '事故后续资料' }),
       el('p', { text: '2018 年公开救援资料中有一条当时带路人周成的补录记录。' }),
@@ -267,6 +290,6 @@ export function renderCache2017({ store, interludes, audio }) {
     el('p', { text: '最后抓取：2017-08-21 07:12。原页面随后停止公开访问；图片附件与文字快照保留在旧索引中。' }),
   ]);
 
-  main.append(banner, body, conclusion);
+  main.append(banner, body, el('section',{class:'archive-guest-old'},[el('strong',{text:'游客留言摘录'}),oldComment('小林','2016-06-15','北坡晴天走过一次，石沟那段别磨蹭。'),oldComment('成都来客','2016-07-02','住青垭人家，老板说下雨就老实走主线。'),oldComment('阿东','2016-09-19','四号拍照挺怪但其实就是水泥人。')]), conclusion);
   return main;
 }

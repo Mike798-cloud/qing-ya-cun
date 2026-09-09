@@ -39,6 +39,17 @@ function avatar(className = '') {
   return el('img', { class: `zhou-avatar ${className}`.trim(), src: IMG.avatar, alt: '', loading: 'eager', decoding: 'async' });
 }
 
+function olderTrailPost({ date, place, text, stats = '' }) {
+  return el('article', { class: 'trail-history-row' }, [
+    el('time', { text: date }),
+    el('div', {}, [
+      el('strong', { text: place }),
+      el('p', { text }),
+      el('small', { text: stats }),
+    ]),
+  ]);
+}
+
 function renderTrailHeader(active = '') {
   const header = el('header', { class: 'trail-header' });
   const inner = el('div', { class: 'trail-header__inner' });
@@ -51,7 +62,7 @@ function renderTrailHeader(active = '') {
       el('span', { text: '社区' }),
       el('span', { text: '装备' }),
     ]),
-    el('span', { class: 'trail-login', text: '游客浏览' }),
+    el('div', { class: 'trail-utility' }, [el('span', { text: '下载客户端' }), el('span', { text: '路线纠错' }), el('span', { class: 'trail-login', text: '游客浏览' })]),
   );
   header.append(inner);
   return header;
@@ -60,9 +71,9 @@ function renderTrailHeader(active = '') {
 function renderVillageHeader(active = '', flow) {
   const header = el('header', { class: 'village-header village-header--portal' });
   const today = el('div', { class: 'village-datebar' }, [
-    el('span', { text: '青垭村旅游服务信息网' }),
-    el('span', { text: '2026年9月14日　星期一' }),
-    el('span', { text: '游客咨询：0836-7XXXXXX' }),
+    el('span', { text: '设为首页　|　加入收藏　|　联系我们' }),
+    el('span', { text: '2026年9月14日　星期一　农历八月初四' }),
+    el('span', { text: '游客咨询：0836-7XXXXXX　　今日访问：328' }),
   ]);
   const mast = el('div', { class: 'village-masthead' }, [
     el('a', { href: '#/qingya', class: 'village-brand' }, [
@@ -86,7 +97,11 @@ function renderVillageHeader(active = '', flow) {
     navLabel('游客服务', 'service'),
     navLabel('通知公告', 'safety'),
   ]);
-  header.append(today, mast, nav);
+  const ticker = el('div', { class: 'village-ticker' }, [
+    el('b', { text: '站内公告：' }),
+    el('span', { text: '九弯雨后路滑，请穿防滑鞋；村口自来水检修已结束。　　[09-08] 丰收节摊位报名还有 3 天。' }),
+  ]);
+  header.append(today, mast, nav, ticker);
   return header;
 }
 
@@ -392,6 +407,14 @@ export function renderProfile({ store, passwords, router }) {
     ]));
   }
 
+  stream.append(el('section', { class: 'trail-history' }, [
+    el('h2', { text: '以前的动态' }),
+    olderTrailPost({ date: '2026-07-18', place: '城西绿道 · 18.6 km', text: '热。水带少了。最后三公里靠便利店救命。', stats: '♡ 96　评论 11' }),
+    olderTrailPost({ date: '2026-05-02', place: '南岭小环线 · 12.4 km', text: '没登顶。下午雷太密，撤得很值。', stats: '♡ 141　评论 23' }),
+    olderTrailPost({ date: '2025-11-09', place: '白石坡 · 9.7 km', text: '风景不错。台阶不做人。', stats: '♡ 208　评论 34' }),
+    olderTrailPost({ date: '2025-03-16', place: '东郊水库 · 14.1 km', text: '新鞋第二次。还是磨。鞋没错，可能是脚。', stats: '♡ 78　评论 7' }),
+  ]));
+
   const privateArea = el('section', { class: 'trail-private-tools' });
   privateArea.append(el('h2', { text: '本机缓存' }));
   privateArea.append(el('p', { class: 'trail-private-note', text: '这个浏览器保留过该账号的本地草稿索引；正文仍需要本机口令。' }));
@@ -522,9 +545,18 @@ export function renderQingya({ flow }) {
   const columns = el('div', { class: 'village-portal-columns' });
   const news = el('section', { class: 'portal-news' }, [el('h2', { text: '最新公告' })]);
   const notices = [
-    ['09-01','秋季徒步与降雨天气安全提示','','新'], ['08-28','九弯环线雨后安全提醒','',''], ['08-15','2026 年秋季民宿联系电话汇总','',''],
-    ['07-31','关于游客车辆停放的说明','',''], ['07-18','村口公交站候车点临时调整','',''], ['06-29','九弯沿线饮水点维护完成','',''],
-    ['05-12','关于文明采摘野果的提醒','',''], ['04-30','五一假期游客服务时间延长','',''],
+    ['09-12','关于村口自来水管网检修的通知','',''],
+    ['09-10','青垭村秋季森林防火值班表','',''],
+    ['09-08','丰收节摊位报名截至本周五','','新'],
+    ['09-05','村卫生室九月坐诊时间','',''],
+    ['09-01','秋季徒步与降雨天气安全提示','','新'],
+    ['08-28','九弯环线雨后安全提醒','',''],
+    ['08-23','本周六村口篮球场暂停使用','',''],
+    ['08-15','2026 年秋季民宿联系电话汇总','',''],
+    ['07-31','关于游客车辆停放的说明','',''],
+    ['07-18','村口公交站候车点临时调整','',''],
+    ['06-29','九弯沿线饮水点维护完成','',''],
+    ['05-12','关于文明采摘野果的提醒','',''],
   ];
   notices.forEach(([date,title,id,badge]) => {
     const row = el('div', { class: 'portal-news-row' }, [el('time', { text: `2026-${date}` })]);
@@ -536,7 +568,18 @@ export function renderQingya({ flow }) {
     el('h2', { text: '推荐线路' }),
     el('div', { class: 'portal-route__body' }, [photo({ src: IMG.trail, alt: '青垭九弯山脊路线', className: 'photo--portal-route' }), el('div', {}, [el('strong', { text: '青垭九弯环线' }), el('p', { text: '约16公里　5–7小时　难度：中等' }), el('a', { href: '#/jiuwan', text: '线路介绍 ›' })])]),
   ]);
-  const left = el('div', { class: 'portal-maincol' }, [news, route]);
+  const villageLife = el('section', { class: 'portal-plain-section' }, [
+    el('h2', { text: '村里这些天' }),
+    el('table', { class: 'portal-plain-table' }, [el('tbody', {}, [
+      ['9月13日','老街东头水沟清淤，上午车辆绕行。'],
+      ['9月11日','村口晒谷场下午借给小学做活动。'],
+      ['9月09日','两家民宿恢复营业，电话见游客中心登记本。'],
+      ['9月06日','蜂蜜新货到村供销点，数量不多。'],
+      ['9月02日','公交末班仍为18:20，国庆期间另行通知。'],
+    ].map(([a,b]) => el('tr', {}, [el('th', { text: a }), el('td', { text: b })])) )]),
+    el('p', { class: 'portal-maintain-note', text: '※ 本栏由村委会办公室随手更新，错别字请电话说，不用专门发邮件。' }),
+  ]);
+  const left = el('div', { class: 'portal-maincol' }, [news, route, villageLife]);
   const side = el('aside', { class: 'portal-side' }, [
     el('section', { class: 'portal-box portal-weather' }, [el('h2', { text: '今日青垭' }), el('strong', { text: '17–24℃　多云' }), el('p', { text: '山脊阵风 4–5 级。下午局部有短时阵雨。' })]),
     el('section', { class: 'portal-box' }, [el('h2', { text: '便民信息' }),
@@ -549,7 +592,11 @@ export function renderQingya({ flow }) {
   columns.append(left, side);
   shell.append(banner, el('div', { class: 'portal-welcome' }, [el('strong', { text: '青垭村 · 山与人的相遇' }), el('p', { text: '青垭村位于群山之间，海拔约 980 米。村里有农田、溪谷、老杉树林，以及一条沿山脊绕行的九弯环线。' })]), columns,
     el('section', { class: 'portal-links' }, [el('strong', { text: '友情链接：' }), el('span', { text: '青垭县文旅信息　|　天气服务　|　公交查询　|　森林防火' })]),
-    el('footer', { class: 'village-footer', text: '青垭村村民委员会　网页维护：游客服务中心　最后更新 2026-09-01' }));
+    el('footer', { class: 'village-footer' }, [
+      el('span', { text: '青垭村村民委员会　网页维护：游客服务中心　最后更新：2026-09-12 17:36' }),
+      el('span', { text: '今日：328　昨日：291　累计：036821　　建议使用 IE9 以上 / 1366×768 浏览（旧说明未删除）' }),
+      el('small', { text: '本站部分栏目资料由各经营户自行提供，如电话有变请以门口公告为准。' }),
+    ]));
   main.append(shell); return main;
 }
 

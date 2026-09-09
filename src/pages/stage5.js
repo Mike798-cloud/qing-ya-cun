@@ -26,22 +26,10 @@ function photo({ src, alt, caption, className = '' }) {
 }
 
 function mountainHeader() {
-  return el('header', { class: 'mountain-archive-header' }, [
-    el('div', { class: 'mountain-archive-header__top' }, [
-      el('a', { class: 'mountain-archive-brand', href: '#/watchman-04-detail' }, [
-        el('strong', { text: '四号_巡查资料' }),
-        el('span', { text: 'QINGYA FIELD ARCHIVE / SCAN INDEX' }),
-      ]),
-      el('span', { class: 'mountain-archive-search', text: '只读目录' }),
-    ]),
-    el('nav', { class: 'mountain-archive-nav', 'aria-label': '山地环境资料库栏目' }, [
-      el('span', { text: '首页' }),
-      el('span', { class: 'is-active', text: '看路人' }),
-      el('span', { text: '避险设施' }),
-      el('span', { text: '自然环境' }),
-      el('span', { text: '旧路线资料' }),
-      el('span', { text: '志愿者记录' }),
-    ]),
+  return el('header', { class: 'mountain-archive-header mountain-archive-header--dir' }, [
+    el('div',{class:'archive-window-title',text:'青垭村资料整理盘 - D:\\巡查资料\\北坡\\四号'}),
+    el('div',{class:'archive-window-menu'},[el('span',{text:'文件(F)'}),el('span',{text:'编辑(E)'}),el('span',{text:'查看(V)'}),el('span',{text:'收藏夹(A)'}),el('span',{text:'帮助(H)'})]),
+    el('div',{class:'archive-addressbar'},[el('b',{text:'地址(D)'}),el('code',{text:'D:\\青垭巡查\\QY-BP-04\\'})]),
   ]);
 }
 
@@ -52,6 +40,12 @@ function patrolRow(date, weather, action, note) {
     el('p', { text: action }),
     el('p', { text: note }),
   ]);
+}
+
+function dirFile(name, modified, size, description, onOpen, folder = false) {
+  const open = el('button', { class: `mountain-dir-link${folder ? ' mountain-dir-link--folder' : ''}`, type: 'button', text: name });
+  open.addEventListener('click', onOpen);
+  return el('tr', {}, [el('td', {}, open), el('td', { text: modified }), el('td', { text: size }), el('td', { text: description })]);
 }
 
 function interludeTwo() {
@@ -97,17 +91,23 @@ export function renderWatchman04Detail({ store, router, interludes, audio }) {
   const main = el('main', { id: 'app-main', class: 'mountain-archive-site', tabindex: '-1' });
   main.append(mountainHeader());
 
-  const breadcrumb = el('div', { class: 'mountain-breadcrumb' }, [
-    el('span', { text: '首页' }),
-    el('span', { text: '›' }),
-    el('span', { text: '看路人' }),
-    el('span', { text: '›' }),
-    el('strong', { text: '四号' }),
-  ]);
+  const breadcrumb = el('div', { class: 'mountain-breadcrumb' }, [el('strong',{text:'Index of /inspection/QY-BP-04/'}),el('span',{text:'　最后整理：2025-01-18　只读'})]);
 
   const page = el('div', { class: 'mountain-record-page' });
   const article = el('article', { class: 'mountain-record' });
   article.append(
+    el('table',{class:'mountain-dir-table'},[
+      el('thead',{},el('tr',{},[el('th',{text:'Name'}),el('th',{text:'Last modified'}),el('th',{text:'Size'}),el('th',{text:'Description'})])),
+      el('tbody',{},[
+        el('tr',{},[el('td',{text:'../'}),el('td',{text:'2025-01-18'}),el('td',{text:'-'}),el('td',{text:'上一级目录'})]),
+        dirFile('front.jpg','2024-10-11','842K','四号正面',()=>openLightbox({src:IMG.watch4,alt:'四号看路人正面巡查照片',caption:'front.jpg · 四号正面'})),
+        dirFile('side.jpg','2024-10-11','731K','侧面 / 蓝铁皮',()=>openLightbox({src:IMG.back,alt:'四号后方蓝铁皮与灌木',caption:'side.jpg · 四号后方环境'})),
+        dirFile('base.jpg','2024-10-11','615K','底座编号',()=>openLightbox({src:IMG.watch4Wide,alt:'四号看路人底座与编号',caption:'base.jpg · 底座编号'})),
+        dirFile('patrol_2019-2025.txt','2025-01-18','14K','巡查摘录',()=>document.querySelector('.patrol-sheet')?.scrollIntoView({block:'start'})),
+        dirFile('readme.txt','2025-01-18','2K','公开说明',()=>document.querySelector('.mountain-note')?.scrollIntoView({block:'start'})),
+        dirFile('look_back/','2025-01-16','-','旧扫描附件目录',()=>openBackFolder({store,router,interludes,audio}),true),
+      ])]),
+    el('hr',{}),
     el('p', { class: 'mountain-kicker', text: '旧设施编号 QY-BP-04 · 最后更新 2025-01-18' }),
     el('h1', { text: '四号看路人' }),
     el('div', { class: 'mountain-meta' }, [
@@ -169,29 +169,28 @@ export function renderWatchman04Detail({ store, router, interludes, audio }) {
   const side = el('aside', { class: 'mountain-record-side' });
   side.append(
     el('section', { class: 'mountain-note' }, [
-      el('strong', { text: '现场提醒' }),
+      el('strong', { text: 'readme.txt' }),
       el('p', { text: '不要攀爬，不要搂脖子。四号以后不属于开放徒步范围。' }),
     ]),
     el('section', { class: 'mountain-note' }, [
-      el('strong', { text: '村民旧帖摘录 · 2023-09-16' }),
+      el('strong', { text: 'notes_2023.txt' }),
       el('blockquote', { text: '“后边别塞东西。湿了都粘一块，清起来麻烦。”' }),
     ]),
     el('section', { class: 'mountain-note mountain-note--key' }, [
-      el('strong', { text: '旧附件目录' }),
+      el('strong', { text: '目录内容' }),
       el('p', { text: '2025 年整理盘保留了四号巡查照片的原目录。文件按拍摄方位命名。' }),
       el('div', { class: 'mountain-file-list' }, [
-        el('span', { text: 'front.jpg' }),
-        el('span', { text: 'side.jpg' }),
-        el('span', { text: 'base.jpg' }),
+        el('span', { text: 'front.jpg　842K' }),
+        el('span', { text: 'side.jpg　731K' }),
+        el('span', { text: 'base.jpg　615K' }),
+        el('span', { text: 'patrol_2019-2025.txt　14K' }),
       ]),
     ]),
   );
-  const backLink = el('button', { class: 'mountain-folder-link', type: 'button', text: 'look_back/　›' });
-  backLink.addEventListener('click', () => openBackFolder({ store, router, interludes, audio }));
-  side.querySelector('.mountain-note--key').append(backLink, el('small', { class: 'mountain-folder-note', text: '目录最后修改：2025-01-16' }));
+  side.querySelector('.mountain-note--key').append(el('small', { class: 'mountain-folder-note', text: '完整目录以上方文件列表为准；文件名沿用原整理盘。' }));
 
   page.append(article, side);
-  main.append(breadcrumb, page);
+  main.append(breadcrumb, page, el('footer',{class:'mountain-dir-footer',text:'QY-FILESERVER/1.4　目录索引自动生成　不要删除原始文件'}));
   return main;
 }
 

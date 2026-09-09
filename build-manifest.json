@@ -1,104 +1,64 @@
 {
-  "artifact": "返程线-玩家认知链与去卡片化最终重构-2026-09-09",
-  "generated_at": "2026-09-09T08:29:01Z",
-  "mode": "BAT-equivalent production patch; only production files changed from the immediately previous visual-consistency baseline",
-  "design_goal": "从玩家当前可见信息出发重构调查链：公开网站仍可自由浏览，但后台不再把‘点过页面’当成理解；每一步只有一个由当前事实自然产生的主问题，同时继续消除不符合网站身份的结构性卡片。",
-  "cognitive_chain": [
-    "周航聊天中的路迹分享 → 公开轨迹：确认最后可靠位置是四号且已折返",
-    "本机私密草稿：确认周航没有把北坡当推荐路线 → 草稿内自然指向‘四号看路人’地方资料",
-    "四号地方资料 → 北坡安全公告：理解‘旧标记/刚同步轨迹不等于可走’",
-    "安全公告 → 2017旧新闻 → 历史检索 → 2016旧站：确认事故前北坡曾被公开包装成快捷返程",
-    "2016旧站 → 周成补录 → 周有根旧帖 → QY-BP-04巡查档案：解释为什么有人持续拆路条和箭头",
-    "四号档案 look_back/ → 第二本册子：确认多年里路条、箭头、补水与脚印反复出现且并非单一维护者",
-    "平台后期恢复阿纪评论缓存 → 周航最终草稿 → 搜救通报：完成折返救人与悲剧结局"
-  ],
+  "artifact": "返程线-旧网站真实感去设计师痕迹-2026-09-09",
+  "generated_at": "2026-09-09T12:25:00Z",
+  "mode": "BAT-equivalent production patch; only production files changed from 旧互联网生态与单锚点认知链 baseline",
+  "goal": "在不新增调查分支、不恢复门控的前提下，继续降低现代设计师感：村站、政务站、县媒体、BBS、农家乐和巡查资料分别加入符合自身维护者/年代的粗糙工具条、公告、旧页脚、访问计数和文件目录行为；主线单锚点与认知状态保持不变。",
   "changes": [
-    "新增 cognition.js：推进依据改为上下文事实；提前乱逛后期页面不会自动等于理解，旧存档只迁移真正被旧阶段证明过的认知。",
-    "Stage 1 从哥哥聊天中的路迹分享建立首个锚点；青垭主页、九弯、农家乐、游客中心降为可自由浏览的背景资料，不再是隐藏 checklist。",
-    "主调查跨站关系改成单向来源链，删除周成/论坛/新闻/旧站之间的来回跳转式互链，并把未来阿纪评论改为后期平台恢复事件。",
-    "NOBACK 只在县融媒体历史检索中真正发现；直接猜到 2016 快照 URL 不再自动获得该认知，LOOKBACK 同理由巡查目录动作建立。",
-    "继续去结构性卡片：路迹主页/轨迹详情、游客服务目录、村站右栏、论坛与档案侧栏、评论缓存、最终草稿、搜救通报等改为各自网站身份中的连续页面。",
-    "保留并回归草稿通知、评论缓存通知、密码容错、损坏存档恢复、桌面/手机/1.2×字号与旧存档兼容。"
+    "青垭村：增加老站公告条与更随手的访问/维护信息；右栏取消残余独立盒子边框，改为栏目条+点线分隔。",
+    "游客服务中心：增加当前位置/打印/意见簿式旧政务工具条；宣传横幅缩小并改成笨重图文横幅。",
+    "青垭人家：增加旧访问计数、失效功能说明和维护人碎碎念，强化亲友维护小商户站感。",
+    "县融媒体：增加当前位置、值班电话和旧CMS版权页脚；历史搜索取消独立卡片感，仍只作为工具。",
+    "地方BBS：增加游客状态、论坛搜索/帮助/RSS/在线人数等普通工具行，不新增主线链接。",
+    "四号资料：front/side/base/txt/look_back 全部进入同一真实目录列表；普通文件可打开或滚动查看，look_back 不再被单独做成提示按钮。"
   ],
   "verification": {
-    "cognitive_flow": "PASS: 随机提前浏览后期公开页停留在当前认知层；完整单向认知链可达 Stage 7；直接猜缓存 URL 不能绕过历史检索。",
-    "notification_states": "PASS: 最终草稿通知刷新保留、忽略后持久隐藏、手动进入主页只消费通知不自动解锁、NORETURN 后不再出现；阿纪评论缓存通知同样可持久与正确消费。",
-    "passwords": "PASS: NOWEEKEND/NORETURN 大小写、空格、下划线、连字符统一归一化。",
-    "storage": "PASS: 损坏 JSON/错误类型存档恢复初始状态；有效存档 round-trip 保留剧情事实。",
-    "browser_matrix": "PASS: 21 routes × desktop 1440×900 / mobile 390×844 / mobile 1.2× text = 63 views; horizontal overflow 0, duplicate IDs 0, unnamed buttons 0, failed images 0, broken internal hash links 0, nested interactive controls 0.",
-    "javascript_syntax": "PASS: all src JavaScript via node --check",
-    "module_import_graph": "PASS: 45 relative ES-module imports; 0 missing",
-    "css_parse": "PASS: 4 stylesheets; 0 parser errors",
-    "runtime_references": "PASS: 45 relative module imports + 35 local runtime asset references = 80; 0 missing",
-    "page_dom": "PASS: all 21 renderers build cleanly; no duplicate IDs / unnamed controls / invalid internal destinations; no page-level inline SVG route drawings",
-    "runtime_card_classes": "PASS: no runtime .card/.card--/.card__ selectors or page classes; remaining word ‘card’ occurs only in developer comments describing removed patterns",
+    "javascript": "PASS: all src JS node --check.",
+    "css": "PASS: 4 stylesheets, 0 tinycss2 parse errors.",
+    "module_imports": "PASS: 45 relative ES-module imports, 0 missing.",
+    "runtime_assets": "PASS: 35 runtime asset references / 20 unique paths, 0 missing.",
+    "routes": "PASS: 21 route definitions; literal internal hash destinations all valid.",
+    "cognitive_flow": "PASS: early future browsing creates no cognition; full contextual chain reaches Stage 7.",
+    "directory_actions": "PASS: normal archive files do not navigate; look_back sets lookbackFound and navigates second-book.",
+    "browser_matrix": "PASS: 21 routes × desktop 1440 + mobile 390 + mobile 390 at 1.2x text = 63 in-memory Chromium states; 0 horizontal overflow, 0 duplicate IDs, 0 unnamed controls, 0 page errors.",
+    "runtime_cards": "PASS: no runtime .card/.card--/.card__ selectors/classes.",
+    "inline_route_svg": "PASS: no page-level inline SVG route drawings.",
     "known_reproducible_bugs": 0
   },
   "files": [
     {
-      "path": "src/core/cognition.js",
-      "bytes": 4066,
-      "sha256": "b10379dc88e74b435f5aa17fad33b7d26b609afdf201faef0f1268b45df168a2",
-      "status": "new"
-    },
-    {
-      "path": "src/core/notifications.js",
-      "bytes": 777,
-      "sha256": "13e75a731236bb19ff0ac57567a9e44872892f822626276e79609e0ed9aa7151",
-      "status": "modified"
-    },
-    {
-      "path": "src/data/content.js",
-      "bytes": 4400,
-      "sha256": "fb99d805439050fef0eeac7335374150f4437918091a1bafa5e0b710e9505acf",
-      "status": "modified"
-    },
-    {
-      "path": "src/main.js",
-      "bytes": 10047,
-      "sha256": "e6462e72d1d159dda18a1d961123b8f795c4e9dadaa09b4b9c247dacd2b0b1d9",
-      "status": "modified"
-    },
-    {
       "path": "src/pages/stage1.js",
-      "bytes": 37629,
-      "sha256": "f07adcb727ba31ad568a4c29185011dc1833506a639db94ef5489cb20ebd0e55",
+      "bytes": 40530,
+      "sha256": "8891adacf27f711df6e2fd7e743552541ec078c457488c1a06dee55f3dc91938",
       "status": "modified"
     },
     {
       "path": "src/pages/stage2.js",
-      "bytes": 19060,
-      "sha256": "85eb39de0e6fe54d8ac16d9e75e47d21c4af68564119cb1be01814491b524add",
+      "bytes": 20993,
+      "sha256": "b79597ebe4474dc2fea74135edb06596fb841bb35c915affc1c1917e7bfaa353",
       "status": "modified"
     },
     {
       "path": "src/pages/stage3.js",
-      "bytes": 13037,
-      "sha256": "57af494059181083306e8765d2a108a0f8d620bb831978960a4179cfd7513513",
+      "bytes": 16662,
+      "sha256": "0aef652021f528b6d286fee9ef02a714c03b9e181ddb6e73be05052d792159df",
       "status": "modified"
     },
     {
       "path": "src/pages/stage4.js",
-      "bytes": 10869,
-      "sha256": "94fe1d6059fcd57c16e40a41ac7917c790b2a3fff97773b0ce616a01e7ff48b4",
+      "bytes": 12910,
+      "sha256": "c5597e7fe9aee21e54f6c570a1bad39d0cb05d66930465554f84ab856124b1d3",
       "status": "modified"
     },
     {
       "path": "src/pages/stage5.js",
-      "bytes": 12482,
-      "sha256": "daf37b86a48ebbe63b1fa7ff7792cd7786d967a1cd274207fb6c79b9e47f0cbf",
-      "status": "modified"
-    },
-    {
-      "path": "src/pages/stage6.js",
-      "bytes": 9343,
-      "sha256": "e052bba3794b09394f0169689143db4f0b276ffbf042af6781532b1dc9eaf993",
+      "bytes": 13848,
+      "sha256": "73f52aef23b672b857260d474d0f923e01d52148c23993c6ad87835013fe341e",
       "status": "modified"
     },
     {
       "path": "src/styles/immersive-web.css",
-      "bytes": 121902,
-      "sha256": "e419c9d500f34b49f6c2ad1cce676341d1fefa49578041ac4e27d0fb7c91bfd7",
+      "bytes": 171605,
+      "sha256": "ea6dabfa3d12dbc15b0c2c5194cce71b48a7671dc157f96e0f34fcbff3cee013",
       "status": "modified"
     }
   ]
