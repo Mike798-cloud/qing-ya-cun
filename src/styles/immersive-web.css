@@ -131,16 +131,6 @@ body[data-site="trail"], body[data-site="trail-cache"], body[data-site="draft-re
 .track-article,.track-info-side { background:#fff; border:1px solid #e0e4e6; padding:20px; }
 .track-article h1 { margin:14px 0 3px; font-size:1.45rem; }
 .track-state { color:#969da1; font-size:.7rem; }
-.track-map { height:310px; margin:20px 0; position:relative; overflow:hidden; background:linear-gradient(155deg,#d7e1d2,#b8cbb3 40%,#dbe2d7 40%,#c7d1c5 65%,#aebfa9); border:1px solid #cdd5cf; }
-.track-map__terrain { position:absolute; inset:0; opacity:.35; background-image:radial-gradient(circle at 20% 25%,#5f755c 0 1px,transparent 2px),radial-gradient(circle at 70% 60%,#6a7f67 0 1px,transparent 2px); background-size:18px 18px,23px 23px; }
-.track-map__svg { position:absolute; inset:0; width:100%; height:100%; }
-.track-map__mainline,.track-map__oldline { fill:none; stroke:#f4a72c; stroke-width:6; stroke-linecap:round; stroke-dasharray:900; stroke-dashoffset:900; animation:routeDraw 1.5s ease-out forwards; }
-.track-map__oldline { stroke:#c95e46; stroke-width:4; stroke-dasharray:320; animation-delay:.6s; }
-.track-map__stop { fill:#fff; stroke:#c95e46; stroke-width:4; opacity:0; animation:mapStop .35s 1.55s forwards; }
-@keyframes routeDraw { to { stroke-dashoffset:0; } }
-@keyframes mapStop { to { opacity:1; } }
-.track-map__label { position:absolute; padding:3px 6px; background:rgba(255,255,255,.86); font-size:.66rem; }
-.track-map__label--start { right:24px; top:54px; }.track-map__label--four { left:56px; top:140px; }
 .track-data-table { width:100%; border-collapse:collapse; font-size:.74rem; margin-bottom:24px; }
 .track-data-table th,.track-data-table td { padding:9px; border:1px solid #e4e7e8; text-align:left; }.track-data-table th { width:18%; background:#f7f8f8; color:#788086; }
 .track-article h2,.track-info-side h2 { font-size:.9rem; margin:22px 0 9px; }
@@ -169,7 +159,7 @@ body[data-site="village"] { background:#f1efe7; }
 .village-masthead__weather { display:grid; justify-items:end; gap:3px; }.village-masthead__weather strong { color:#4d6455; }.village-masthead__weather span { color:#8b8f8a; font-size:.7rem; }
 .village-nav--portal { height:39px; padding:0 max(12px,calc((100vw - 1040px)/2)); display:flex; gap:0; background:#3f694e; color:#fff; overflow-x:auto; white-space:nowrap; }
 .village-nav--portal a,.village-nav--portal span { min-width:110px; display:grid; place-items:center; padding:0 14px; color:inherit; text-decoration:none; font-size:.8rem; border-right:1px solid rgba(255,255,255,.14); }
-.village-nav--portal .is-active { background:#315841; }.village-nav--portal .is-disabled { opacity:.62; cursor:default; }
+.village-nav--portal .is-active { background:#315841; }
 .village-portal { width:min(calc(100% - 24px),1040px); margin:0 auto 50px; background:#fff; border-left:1px solid #dedbd0; border-right:1px solid #dedbd0; }
 .village-portal-banner { position:relative; height:240px; overflow:hidden; }.photo--portal-banner { width:100%; height:100%; border:0!important; padding:0; }.photo--portal-banner img { width:100%; height:240px; object-fit:cover; }.photo--portal-banner .photo__caption{display:none!important;}
 .village-portal-banner__text { position:absolute; left:34px; bottom:26px; padding:10px 15px; background:rgba(255,255,255,.86); border-left:5px solid #3f694e; display:grid; gap:2px; }.village-portal-banner__text strong { font-family:"STKaiti","KaiTi",serif; font-size:1.45rem; color:#244b37; }.village-portal-banner__text span { color:#727972; font-size:.7rem; }
@@ -244,7 +234,7 @@ body[data-site="village"] .restaurant-site { background:#eee7d5; }
 }
 @media (max-width: 640px){
   .messenger-app,.contact-shell{border:0}.chat-topbar{min-height:62px;padding:7px 10px}.chat-list{padding:14px 10px 22px}.msg-row--other{padding-right:8%}.msg-row--me{padding-left:8%}.msg-bubble{max-width:82%}.chat-image-wrap{max-width:72%}
-  .trail-header__inner{width:calc(100% - 18px);gap:12px}.trail-search{display:none}.trail-nav{gap:12px;margin-left:auto}.trail-nav span:nth-child(n+3){display:none}.trail-profile-grid{width:100%;margin:0;display:block}.trail-profile-side{border-width:0 0 1px;padding:18px}.trail-stream{border-width:0}.track-layout{width:100%;margin:0;gap:0}.track-article,.track-info-side{border-width:0 0 1px;padding:16px}.track-map{height:250px}.draft-page--platform{width:100%;margin:0;border:0;padding:20px 16px}
+  .trail-header__inner{width:calc(100% - 18px);gap:12px}.trail-search{display:none}.trail-nav{gap:12px;margin-left:auto}.trail-nav span:nth-child(n+3){display:none}.trail-profile-grid{width:100%;margin:0;display:block}.trail-profile-side{border-width:0 0 1px;padding:18px}.trail-stream{border-width:0}.track-layout{width:100%;margin:0;gap:0}.track-article,.track-info-side{border-width:0 0 1px;padding:16px}.draft-page--platform{width:100%;margin:0;border:0;padding:20px 16px}
   .village-datebar{padding:0 10px}.village-datebar span:nth-child(2),.village-datebar span:nth-child(3){display:none}.village-masthead{width:calc(100% - 20px);min-height:68px}.village-brand strong{font-size:1.65rem}.village-masthead__weather{display:none}.village-nav--portal{padding:0}.village-nav--portal a,.village-nav--portal span{min-width:88px;font-size:.72rem}.village-portal{width:100%;border:0;margin:0}.village-portal-banner{height:180px}.photo--portal-banner img{height:180px}.village-portal-banner__text{left:16px;bottom:16px}.portal-welcome{grid-template-columns:1fr;padding:16px;gap:6px}.village-portal-columns{padding:18px 14px}.portal-route__body{grid-template-columns:120px 1fr}.photo--portal-route img{width:120px;height:90px}.portal-news-row{grid-template-columns:78px 1fr auto}.portal-links,.village-footer{padding-left:14px;padding-right:14px}.route-guide--portal{width:100%;margin:0;border:0;padding:16px}.route-article-head h1{font-size:1.5rem}.route-fact-table th,.route-fact-table td,.route-level-table th,.route-level-table td{padding:7px;font-size:.68rem}
   .restaurant-strip{padding-left:8px}.restaurant-header__inner{width:calc(100% - 16px);min-height:64px}.restaurant-brand strong{font-size:1.55rem}.restaurant-contact{display:none}.restaurant-nav{padding:0}.restaurant-nav a,.restaurant-nav span{min-width:82px}.restaurant-page{width:100%;margin:0;border:0}.restaurant-photo-strip{grid-template-columns:1fr}.photo--restaurant-hero img{height:220px}.restaurant-photo-strip__copy{padding:16px}.restaurant-content{padding:18px 14px}.restaurant-aside{grid-template-columns:1fr;padding:16px}.restaurant-menu-table{font-size:.67rem}.restaurant-menu-table th,.restaurant-menu-table td{padding:6px 5px}
   .public-service-header__top{width:calc(100% - 18px);min-height:66px}.public-service-brand strong{font-size:1.12rem}.public-service-tel{display:none}.public-service-nav{padding:0}.public-service-nav a,.public-service-nav span{min-width:96px}.public-service-page{width:100%;margin:0;border:0}.service-article-head,.public-service-article{padding:16px}.service-article-head h1{font-size:1.25rem}.public-service-table th{width:92px}.service-info-side{padding:16px}
@@ -255,10 +245,7 @@ body[data-site="village"] .restaurant-site { background:#eee7d5; }
   .forum-post{grid-template-columns:64px 1fr!important}.forum-post>.forum-avatar{padding-top:14px!important}.forum-post>div{padding:14px 12px!important}
 }
 
-html[data-reduced-motion="true"] .track-map__mainline,
-html[data-reduced-motion="true"] .track-map__oldline,
-html[data-reduced-motion="true"] .track-map__stop,
-html[data-reduced-motion="true"] .sync-pulse::before { animation:none!important; stroke-dashoffset:0!important; opacity:1!important; }
+html[data-reduced-motion="true"] .sync-pulse::before { animation:none!important; opacity:1!important; }
 
 .device-notification{position:fixed;right:18px;bottom:18px;z-index:80;width:min(340px,calc(100% - 36px));display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid rgba(0,0,0,.12);background:rgba(248,249,250,.96);box-shadow:0 8px 28px rgba(0,0,0,.18);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;text-align:left;opacity:0;transform:translateY(10px);animation:deviceNotifyIn .35s 1.2s ease forwards}.device-notification__avatar{width:42px;height:42px;border-radius:9px;object-fit:cover}.device-notification__copy{display:grid;gap:1px}.device-notification__copy span{color:#7e858a;font-size:.62rem}.device-notification__copy strong{font-size:.84rem}.device-notification__copy p{margin:1px 0 0;color:#5f666b;font-size:.72rem}.device-notification time{align-self:start;color:#9aa0a5;font-size:.6rem}@keyframes deviceNotifyIn{to{opacity:1;transform:translateY(0)}}
 .ending-person-link{display:flex!important;align-items:center!important;gap:10px!important}
@@ -267,3 +254,97 @@ html[data-reduced-motion="true"] .device-notification{animation:none!important;o
 .toast-region{right:14px!important;bottom:14px!important;width:min(320px,calc(100vw - 28px))!important}.toast{background:rgba(248,249,250,.97)!important;color:#31363a!important;border:1px solid rgba(0,0,0,.12)!important;border-radius:8px!important;padding:10px 12px!important;box-shadow:0 8px 26px rgba(0,0,0,.16)!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif!important;font-size:.76rem!important}
 .restaurant-nav-button{min-width:92px;padding:0 12px;border:0;border-right:1px solid #d6c4a6;background:transparent;color:inherit;font-size:.7rem;cursor:pointer}
 @media(max-width:640px){.restaurant-nav-button{min-width:82px}}
+
+
+/* ===== 2026-09-08 FINAL SOURCE-SEPARATION PASS =====
+   No shared parchment palette. Public links remain visibly clickable. */
+body[data-site="village"]{background:#dfe6d8}
+.village-site,.village-portal-site{background:#edf2e8!important;color:#222!important;font-family:Arial,"Microsoft YaHei",sans-serif!important}
+.village-header--portal{background:#fff!important;border-bottom:0!important}
+.village-datebar{background:#315f35!important;color:#fff!important;border:0!important;font-size:11px!important}
+.village-masthead{background:#fff!important;border-bottom:1px solid #aab5a1!important}
+.village-brand strong{font-family:"KaiTi","STKaiti",serif!important;color:#24532a!important}
+.village-nav--portal{background:#557448!important;border-top:1px solid #355638!important;border-bottom:2px solid #2f4a31!important}
+.village-nav--portal a{color:#fff!important;border-right:1px solid rgba(255,255,255,.25)!important;text-decoration:none!important}
+.village-nav--portal a:hover,.village-nav--portal .is-active{background:#355b38!important}
+.village-portal{background:#fff!important;border:1px solid #bac2b4!important;box-shadow:none!important}
+.village-portal-banner{border-bottom:1px solid #b9c2b4!important}
+.village-portal-banner__text{background:rgba(35,67,37,.78)!important;border:0!important;color:#fff!important}
+.portal-news h2,.portal-route h2,.portal-box h2{background:#e5eee0!important;color:#234a2a!important;border-left:4px solid #4f754b!important;padding:5px 7px!important;font-family:"Microsoft YaHei",sans-serif!important}
+.portal-news-row{border-bottom:1px dotted #aeb7aa!important}
+.portal-news-row a,.portal-side a,.portal-route a{color:#154f9b!important;text-decoration:underline!important}
+.portal-box{background:#fff!important;border:0!important;border-top:1px solid #aeb7aa!important;padding:8px 0!important}
+.portal-new{background:#fff200!important;color:#d50000!important;border:1px solid #777!important;font:700 10px Arial!important;padding:0 3px!important}
+body[data-site="county"]{background:#ececec!important}
+body[data-site="forum"]{background:#dfe4e7!important}
+body[data-site="memorial"]{background:#edf1ef!important}
+body[data-site="mountain-archive"]{background:#e3e8e4!important}
+body[data-site="field-ledger"]{background:#2e3031!important}
+body[data-site="archive"]{background:#cbd9bd!important}
+.restaurant-site{background:#f5f5ed!important;color:#222!important;font-family:Arial,"SimSun",sans-serif!important}
+.restaurant-header{background:#8d1f16!important;color:#fff!important;border:0!important}
+.restaurant-brand strong,.restaurant-brand span{color:#fff!important}
+.restaurant-nav{background:#f5dc9d!important;border-top:1px solid #a87b37!important;border-bottom:1px solid #a87b37!important}
+.restaurant-nav a,.restaurant-nav span{color:#7a1510!important;text-decoration:underline!important}
+.restaurant-page{background:#fff!important;border:1px solid #b7a77d!important;box-shadow:none!important}
+.restaurant-photo-strip{border-bottom:3px double #a8261c!important}
+.restaurant-photo-strip__copy{background:#fff6dc!important}
+.restaurant-photo-strip__copy h1{color:#9c1f14!important;font-family:"SimSun",serif!important}
+.restaurant-menu-table{border-collapse:collapse!important}
+.restaurant-menu-table th,.restaurant-menu-table td{border:1px solid #9c8f72!important;background:#fff!important}
+.restaurant-paper-note{background:#fffad1!important;border:2px solid #c13722!important;box-shadow:none!important;transform:rotate(-.25deg)}
+.restaurant-comment{border-bottom:1px dotted #aaa!important}
+.restaurant-comment blockquote{background:#f7f2e6!important;border-left:3px solid #a8261c!important}
+.public-service-site{background:#edf3f5!important;font-family:Arial,"Microsoft YaHei",sans-serif!important}
+.public-service-header{background:#176b83!important;color:#fff!important}
+.public-service-page{background:#fff!important;border:1px solid #aebdc2!important;box-shadow:none!important}
+.public-service-nav{background:#e7f0f2!important;border-bottom:1px solid #a9bec4!important}
+.public-service-nav a,.public-service-nav span{color:#075b83!important;text-decoration:underline!important}
+.public-service-table{border-collapse:collapse!important}
+.public-service-table th,.public-service-table td{border:1px solid #b8c6ca!important}
+.service-slogan{background:#e7f5f7!important;border:1px dashed #468797!important;box-shadow:none!important}
+.county-archive-search{display:grid;gap:7px;margin-top:10px;padding-top:10px;border-top:1px dotted #bbb}
+.county-archive-search label{font-weight:700;font-size:12px;color:#345f78}
+.county-archive-search>p{margin:0!important;font-size:11px!important}
+.county-archive-search__row{display:grid;grid-template-columns:1fr auto;gap:4px}
+.county-archive-search input{min-width:0;height:30px;border:1px solid #aeb6bb;border-radius:0;padding:4px 6px;background:#fff;font:12px Arial,"Microsoft YaHei",sans-serif}
+.county-archive-search button{height:30px;padding:0 9px;border:1px solid #476f86;background:#e7eff3;color:#174f72;cursor:pointer;font:12px Arial,"Microsoft YaHei",sans-serif}
+.county-archive-results{font-size:11px;line-height:1.55}
+.county-archive-results a{color:#075fa8;text-decoration:underline}
+.mountain-file-list{margin:8px 0;border:1px solid #b8c0ba;background:#fff;font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+.mountain-file-list span{display:block;padding:4px 7px;border-bottom:1px dotted #ccd2ce;color:#555}
+.mountain-file-list span:last-child{border-bottom:0}
+.mountain-folder-link{display:block;width:100%;padding:6px 7px;border:0;border-top:1px solid #91a297;background:#edf3ef;color:#0a5a96;text-align:left;text-decoration:underline;cursor:pointer;font:12px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace}
+.mountain-folder-note{display:block;padding:5px 7px;color:#878d89;font-size:10px}
+.archive-site a{color:#0000cc!important;text-decoration:underline!important}
+.archive-tabs span{font-family:"SimSun",serif!important}
+.archive-old-utility{font-family:Arial,"SimSun",serif!important}
+@media(max-width:720px){.village-datebar span:nth-child(2),.village-datebar span:nth-child(3){display:none}.village-nav--portal{overflow-x:auto;white-space:nowrap}.village-nav--portal a{flex:0 0 auto;padding:9px 12px!important}.restaurant-paper-note{transform:none}.county-archive-search__row{grid-template-columns:1fr 58px}}
+
+.notice-history-links{margin:22px 0;padding:10px 0;border-top:1px solid #d7dcde;border-bottom:1px solid #d7dcde;display:grid;gap:6px;font:12px/1.6 Arial,"Microsoft YaHei",sans-serif}.notice-history-links strong{color:#555}.notice-history-links a{color:#075fa8;text-decoration:underline}.notice-history-links span{color:#888}.track-comment-entry{display:flex;gap:12px;align-items:center;margin-top:18px;padding-top:10px;border-top:1px solid #e0e4e6;font-size:12px}.track-comment-entry a{color:#176b58;text-decoration:underline}.track-comment-entry span{color:#8a9195}.forum-side-note a{display:block;margin-top:7px;color:#075fa8!important;text-decoration:underline!important}
+
+/* ===== persistent 路迹 draft sync notice ===== */
+.trail-draft-notice{position:fixed;right:18px;bottom:18px;z-index:79;width:min(360px,calc(100vw - 36px));display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;background:#f7f8f8;border:1px solid #aeb5b7;border-left:4px solid #2f705d;box-shadow:0 7px 22px rgba(0,0,0,.16);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;color:#202527}
+.trail-draft-notice__open{display:grid;gap:2px;min-width:0;padding:10px 12px;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.trail-draft-notice__app{font-size:.64rem;color:#657176;letter-spacing:.02em}
+.trail-draft-notice__open strong{font-size:.86rem;font-weight:650}
+.trail-draft-notice__open small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.7rem;color:#737c80}
+.trail-draft-notice__open:hover strong,.trail-draft-notice__open:focus-visible strong{text-decoration:underline;text-underline-offset:2px}
+.trail-draft-notice__dismiss{align-self:stretch;padding:0 12px;border:0;border-left:1px solid #d7dcde;background:#eef1f1;color:#596267;font-size:.7rem;cursor:pointer}
+.trail-draft-notice__dismiss:hover,.trail-draft-notice__dismiss:focus-visible{background:#e4e9e8;color:#24332e}
+@media(max-width:640px){.trail-draft-notice{right:10px;bottom:10px;width:calc(100vw - 20px)}.trail-draft-notice__open{padding:9px 10px}.trail-draft-notice__dismiss{padding:0 10px}}
+
+/* Documentary route record: avoids a drawn route that could be mistaken for navigable guidance. */
+.track-record-figure{margin:18px 0 22px;border-top:1px solid #d9dddf;border-bottom:1px solid #d9dddf;padding:18px 0}
+.photo--track-record{width:100%;border:0;background:#e0e4e5;position:relative}
+.photo--track-record img{width:100%;max-height:340px;object-fit:cover;filter:saturate(.82) contrast(.98)}
+.photo--track-record .photo__caption{position:absolute;left:12px;bottom:10px;padding:3px 6px;background:rgba(20,25,27,.68);color:#fff;font-size:.68rem}
+.track-record-note{margin:10px 0 4px!important;color:#7d858a!important;font-size:.75rem!important;line-height:1.7!important}
+.track-record-points{list-style:none;margin:10px 0 0;padding:0;border-top:1px solid #e3e6e7}
+.track-record-points li{display:grid;grid-template-columns:58px minmax(0,1fr);gap:14px;padding:10px 2px;border-bottom:1px solid #e3e6e7}
+.track-record-points time{color:#8b9398;font:11px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+.track-record-points div{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.track-record-points strong{font-size:.84rem}
+.track-record-points span{color:#8c9499;font-size:.7rem;text-align:right}
+.trail-place-link{font-size:.78rem;font-weight:700;color:#176b58;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:600px){.track-record-points li{grid-template-columns:58px minmax(0,1fr);gap:10px}.track-record-points div{display:grid;gap:2px}.track-record-points span{text-align:left}.photo--track-record img{max-height:230px}}

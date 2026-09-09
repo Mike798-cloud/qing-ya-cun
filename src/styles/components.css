@@ -12,15 +12,6 @@
 .icon-button:active { transform: translateY(1px); }
 .icon-button svg { width: 20px; height: 20px; stroke-width: 1.8; }
 
-.card {
-  background: rgba(255,254,249,.78);
-  border: 1px solid rgba(99,92,78,.20);
-  border-radius: var(--radius-md);
-  box-shadow: 0 1px 0 rgba(255,255,255,.6) inset;
-}
-.card--soft { background: rgba(239,235,226,.76); box-shadow: none; }
-.card__body { padding: clamp(16px, 2.8vw, 26px); }
-
 .notice {
   border-left: 3px solid var(--forest);
   background: rgba(63,74,55,.065);

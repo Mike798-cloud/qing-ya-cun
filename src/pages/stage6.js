@@ -120,12 +120,6 @@ export function renderAjiComment({ store, audio }) {
   page.append(thread, side);
   main.append(page);
 
-  if (!store.getState().flags.stage6MessageReady) {
-    store.dispatch({ type: 'SET_FLAG', key: 'stage6MessageReady', value: true });
-    audio?.play?.('message');
-    toast('周航发来新消息');
-  }
-
   return main;
 }
 

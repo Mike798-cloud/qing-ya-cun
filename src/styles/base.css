@@ -1,63 +1,38 @@
 :root {
-  --paper: #f2efe7;
-  --paper-2: #e9e4d8;
-  --ink: #20211d;
-  --ink-soft: #5a5b53;
-  --line: #c7c1b3;
-  --line-strong: #8e8a80;
-  --forest: #3f4a37;
-  --forest-deep: #2f3929;
-  --clay: #7a5948;
-  --danger: #7b332d;
-  --focus: #235f8b;
-  --white: #fffef9;
-  --shadow: 0 12px 30px rgba(34, 31, 25, 0.10);
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --ink: #202124;
+  --ink-soft: #62666a;
+  --line: #c8cdd1;
+  --focus: #175da8;
+  --paper: #ffffff;
+  --forest: #3f5a4b;
+  --forest-deep: #2d4337;
+  --clay: #8b5e49;
+  --danger: #9a332f;
+  --radius-lg: 10px;
+  --shadow: 0 12px 36px rgba(24,31,27,.16);
   --content: 1160px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
-  font-family: "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+  font-family: Arial, "Microsoft YaHei", sans-serif;
   color: var(--ink);
-  background: var(--paper);
+  background: #fff;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
 * { box-sizing: border-box; }
-html { min-height: 100%; background: var(--paper); }
-body {
-  min-height: 100vh;
-  margin: 0;
-  background:
-    radial-gradient(circle at 15% 15%, rgba(255,255,255,.58), transparent 28%),
-    radial-gradient(circle at 85% 20%, rgba(95,90,72,.05), transparent 30%),
-    linear-gradient(180deg, #f5f2eb 0%, var(--paper) 36%, #ebe6db 100%);
-  color: var(--ink);
-}
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: .17;
-  z-index: 9999;
-  background-image:
-    repeating-linear-gradient(0deg, rgba(55,47,35,.035) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(90deg, rgba(55,47,35,.018) 0 1px, transparent 1px 7px);
-  mix-blend-mode: multiply;
-}
+html { min-height:100%; background:#fff; }
+body { min-height:100vh; margin:0; background:#fff; color:var(--ink); }
+body::before { display:none; }
 
 button, input, textarea, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; }
 img { max-width: 100%; display: block; }
 button { color: inherit; }
-::selection { background: rgba(63,74,55,.22); }
+::selection { background:#cfe4ff; }
 
 :focus-visible {
   outline: 3px solid color-mix(in srgb, var(--focus) 75%, white);

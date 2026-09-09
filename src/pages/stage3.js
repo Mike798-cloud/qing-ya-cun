@@ -1,6 +1,5 @@
 import { el, toast } from '../core/ui.js';
 import { openLightbox } from '../core/lightbox.js';
-import { openModal } from '../core/modal.js';
 
 const IMG = {
   north: './assets/photos/north-slope-local.jpg',
@@ -76,42 +75,36 @@ function oldComment(name, date, text) {
   ]);
 }
 
-function openCacheGate({ passwords, router }) {
-  const form = el('form', { class: 'password-form archive-password' });
+function archiveSearch({ store, router }) {
+  const form = el('form', { class: 'county-archive-search', role: 'search' });
   form.append(
-    el('p', { text: '这是事故后下线页面留下的镜像索引。归档程序沿用了旧安全告示的英文短码。' }),
-    el('p', { class: 'password-clue', text: '归档备注：现在的北坡安全公告“旧版告示”一行仍保留英文标题。检索词录入时不用空格。' }),
+    el('label', { for: 'archive-query', text: '历史页面检索' }),
+    el('p', { text: '可按旧页面标题、编号或安全告示短码查询。' }),
   );
-  const field = el('div', { class: 'field' });
-  const label = el('label', { for: 'cache-password', text: '旧页访问码' });
-  const input = el('input', {
-    id: 'cache-password', class: 'input', autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false',
-    placeholder: '输入旧版英文短码',
-  });
-  const error = el('p', { class: 'form-error', role: 'status' });
-  field.append(label, input, error);
-  const submit = el('button', { class: 'btn btn--primary', type: 'submit', text: '读取网页快照' });
-  form.append(field, submit);
-
-  let close;
+  const row = el('div', { class: 'county-archive-search__row' });
+  const input = el('input', { id: 'archive-query', type: 'search', autocomplete: 'off', placeholder: '例如：北坡 / QY-NB-2018' });
+  const button = el('button', { type: 'submit', text: '搜索' });
+  row.append(input, button);
+  const result = el('div', { class: 'county-archive-results', 'aria-live': 'polite' });
+  form.append(row, result);
   form.addEventListener('submit', event => {
     event.preventDefault();
-    const result = passwords.verify('noback', input.value);
-    if (!result.ok) {
-      input.setAttribute('aria-invalid', 'true');
-      error.textContent = '访问码不对。旧安全公告里还留着原来的英文标题。';
-      input.select();
-      return;
+    const q = input.value.trim().toUpperCase().replace(/\s+/g, '');
+    result.replaceChildren();
+    if (q.includes('NOBACK') || q.includes('QY-NB-2018') || q.includes('北坡')) {
+      store.dispatch({ type: 'SET_FLAG', key: 'nobackFound', value: true });
+      result.append(
+        el('p', { text: '找到 1 条已下线页面镜像：' }),
+        el('a', { href: '#/cache-2017', text: '2016-06-12　九弯环线 · 北坡快捷返程（网页镜像）' }),
+      );
+    } else {
+      result.append(el('p', { text: '没有找到匹配结果。可尝试旧公告里保留的页面编号或英文短码。' }));
     }
-    close?.();
-    toast('旧网页快照已读取');
-    router.navigate('cache-2017');
   });
-  close = openModal({ title: '2016 旧页面镜像', content: form });
-  setTimeout(() => input.focus(), 0);
+  return form;
 }
 
-export function renderNews2017({ passwords, router }) {
+export function renderNews2017({ store, router }) {
   const main = el('main', { id: 'app-main', class: 'county-site', tabindex: '-1' });
   main.append(renderCountyHeader());
 
@@ -145,9 +138,7 @@ export function renderNews2017({ passwords, router }) {
       el('p', { text: '索引时间显示为 2016 年。原页面已下线，文字快照仍在。' }),
     ]),
   );
-  const cacheButton = el('button', { class: 'btn btn--archive', type: 'button', text: '读取 2016 网页快照' });
-  cacheButton.addEventListener('click', () => openCacheGate({ passwords, router }));
-  side.querySelector('.archive-index').append(cacheButton);
+  side.querySelector('.archive-index').append(archiveSearch({ store, router }));
   side.append(
     el('section', { class: 'county-related' }, [
       el('strong', { text: '当前安全公告' }),
@@ -209,7 +200,8 @@ async function openArchivedPhoto({ interludes, audio }) {
   });
 }
 
-export function renderCache2017({ interludes, audio }) {
+export function renderCache2017({ store, interludes, audio }) {
+  if (!store.getState().flags.nobackFound) store.dispatch({ type: 'SET_FLAG', key: 'nobackFound', value: true });
   const main = el('main', { id: 'app-main', class: 'archive-site', tabindex: '-1' });
   main.append(renderArchiveHeader());
 

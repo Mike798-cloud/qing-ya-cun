@@ -6,6 +6,7 @@ import { createPasswordSystem } from './core/passwords.js';
 import { createAudioManager } from './core/audio.js';
 import { createInterludePlayer } from './core/interlude.js';
 import { openSettings } from './core/settings.js';
+import { isFinalDraftNoticeEligible, shouldAcknowledgeFinalDraftNotice } from './core/notifications.js';
 import { el, icon, toast } from './core/ui.js';
 import { routeDefinitions, passwordDefinitions, stageRules, gates } from './data/content.js';
 import { renderBoot, renderContact, renderProfile, renderPost, renderDraft1, renderQingya, renderJiuwan } from './pages/stage1.js';
@@ -68,21 +69,99 @@ function renderTools() {
   return tools;
 }
 
+function syncStoryEvents() {
+  const state = store.getState();
+  const checks = [
+    [2, 'safety', 'stage2MessageReady', 'stage2'],
+    [4, 'zhou-yougen', 'stage4MessageReady', 'stage4'],
+    [5, 'second-book', 'stage5MessageReady', 'stage5'],
+    [6, 'aji-comment', 'stage6MessageReady', 'stage6'],
+  ];
+  for (const [stage, visitedId, flag, choiceKey] of checks) {
+    const now = store.getState();
+    if (now.stage >= stage && now.visited.includes(visitedId) && !now.flags[flag]) {
+      store.dispatch({ type: 'SET_FLAG', key: flag, value: true });
+      // Legacy/recovered saves may already contain the player's reply but miss
+      // the corresponding ready flag. Backfill the flag silently instead of
+      // replaying several historical "new message" toasts at once.
+      if (!now.choices[choiceKey]) {
+        audio.play?.('message');
+        toast('周航发来新消息');
+      }
+    }
+  }
+}
+
+
+
+function acknowledgeFinalDraftNoticeForPath(path) {
+  const state = store.getState();
+  if (shouldAcknowledgeFinalDraftNotice(path, state)) {
+    store.dispatch({ type: 'SET_FLAG', key: 'finalDraftNoticeAcknowledged', value: true });
+  }
+}
+
+function renderFinalDraftNotice() {
+  const state = store.getState();
+  if (!isFinalDraftNoticeEligible(state)) return null;
+
+  if (!state.flags.finalDraftNoticeAnnounced) {
+    store.dispatch({ type: 'SET_FLAG', key: 'finalDraftNoticeAnnounced', value: true });
+    audio.play?.('message');
+  }
+
+  const notice = el('aside', {
+    class: 'trail-draft-notice',
+    role: 'status',
+    'aria-label': '路迹发现未发送草稿',
+  });
+  const copy = el('button', {
+    class: 'trail-draft-notice__open',
+    type: 'button',
+    'aria-label': '打开路迹主页查看未发送草稿',
+  }, [
+    el('span', { class: 'trail-draft-notice__app', text: '路迹 · 设备同步' }),
+    el('strong', { text: '发现 1 条未发送草稿' }),
+    el('small', { text: '来自周航手机的本地自动保存记录' }),
+  ]);
+  const dismiss = el('button', {
+    class: 'trail-draft-notice__dismiss',
+    type: 'button',
+    text: '忽略',
+    'aria-label': '忽略这条草稿通知',
+  });
+
+  copy.addEventListener('click', () => {
+    store.dispatch({ type: 'SET_FLAG', key: 'finalDraftNoticeAcknowledged', value: true });
+    router.navigate('profile');
+  });
+  dismiss.addEventListener('click', () => {
+    store.dispatch({ type: 'SET_FLAG', key: 'finalDraftNoticeDismissed', value: true });
+    render();
+  });
+  notice.append(copy, dismiss);
+  return notice;
+}
+
 function render() {
   applySettings();
   const { path } = router.resolve();
   flow.visit(path);
+  syncStoryEvents();
+  acknowledgeFinalDraftNoticeForPath(path);
   const def = routeDefinitions.get(path);
   document.body.dataset.site = def?.kind || '';
   document.title = def?.title || '返程线';
   const renderer = pageRenderers.get(path) || renderBoot;
   const shell = el('div', { class: 'immersive-shell' });
   shell.append(renderer({ store, flow, passwords, audio, interludes, router }));
+  const finalDraftNotice = renderFinalDraftNotice();
+  if (finalDraftNotice) shell.append(finalDraftNotice);
   if (path === 'boot') shell.append(renderTools());
   app.replaceChildren(shell);
   requestAnimationFrame(() => document.getElementById('app-main')?.focus({ preventScroll: true }));
 }
 
-const router = createRouter({ routes: routeDefinitions, canAccess: id => flow.isUnlocked(id), fallback: 'boot', onNavigate: render });
+const router = createRouter({ routes: routeDefinitions, canAccess: id => !gates[id] || flow.isUnlocked(id), fallback: 'boot', onNavigate: render });
 router.start();
 window.__RETURN_ROUTE__ = { store, flow, passwords, audio, interludes, router };

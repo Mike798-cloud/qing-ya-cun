@@ -24,23 +24,25 @@ export const routeDefinitions = new Map([
 
 export const passwordDefinitions = {
   noweekend: { answer: 'NOWEEKEND', unlock: ['draft-1'], stage: 1 },
-  noback: { answer: 'NOBACK', unlock: ['cache-2017'], stage: 3 },
-  lookback: { answer: 'LOOKBACK', unlock: ['second-book'], stage: 5 },
   noreturn: { answer: 'NORETURN', unlock: ['final-draft'], stage: 6 },
 };
 
+// Public internet pages are never stage-locked. Stage rules only advance story time/events.
 export const stageRules = [
-  { stage: 1, when: state => state.visited.includes('boot'), unlock: ['contact','profile', 'qingya', 'jiuwan', 'post'] },
-  { stage: 2, when: state => Boolean(state.passwords.noweekend) && state.visited.includes('draft-1') && ['post','qingya','jiuwan'].every(id=>state.visited.includes(id)), unlock: ['service','food','watchmen','safety'] },
-  { stage: 3, when: state => state.stage >= 2 && Boolean(state.choices.stage2) && ['watchmen','safety'].every(id => state.visited.includes(id)), unlock: ['news-2017'] },
-  { stage: 4, when: state => state.stage >= 3 && Boolean(state.passwords.noback) && ['news-2017','cache-2017'].every(id => state.visited.includes(id)), unlock: ['zhou-cheng'] },
-  { stage: 5, when: state => state.stage >= 4 && Boolean(state.choices.stage4) && ['zhou-cheng','zhou-yougen'].every(id => state.visited.includes(id)), unlock: ['watchman-04-detail'] },
-  { stage: 6, when: state => state.stage >= 5 && Boolean(state.choices.stage5) && state.visited.includes('second-book'), unlock: ['aji-comment'] },
-  { stage: 7, when: state => state.stage >= 6 && Boolean(state.choices.stage6) && Boolean(state.passwords.noreturn) && state.visited.includes('final-draft'), unlock: ['rescue-result'] },
+  { stage: 1, when: state => state.visited.includes('boot') },
+  { stage: 2, when: state => Boolean(state.passwords.noweekend) && state.visited.includes('draft-1') && ['post','qingya','jiuwan'].every(id=>state.visited.includes(id)) },
+  { stage: 3, when: state => state.stage >= 2 && Boolean(state.choices.stage2) && ['watchmen','safety'].every(id => state.visited.includes(id)) },
+  { stage: 4, when: state => state.stage >= 3 && state.visited.includes('news-2017') && state.visited.includes('cache-2017') },
+  { stage: 5, when: state => state.stage >= 4 && Boolean(state.choices.stage4) && ['zhou-cheng','zhou-yougen'].every(id => state.visited.includes(id)) },
+  { stage: 6, when: state => state.stage >= 5 && Boolean(state.choices.stage5) && state.visited.includes('second-book') },
+  { stage: 7, when: state => state.stage >= 6 && Boolean(state.choices.stage6) && Boolean(state.passwords.noreturn) && state.visited.includes('final-draft') },
 ];
 
+// Only truly private/time-based destinations are gated. Everything public stays reachable.
 export const gates = {
-  'zhou-yougen': state => state.stage >= 4 && state.visited.includes('zhou-cheng'),
+  'draft-1': state => Boolean(state.passwords.noweekend),
+  'final-draft': state => Boolean(state.passwords.noreturn),
+  'rescue-result': state => state.stage >= 7,
   'ending': state => state.stage >= 7 && state.visited.includes('rescue-result') && state.interludesSeen.includes('interlude-3-ending'),
 };
 

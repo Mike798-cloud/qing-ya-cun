@@ -1,57 +1,94 @@
 {
-  "generatedAt": "2026-09-08T07:24:35.069964Z",
+  "artifact": "返程线-图二checkpoint最终收尾补丁-v2",
+  "generated_at": "2026-09-09T13:20:00+08:00",
+  "mode": "BAT-equivalent production patch; all files changed after the four packaged checkpoints only",
+  "baseline_chain": [
+    "返程线-最终版-BAT处理后.zip",
+    "返程线-去卡片化沉浸重构-修改文件-BAT处理后.zip",
+    "返程线-伪互联网与聊天重构-修改文件-BAT处理后.zip",
+    "返程线-信息发现与古早伪网站重构-修改文件-BAT处理后.zip"
+  ],
+  "critical_correction": "v1 checkpoint zip is invalid and must not be used: it omitted src/core/notifications.js, src/styles/components.css, assets/photos/qingya-bus-stop.jpg and assets/photos/second-book.jpg. v2 includes every post-checkpoint delta and was verified by byte-for-byte overlay reconstruction.",
+  "changes": [
+    "保留 stage2.js 文件截断修复，补齐 renderSafety 结尾，消除 Unexpected end of input",
+    "彻底移除运行 CSS 中残留 .card / .card--soft / .card__body 选择器，避免旧卡片视觉规则在覆盖部署后回流",
+    "路迹页移除简笔 SVG 路线图，改为实景离线记录 + 时间点，避免把北坡画成可照走路线",
+    "裁切公交站素材中的伪造牌面文字区域；裁切第二本册子素材中的山峰简笔线稿与伪文案区域",
+    "新增“路迹·未发送草稿”持久通知模块：刷新保留，忽略后持久消失，手动进入主页后消费，NORETURN 后自动清除",
+    "修复旧/恢复存档缺少消息 ready flag 时堆叠历史“周航发来新消息”的问题；历史 flag 静默补齐，仅真正尚未回复的当前消息提醒",
+    "保持公共网页直接可访问、私人草稿/时间事件才门控；保持各网站来源独立视觉而非统一米黄模板"
+  ],
+  "verification": {
+    "overlay_completeness": "PASS: v2 overlay on exact four-zip baseline must be byte-identical to tested qingya_work tree",
+    "state_regression": "PASS: Stage 0→7 mixed-order flow; early public browse reuse; NOWEEKEND/NORETURN; final-draft notice 4-state matrix",
+    "core_regression": "PASS: damaged storage recovery; duplicate state sanitation; password normalization/repeat solve",
+    "public_private_gate_matrix": "PASS: 17 public routes direct via router; 4 private/time routes gated",
+    "route_dom_matrix": "PASS from regenerated 42-view report: 21 routes × desktop/mobile; duplicate IDs 0; unnamed buttons 0; broken images 0; nested interactive 0",
+    "responsive_overflow": "PASS from regenerated report: desktop 1440 and mobile 390; horizontal overflow 0",
+    "javascript_syntax": "PASS: all src JS via node --check",
+    "module_import_graph": "PASS: 44 relative ES-module imports; 0 missing",
+    "css_parse": "PASS: 4 stylesheets; 0 PostCSS parser errors",
+    "asset_references": "PASS: 39 local refs; 0 missing",
+    "internal_hash_links": "PASS: 48 static #/ links; 0 invalid route targets",
+    "inline_drawn_route": "PASS: 0 inline <svg> in page renderers",
+    "card_selector_runtime": "PASS: 0 .card / card__ / card-- selectors or classes in runtime source",
+    "browser_environment_note": "Direct Chromium navigation to local 127.0.0.1/file:// is blocked by ERR_BLOCKED_BY_ADMINISTRATOR in this environment; DOM/state rendering was verified with injected modules and static resource/import existence separately.",
+    "known_reproducible_bugs": 0
+  },
   "files": [
-    "assets/audio/interlude-1.wav",
-    "assets/audio/interlude-2.wav",
-    "assets/audio/interlude-3.wav",
-    "assets/audio/message.wav",
-    "assets/credits/AUDIO.md",
-    "assets/credits/PHOTOS.md",
-    "assets/photos/jiuwan-ridge.jpg",
-    "assets/photos/jiuwan-trail.jpg",
-    "assets/photos/north-slope-local.jpg",
-    "assets/photos/north-slope-track.jpg",
-    "assets/photos/qingya-bus-stop.jpg",
-    "assets/photos/qingya-food-clean.jpg",
-    "assets/photos/qingya-food.jpg",
-    "assets/photos/qingya-morning.jpg",
-    "assets/photos/qingya-toilet-clean.jpg",
-    "assets/photos/qingya-village.jpg",
-    "assets/photos/rescue-2017.jpg",
-    "assets/photos/second-book.jpg",
-    "assets/photos/watchman-04-back.jpg",
-    "assets/photos/watchman-04-hd.jpg",
-    "assets/photos/watchman-04-stage2.jpg",
-    "assets/photos/watchman-04.jpg",
-    "assets/photos/zhou-hang-avatar.jpg",
-    "assets/ui/new-2016.gif",
-    "assets/ui/trail-divider-2016.gif",
-    "index.html",
-    "src/core/audio.js",
-    "src/core/flow.js",
-    "src/core/interlude.js",
-    "src/core/lightbox.js",
-    "src/core/modal.js",
-    "src/core/overlay.js",
-    "src/core/passwords.js",
-    "src/core/router.js",
-    "src/core/settings.js",
-    "src/core/state.js",
-    "src/core/storage.js",
-    "src/core/store.js",
-    "src/core/ui.js",
-    "src/data/content.js",
-    "src/main.js",
-    "src/pages/stage1.js",
-    "src/pages/stage2.js",
-    "src/pages/stage3.js",
-    "src/pages/stage4.js",
-    "src/pages/stage5.js",
-    "src/pages/stage6.js",
-    "src/pages/stage7.js",
-    "src/styles/base.css",
-    "src/styles/components.css",
-    "src/styles/immersive-web.css",
-    "src/styles/layout.css"
+    {
+      "path": "assets/photos/qingya-bus-stop.jpg",
+      "bytes": 23424,
+      "sha256": "76e040f16262c3601fd3fa06e08e61aa9c74b33b45cb58243c50875616b39b2b",
+      "status": "modified"
+    },
+    {
+      "path": "assets/photos/second-book.jpg",
+      "bytes": 69597,
+      "sha256": "95d58ad19f5e55307da78ddbde2c6dfc6ce7a323e1d312a602954dd36a772839",
+      "status": "modified"
+    },
+    {
+      "path": "src/core/notifications.js",
+      "bytes": 405,
+      "sha256": "bd960bbf21de19622ad918d2a4ed7e271c7aecd62fe18907cc0ead60cf36f4c1",
+      "status": "added"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 7490,
+      "sha256": "b1febc2c19f16d0ed73230bcc0828d69f9b05744be7dbfa0db846ba8c1d03f17",
+      "status": "modified"
+    },
+    {
+      "path": "src/pages/stage1.js",
+      "bytes": 33429,
+      "sha256": "e487bfaf7afef758c1dca1552409c734106e1ae36074217fcd9a513690a48071",
+      "status": "modified"
+    },
+    {
+      "path": "src/pages/stage2.js",
+      "bytes": 17938,
+      "sha256": "9ac9f7602d2ffc5a7a4a236769411cc3b474220dd7c314acf7fb88e0b3293154",
+      "status": "modified"
+    },
+    {
+      "path": "src/styles/base.css",
+      "bytes": 2343,
+      "sha256": "623b6ef9fe2a5942f52bcfbf17355e82ebd2756a74b91ea5402fda7fd0de935c",
+      "status": "modified"
+    },
+    {
+      "path": "src/styles/components.css",
+      "bytes": 29276,
+      "sha256": "e48ab2b4dd6ffa8b67b73c9eefb1a2baff3f2a1ca1c881088d12d1c19737e8aa",
+      "status": "modified"
+    },
+    {
+      "path": "src/styles/immersive-web.css",
+      "bytes": 61312,
+      "sha256": "bba18f745b190655cf4098d032a06604a7f00281c828958dcf7557dc330d5301",
+      "status": "modified"
+    }
   ]
 }

@@ -181,9 +181,14 @@ export function renderSafety({store,audio}){
     el('p',{text:'四、遇到旧路条、自制箭头等标记，请留在当前开放主线，不要自行验证旧路，也不要重新绑路条或扶正旧箭头。'}),
     photo(IMG.trail,'青垭九弯主线附近的山脊步道','九弯主线与北坡岔口附近','photo--notice-main'),
     el('div',{class:'old-warning-strip'},[el('span',{text:'2018 年旧版安全告示'}),el('strong',{text:'NO BACK · 请勿按旧线返回'}),el('small',{text:'旧版页面编号 QY-NB-2018；现已由本页替代。'})]),
+    el('div',{class:'notice-history-links'},[
+      el('strong',{text:'历年相关信息'}),
+      el('a',{href:'#/news-2017',text:'2017-08-20　北坡户外事故搜救工作结束'}),
+      el('span',{text:'2018-05-11　旧返程线路停止推荐说明（原链接已失效）'})
+    ]),
     el('p',{class:'notice-signature',text:'青垭村游客服务中心\n2026年9月1日'}),
     el('footer',{class:'village-notice-foot'},[el('a',{href:'#/qingya',text:'返回通知列表'}),el('span',{text:'打印本页'}),el('span',{text:'关闭窗口'})])
   );
-  if(!store.getState().flags.stage2MessageReady){ store.dispatch({type:'SET_FLAG',key:'stage2MessageReady',value:true}); audio.play?.('message'); toast('周航发来新消息'); }
-  main.append(wrap); return main;
+  main.append(wrap);
+  return main;
 }

@@ -238,17 +238,12 @@ export function renderZhouYougen({ store, audio }) {
       el('strong', { text: '版主补充' }),
       el('p', { text: '北坡不是当前开放线路。帖子里提到的红布条、自制箭头均不属于村里设置的正式标记。' }),
       el('a', { href: '#/zhou-cheng', text: '相关：周成资料补录' }),
+      el('a', { href: '#/watchman-04-detail', text: '旧设施资料：四号看路人（巡查照片）' }),
     ]),
   );
 
   const layout = el('div', { class: 'forum-layout' }, [thread, side]);
   main.append(layout);
-
-  if (!store.getState().flags.stage4MessageReady) {
-    store.dispatch({ type: 'SET_FLAG', key: 'stage4MessageReady', value: true });
-    audio?.play?.('message');
-    toast('周航发来新消息');
-  }
 
   return main;
 }

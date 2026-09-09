@@ -1,6 +1,5 @@
 import { el, toast } from '../core/ui.js';
 import { openLightbox } from '../core/lightbox.js';
-import { openModal } from '../core/modal.js';
 
 const IMG = {
   watch4: './assets/photos/watchman-04-hd.jpg',
@@ -88,52 +87,13 @@ async function playSecondBookInterlude({ interludes, audio }) {
   });
 }
 
-function openSecondBookGate({ passwords, router, interludes, audio }) {
-  const form = el('form', { class: 'password-form lookback-form' });
-  form.append(
-    el('p', { text: '2025 年整理旧巡查照片时，附件服务器只留下了一个不完整的检索词。它不是后台密码，只是当年的图片命名方式。' }),
-    el('div', { class: 'archive-key-note' }, [
-      el('span', { text: '旧索引前缀' }),
-      el('strong', { text: 'LOOK_' }),
-      el('small', { text: '后半段取照片方位，英文，不加空格。' }),
-    ]),
-    el('p', { class: 'password-clue', text: '四号资料里哪一侧被巡查记录反复提到？周有根的旧留言也提过同一边。' }),
-  );
-  const field = el('div', { class: 'field' });
-  const label = el('label', { for: 'lookback-password', text: '旧照片检索词' });
-  const input = el('input', {
-    id: 'lookback-password',
-    class: 'input',
-    autocomplete: 'off',
-    autocapitalize: 'characters',
-    spellcheck: 'false',
-    placeholder: 'LOOK…',
-  });
-  const error = el('p', { class: 'form-error', role: 'status' });
-  field.append(label, input, error);
-  const submit = el('button', { class: 'btn btn--primary', type: 'submit', text: '读取扫描附件' });
-  form.append(field, submit);
-
-  let close;
-  form.addEventListener('submit', async event => {
-    event.preventDefault();
-    const result = passwords.verify('lookback', input.value);
-    if (!result.ok) {
-      input.setAttribute('aria-invalid', 'true');
-      error.textContent = '检索词不对。旧索引只给了 LOOK；剩下那一半，四号资料反复写的是哪一侧？';
-      input.select();
-      return;
-    }
-    close?.();
-    toast('扫描附件已读取');
-    await playSecondBookInterlude({ interludes, audio });
-    router.navigate('second-book');
-  });
-  close = openModal({ title: '旧巡查照片附件', content: form });
-  setTimeout(() => input.focus(), 0);
+async function openBackFolder({ store, router, interludes, audio }) {
+  store.dispatch({ type: 'SET_FLAG', key: 'lookbackFound', value: true });
+  await playSecondBookInterlude({ interludes, audio });
+  router.navigate('second-book');
 }
 
-export function renderWatchman04Detail({ passwords, router, interludes, audio }) {
+export function renderWatchman04Detail({ store, router, interludes, audio }) {
   const main = el('main', { id: 'app-main', class: 'mountain-archive-site', tabindex: '-1' });
   main.append(mountainHeader());
 
@@ -218,13 +178,18 @@ export function renderWatchman04Detail({ passwords, router, interludes, audio })
       el('a', { href: '#/zhou-yougen', text: '回看原帖' }),
     ]),
     el('section', { class: 'mountain-note mountain-note--key' }, [
-      el('strong', { text: '未公开扫描附件' }),
-      el('p', { text: '2023 年巡查记录对应的一组照片仍在旧附件服务器。索引只剩不完整检索词。' }),
+      el('strong', { text: '旧附件目录' }),
+      el('p', { text: '2025 年整理盘保留了四号巡查照片的原目录。文件按拍摄方位命名。' }),
+      el('div', { class: 'mountain-file-list' }, [
+        el('span', { text: 'front.jpg' }),
+        el('span', { text: 'side.jpg' }),
+        el('span', { text: 'base.jpg' }),
+      ]),
     ]),
   );
-  const gateButton = el('button', { class: 'btn btn--mountain', type: 'button', text: '读取旧扫描附件' });
-  gateButton.addEventListener('click', () => openSecondBookGate({ passwords, router, interludes, audio }));
-  side.querySelector('.mountain-note--key').append(gateButton);
+  const backLink = el('button', { class: 'mountain-folder-link', type: 'button', text: 'look_back/　›' });
+  backLink.addEventListener('click', () => openBackFolder({ store, router, interludes, audio }));
+  side.querySelector('.mountain-note--key').append(backLink, el('small', { class: 'mountain-folder-note', text: '目录最后修改：2025-01-16' }));
 
   page.append(article, side);
   main.append(breadcrumb, page);
@@ -260,7 +225,7 @@ export function renderSecondBook({ store, audio }) {
   const wrap = el('div', { class: 'ledger-page' });
   const intro = el('section', { class: 'ledger-intro' });
   intro.append(
-    el('p', { class: 'ledger-kicker', text: '附件编号 QY-BP-04-LOOKBACK · 共 23 张扫描' }),
+    el('p', { class: 'ledger-kicker', text: '附件目录 /inspection/QY-BP-04/look_back/scan02 · 共 23 张扫描' }),
     el('h1', { text: '第二本册子' }),
     el('p', { text: '北坡巡查的人以前会把当天的简短记录写在小册子里，装进防水袋，放回四号后方石缝。前一本写满后又换过一本，资料整理时大家顺口叫它“第二本”。它不是官方执法记录，也不是谁一个人的日记，大部分内容只是日期、天气和几句处理情况。' }),
     el('p', { text: '2025 年 1 月，防水袋裂开，这本册子进水后才被带回村里扫描。纸上的几种笔迹没有逐一确认身份，能确定的只有：这些记录跨了很多年。' }),
@@ -330,12 +295,6 @@ export function renderSecondBook({ store, audio }) {
 
   wrap.append(intro, cover, scan, conclusion);
   main.append(wrap);
-
-  if (!store.getState().flags.stage5MessageReady) {
-    store.dispatch({ type: 'SET_FLAG', key: 'stage5MessageReady', value: true });
-    audio?.play?.('message');
-    toast('周航发来新消息');
-  }
 
   return main;
 }
