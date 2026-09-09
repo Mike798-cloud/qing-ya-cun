@@ -173,9 +173,8 @@ export function renderWatchman04Detail({ store, router, interludes, audio }) {
       el('p', { text: '不要攀爬，不要搂脖子。四号以后不属于开放徒步范围。' }),
     ]),
     el('section', { class: 'mountain-note' }, [
-      el('strong', { text: '周有根的旧留言' }),
+      el('strong', { text: '村民旧帖摘录 · 2023-09-16' }),
       el('blockquote', { text: '“后边别塞东西。湿了都粘一块，清起来麻烦。”' }),
-      el('a', { href: '#/zhou-yougen', text: '回看原帖' }),
     ]),
     el('section', { class: 'mountain-note mountain-note--key' }, [
       el('strong', { text: '旧附件目录' }),
@@ -280,12 +279,12 @@ export function renderSecondBook({ store, audio }) {
 
   const conclusion = el('aside', { class: 'ledger-conclusion' }, [
     el('section', {}, [
-      el('strong', { text: '资料整理备注' }),
-      el('p', { text: '现存扫描跨 2019–2025 年。红布条、箭头、补水和脚印在不同年份重复出现；记录中多次写明“拆”“清走”或“带回”。' }),
+      el('strong', { text: '扫描范围' }),
+      el('p', { text: '本次公开的是 2019–2025 年间仍可辨认的部分页。若干页因进水粘连没有录入，日期并不连续。' }),
     ]),
     el('section', {}, [
-      el('strong', { text: '书写人与来源' }),
-      el('p', { text: '册子里有几种不同笔迹，整理时没有逐一确认书写者。附件也没有把各年份留下路痕的人归为同一身份。' }),
+      el('strong', { text: '笔迹说明' }),
+      el('p', { text: '现存页能看出几种不同笔迹和墨色。整理时没有逐一确认书写者，也没有能够连续对应到同一个人的署名。' }),
     ]),
     el('section', { class: 'ledger-margin-note' }, [
       el('span', { text: '册子中重复最多的一句' }),

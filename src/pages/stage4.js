@@ -68,10 +68,10 @@ export function renderZhouCheng() {
   const main = el('main', { id: 'app-main', class: 'memorial-site', tabindex: '-1' });
   main.append(memorialHeader());
 
-  const breadcrumb = el('div', { class: 'memorial-breadcrumb' }, [
-    el('a', { href: '#/news-2017', text: '2017 事故旧新闻' }),
+  const breadcrumb = el('div', { class: 'memorial-breadcrumb memorial-breadcrumb--provenance' }, [
+    el('span', { text: '资料来源线：2017 事故旧新闻' }),
     el('span', { text: '›' }),
-    el('span', { text: '周成资料补录' }),
+    el('strong', { text: '2018 周成资料补录' }),
   ]);
 
   const page = el('div', { class: 'memorial-page' });
@@ -94,11 +94,11 @@ export function renderZhouCheng() {
 
   const responsibility = el('section', { class: 'responsibility-note' });
   responsibility.append(
-    el('h2', { text: '材料对照' }),
-    factRow('路线', '北坡在事故前确实被当地旅游经营页面公开写成“快捷返程”，并不是游客凭空发现的一条野线。'),
-    factRow('天气恶化后', '周成提出过原路返回；外地领队仍想走北坡，理由包括天黑、包车等待和行程超时。'),
-    factRow('周成的责任', '他熟悉本地情况，却没有坚持阻止队伍继续走北坡。'),
-    factRow('事故发生后', '他参与带人过石沟，最后一次折返寻找掉队者时死亡。'),
+    el('h2', { text: '公开材料摘录' }),
+    factRow('2016 旅游页存档', '页面标题保留“北坡快捷返程”，并写有旧石料场、二号避险棚等沿途位置。'),
+    factRow('团员口述摘录', '天气转坏后，周成提过原路返回；队伍后来仍继续进入北坡返程。'),
+    factRow('事故补录', '周成没有坚持阻止继续通行。该内容在纪念资料中原样保留。'),
+    factRow('救援记录', '石沟涨水后，他协助队员过沟，随后折返寻找一名掉队者。'),
   );
   article.append(responsibility);
 
@@ -108,12 +108,11 @@ export function renderZhouCheng() {
       el('span', { class: 'memorial-side__label', text: '相关人物' }),
       el('strong', { text: '周有根' }),
       el('p', { text: '周成的父亲。事故后多年在北坡附近拆游客绑的路条和旧标记。' }),
-      el('a', { class: 'memorial-inline-link', href: '#/zhou-yougen', text: '相关：周有根在青垭村民交流板的公开回复 ›' }),
+      el('a', { class: 'memorial-inline-link', href: '#/zhou-yougen', text: '查看：周有根关于北坡路条的公开回复 ›' }),
     ]),
-    el('section', {}, [
-      el('span', { class: 'memorial-side__label', text: '对照材料' }),
-      el('a', { href: '#/cache-2017', text: '2016 北坡快捷返程网页快照' }),
-      el('a', { href: '#/news-2017', text: '2017 事故旧新闻' }),
+    el('section', { class: 'memorial-side__context' }, [
+      el('span', { class: 'memorial-side__label', text: '补录范围' }),
+      el('p', { text: '本页只整理已公开的路线背景、责任记录与救援经过，不对事故之外的传闻作判断。' }),
     ]),
   );
 
@@ -236,11 +235,11 @@ export function renderZhouYougen({ store, audio }) {
       el('p', { text: '青垭村民。周成的父亲。事故后多年在北坡附近拆游客留下的路条、临时箭头和不属于开放线路的标记。' }),
       el('p', { class: 'forum-profile__plain', text: '他不是巡山管理员，也没有后台权限。大部分时候只是自己去拆。' }),
     ]),
-    el('section', { class: 'forum-side-note' }, [
+    el('section', { class: 'forum-side-note forum-side-note--next' }, [
       el('strong', { text: '版主补充' }),
       el('p', { text: '北坡不是当前开放线路。帖子里提到的红布条、自制箭头均不属于村里设置的正式标记。' }),
-      el('a', { href: '#/zhou-cheng', text: '相关：周成资料补录' }),
-      el('a', { href: '#/watchman-04-detail', text: '旧设施资料：四号看路人（巡查照片）' }),
+      el('p', { text: '版务合并：关于“四号后边塞东西”的旧图和巡查记录，已移到村志资料盘 QY-BP-04。' }),
+      el('a', { href: '#/watchman-04-detail', text: 'QY-BP-04：四号附近历年巡查记录 ›' }),
     ]),
   );
 

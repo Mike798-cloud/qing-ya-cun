@@ -27,20 +27,29 @@ export const passwordDefinitions = {
   noreturn: { answer: 'NORETURN', unlock: ['final-draft'], stage: 6 },
 };
 
-// Public internet pages are never stage-locked. Stage rules only advance story time/events.
+/*
+ * Story time advances from contextual discoveries, not from a checklist of every
+ * public page the player happened to open. Public pages remain reachable at any
+ * time; main.js records a discovery flag only when that page answers the question
+ * the player can reasonably be asking at the current story stage.
+ */
 export const stageRules = [
   { stage: 1, when: state => state.visited.includes('boot') },
-  { stage: 2, when: state => Boolean(state.passwords.noweekend) && state.visited.includes('draft-1') && ['post','qingya','jiuwan'].every(id=>state.visited.includes(id)) },
-  { stage: 3, when: state => state.stage >= 2 && Boolean(state.choices.stage2) && ['watchmen','safety'].every(id => state.visited.includes(id)) },
-  { stage: 4, when: state => state.stage >= 3 && state.visited.includes('news-2017') && state.visited.includes('cache-2017') },
-  { stage: 5, when: state => state.stage >= 4 && Boolean(state.choices.stage4) && ['zhou-cheng','zhou-yougen'].every(id => state.visited.includes(id)) },
-  { stage: 6, when: state => state.stage >= 5 && Boolean(state.choices.stage5) && state.visited.includes('second-book') },
-  { stage: 7, when: state => state.stage >= 6 && Boolean(state.choices.stage6) && Boolean(state.passwords.noreturn) && state.visited.includes('final-draft') },
+  { stage: 2, when: state => Boolean(state.choices.stage1) && Boolean(state.passwords.noweekend) && Boolean(state.flags.cogLocationPost) && Boolean(state.flags.cogLocationDraft) },
+  { stage: 3, when: state => state.stage >= 2 && Boolean(state.choices.stage2) && Boolean(state.flags.cogWatchmen) && Boolean(state.flags.cogSafety) },
+  { stage: 4, when: state => state.stage >= 3 && Boolean(state.flags.cogNews2017) && Boolean(state.flags.cogCache2016) },
+  { stage: 5, when: state => state.stage >= 4 && Boolean(state.choices.stage4) && Boolean(state.flags.cogZhouYougen) },
+  { stage: 6, when: state => state.stage >= 5 && Boolean(state.choices.stage5) && Boolean(state.flags.cogSecondBook) },
+  { stage: 7, when: state => state.stage >= 6 && Boolean(state.choices.stage6) && Boolean(state.passwords.noreturn) && Boolean(state.flags.cogFinalDraft) },
 ];
 
 // Only truly private/time-based destinations are gated. Everything public stays reachable.
 export const gates = {
   'draft-1': state => Boolean(state.passwords.noweekend),
+  // This cache is created later by the platform; before that moment the URL has
+  // no readable object behind it. This is a time-based availability rule, not a
+  // chapter lock on an already-public page.
+  'aji-comment': state => state.stage >= 6,
   'final-draft': state => Boolean(state.passwords.noreturn),
   'rescue-result': state => state.stage >= 7,
   'ending': state => state.stage >= 7 && state.visited.includes('rescue-result') && state.interludesSeen.includes('interlude-3-ending'),

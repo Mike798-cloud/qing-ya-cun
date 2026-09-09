@@ -135,16 +135,15 @@ export function renderNews2017({ store, router }) {
   side.append(
     el('section', { class: 'archive-index' }, [
       el('p', { class: 'county-kicker', text: '旧页面索引' }),
-      el('h2', { text: '事故前还有一条旅游线路页' }),
-      el('p', { text: '索引时间显示为 2016 年。原页面已下线，文字快照仍在。' }),
+      el('h2', { text: '2016 年“徒步线路”分类仍有旧索引' }),
+      el('p', { text: '原页面已经下线，索引服务器只保留标题、页面编号和文字快照。' }),
     ]),
   );
   side.querySelector('.archive-index').append(archiveSearch({ store, router }));
   side.append(
-    el('section', { class: 'county-related' }, [
-      el('strong', { text: '当前安全公告' }),
-      el('p', { text: '北坡旧返程目前已明确标注“不开放、不维护”。' }),
-      el('a', { href: '#/safety', text: '回看现在的安全公告' }),
+    el('section', { class: 'county-related county-related--plain' }, [
+      el('strong', { text: '索引备注' }),
+      el('p', { text: '旧索引的抓取时间早于 2017 年事故。页面编号和标题仍可用于上方历史检索。' }),
     ]),
   );
 
@@ -202,7 +201,6 @@ async function openArchivedPhoto({ interludes, audio }) {
 }
 
 export function renderCache2017({ store, interludes, audio }) {
-  if (!store.getState().flags.nobackFound) store.dispatch({ type: 'SET_FLAG', key: 'nobackFound', value: true });
   const main = el('main', { id: 'app-main', class: 'archive-site', tabindex: '-1' });
   main.append(renderArchiveHeader());
 
@@ -252,12 +250,14 @@ export function renderCache2017({ store, interludes, audio }) {
       el('p', { text: '2017 年事故后停止公开访问。' }),
     ]),
     el('section', {}, [
-      el('strong', { text: '与现在页面的差异' }),
-      el('p', { text: '现在的青垭游客页明确写着：北坡旧返程不开放、不维护，也不属于九弯主线。' }),
+      el('strong', { text: '镜像信息' }),
+      el('p', { text: '原页面所属栏目：徒步线路。页面标题与正文按最后一次抓取版本保留。' }),
     ]),
-    el('a', { class: 'text-link', href: '#/zhou-cheng', text: '相关资料：2018 救援纪念补录' }),
-    el('a', { class: 'text-link', href: '#/news-2017', text: '返回 2017 事故旧新闻' }),
-    el('a', { class: 'text-link', href: '#/safety', text: '对照现在的北坡安全公告' }),
+    el('section', { class: 'archive-next-record' }, [
+      el('strong', { text: '事故后续资料' }),
+      el('p', { text: '2018 年公开救援资料中有一条当时带路人周成的补录记录。' }),
+      el('a', { href: '#/zhou-cheng', text: '打开：周成 · 2017 北坡资料补录 ›' }),
+    ]),
   );
 
   body.append(article, side);

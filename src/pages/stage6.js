@@ -62,14 +62,13 @@ export function renderAjiComment({ store, audio }) {
     el('div', { class: 'trail-cache-path', text: '周末别找我 › 青垭九弯 / 北坡旧返程探路 › 评论缓存' }),
     el('header', { class: 'trail-cache-thread__head' }, [
       el('div', {}, [
-        el('p', { class: 'trail-cache-kicker', text: '今天 · 评论已停止更新' }),
-        el('h1', { text: '“有人看了我那条动态，也进北坡了。”' }),
+        el('p', { class: 'trail-cache-kicker', text: '今天 · 只读缓存快照' }),
+        el('h1', { text: '青垭九弯 / 北坡旧返程探路 · 评论' }),
       ]),
-      el('a', { class: 'btn btn--quiet', href: '#/post', text: '回看原动态' }),
     ]),
     el('div', { class: 'trail-cache-original' }, [
-      el('strong', { text: '周末别找我 · 10:09' }),
-      el('p', { text: '到四号了。后面不走了。路完全烂掉。这一段不是推荐路线，也不要拿本条轨迹做导航。' }),
+      el('strong', { text: '周末别找我 · 10:18' }),
+      el('p', { text: '青垭九弯主线正常。北坡老返程我只走到四号，后段路面已经散了，我在这里折返。' }),
     ]),
   );
 
@@ -105,7 +104,7 @@ export function renderAjiComment({ store, audio }) {
     el('section', { class: 'trail-cache-note' }, [
       el('span', { text: '缓存区间' }),
       el('strong', { text: '10:21 → 10:33' }),
-      el('p', { text: '本页仅保留这 12 分钟内的评论正文与回复关系。' }),
+      el('p', { text: '缓存截面生成于 10:21，之后继续补入 10:33 前的回复；10:25 以后主动态的编辑内容不在这个截面里。' }),
     ]),
     el('section', { class: 'trail-cache-note' }, [
       el('span', { text: '附件状态' }),
@@ -185,7 +184,7 @@ export function renderFinalDraft({ store }) {
       draftLine('11:03', '他一直跟我道歉，说看到我到四号就觉得能走。别骂他。换我也可能这么判断。'),
       draftLine('11:09', '四号那边还有一盏头灯。刚才亮了一下。阿纪说他进来的时候没看见别人。'),
       draftLine('11:11', '我再回一次。只到四号。'),
-      draftLine('11:18', '我现在知道周成为什么又回去了。\n你看见有人在路上，就会觉得不能不回去。\n可这条路最坏的地方就是，它会一直让你觉得前面还有人。', true),
+      draftLine('11:18', '我现在大概知道周成为什么又回去了。\n你看见有人还在路上，就没法当没看见。\n这条路最麻烦的不是难走，是你总会觉得前面还有人。', true),
     ]),
   );
 
@@ -205,7 +204,7 @@ export function renderFinalDraft({ store }) {
       el('p', { text: '这一段草稿没有照片、视频或第二个人的身份信息。设备同步队列里也没有对应附件。' }),
     ]),
     recoveryPhoto(),
-    ...(store.getState().stage >= 7 ? [el('a', { class: 'btn btn--rescue-link', href: '#/rescue-result', text: '查看搜救信息' })] : []),
+    ...(store.getState().stage >= 7 ? [el('div', { class: 'recovery-public-record' }, [el('span', { text: '后续公开记录' }), el('a', { href: '#/rescue-result', text: '青垭县应急联络组 · 北坡搜救结束通报（9 月 17 日） ›' })])] : []),
   ]);
 
   page.append(article, side);

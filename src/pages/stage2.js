@@ -59,7 +59,7 @@ function villageNoticeHeader(){
   return el('header',{class:'notice-gov-header'},[
     el('div',{class:'notice-gov-top'},[el('a',{href:'#/qingya',text:'青垭村旅游服务信息网'}),el('span',{text:'通知公告'})]),
     el('div',{class:'notice-gov-brand'},[el('strong',{text:'青垭村游客服务中心'}),el('span',{text:'信息公开 / 徒步安全'})]),
-    el('nav',{class:'notice-gov-nav'},[el('a',{href:'#/qingya',text:'首页'}),el('span',{text:'服务动态'}),el('span',{class:'is-active',text:'安全提醒'}),el('span',{text:'便民电话'})])
+    el('nav',{class:'notice-gov-nav'},[el('span',{text:'首页'}),el('span',{text:'服务动态'}),el('span',{class:'is-active',text:'安全提醒'}),el('span',{text:'便民电话'})])
   ]);
 }
 
@@ -98,7 +98,8 @@ export function renderService(){
   const aside=el('aside',{class:'service-info-side'},[
     el('h2',{text:'游客中心一层'}),el('ul',{},[el('li',{text:'卫生间'}),el('li',{text:'补水'}),el('li',{text:'手机 / 充电宝充电'}),el('li',{text:'公交时刻查询'}),el('li',{text:'失物登记'})]),
     el('h2',{text:'当天提醒'}),el('p',{text:'九弯主线可正常通行。下午山脊风较大。北坡旧返程不开放。'}),
-    el('p',{class:'service-info-small',text:'工作人员不为非开放旧线路提供方向指引。'}), textLink('qingya','返回青垭村旅游服务信息网')
+    el('p',{class:'service-info-small',text:'工作人员不为非开放旧线路提供方向指引。'}),
+    el('div',{class:'service-side-directory'},[el('span',{text:'周边信息'}),el('p',{text:'餐饮与住宿电话请在游客中心前台查询，当天营业情况以店家为准。'})])
   ]);
   body.append(article,aside); wrap.append(title,body,el('footer',{class:'public-service-footer',text:'青垭村游客服务中心　网页维护：值班室　最后更新 2026-08-30'})); main.append(wrap); return main;
 }
@@ -131,7 +132,7 @@ export function renderFood(){
           foodComment('林里有风','2026-08-21','晚上七点半到还有饭吗？','有桌就有。八点以后先打电话。'),
           foodComment('南门小赵','2026-08-29','能不能只点土豆不点锅？','能。你来饭馆又不是考试。'),
           foodComment('青垭回头客','2026-09-03','去年那个酸萝卜还有吗？','今年也有。'),
-          foodComment('路口有人','2026-09-14','今天上午背黑包、拿手机看旧地图那个男生是不是一个人来的？问了北坡吗？','一个人。吃完问了以前北坡从哪边回，问完就走了。没说要走那边。'),
+          foodComment('路口有人','2026-09-14','今天上午一个人来吃小锅，真能吃完吗？看照片感觉比脸盆还大。','能。小锅别看着大，真没你们想的那么夸张。'),
           foodComment('阿海','2026-09-07','小锅能不能打包？','汤别打。山路上漏一包你自己受不了。'),
           foodComment('周末来哪儿','2026-09-08','本地土豆绝了，米饭吃了三碗。','下回来提前说，周末桌少。'),
           foodComment('不想下山','2026-09-09','有没有素菜？','有。青菜、豆腐、土豆都能炒。'),
@@ -143,7 +144,7 @@ export function renderFood(){
       el('aside',{class:'restaurant-aside'},[
         el('h2',{text:'本店信息'}),el('dl',{},[el('dt',{text:'午饭'}),el('dd',{text:'10:30–14:00'}),el('dt',{text:'晚饭'}),el('dd',{text:'16:30–20:00'}),el('dt',{text:'付款'}),el('dd',{text:'现金 / 手机支付'}),el('dt',{text:'停车'}),el('dd',{text:'村口停车场'})]),
         el('h2',{text:'老板说'}),el('p',{text:'赶早爬山可以来装一壶热水。晚上回得太晚就别问还能不能开火，能开也不一定等你。'}),
-        el('h2',{text:'友情链接'}),el('a',{href:'#/qingya',text:'青垭村旅游服务信息网'}),el('span',{text:'青垭公交时刻（村口公告）'}),el('span',{text:'附近民宿电话汇总'})
+        el('h2',{text:'友情链接'}),el('span',{text:'青垭村旅游服务信息网'}),el('span',{text:'青垭公交时刻（村口公告）'}),el('span',{text:'附近民宿电话汇总'})
       ])
     ]),
     el('footer',{class:'restaurant-footer',text:'青垭人家农家乐　网页由侄子帮忙维护　最后改：2026-09-02'})
@@ -170,7 +171,7 @@ export function renderWatchmen(){
     el('h2',{text:'为什么村里单独写一页说明'}),
     el('p',{text:'这几年有人给水泥人放水果、插香、系红布。工作人员清理时经常被问“是不是当地习俗”。不是。请不要自行给旧设施添加宗教含义，也不要把临时布条留在北坡。'}),
     el('p',{class:'heritage-warning-line',text:'可以拍照。不要攀爬。不要搂脖子。水泥的，倒下来比人重。'}),
-    textLink('safety','相关：北坡旧返程线路安全提醒')
+    textLink('safety','安全资料：北坡旧返程线路安全提醒')
   );
   const side=el('aside',{class:'heritage-side-index'},[el('h2',{text:'本页目录'}),el('span',{text:'一至三号'}),el('strong',{text:'四号'}),el('span',{text:'五号和六号'}),el('span',{text:'游客须知'}),el('h2',{text:'其他旧物'}),el('span',{text:'旧石料场铁牌'}),el('span',{text:'村口旧广播喇叭'}),el('span',{text:'九弯老里程碑'})]);
   page.append(article,side); main.append(page,el('footer',{class:'heritage-footer',text:'青垭村志资料　仅作地方旧物记录　如有旧照片可联系游客服务中心'})); return main;
@@ -196,7 +197,7 @@ export function renderSafety({store,audio}){
       el('span',{text:'2018-05-11　旧返程线路停止推荐说明（原链接已失效）'})
     ]),
     el('p',{class:'notice-signature',text:'青垭村游客服务中心\n2026年9月1日'}),
-    el('footer',{class:'village-notice-foot'},[el('a',{href:'#/qingya',text:'返回通知列表'}),el('span',{text:'打印本页'}),el('span',{text:'关闭窗口'})])
+    el('footer',{class:'village-notice-foot'},[el('span',{text:'返回通知列表'}),el('span',{text:'打印本页'}),el('span',{text:'关闭窗口'})])
   );
   main.append(wrap);
   return main;

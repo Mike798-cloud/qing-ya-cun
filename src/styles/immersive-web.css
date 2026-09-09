@@ -447,3 +447,683 @@ body[data-site="archive"]{background:#cbd9bd!important}
   .memorial-side{grid-template-columns:minmax(0,1fr)!important;gap:0!important;min-width:0!important}
   .memorial-side section{padding:14px 0!important}
 }
+
+/* ==========================================================
+   Cognitive-chain + de-card pass
+   Keep each source looking like a website/document, not a stack of UI cards.
+   ========================================================== */
+
+/* 路迹：把三张“白卡”合成一个连续的社区主页。 */
+.trail-profile-grid{
+  gap:0!important;
+  background:#fff!important;
+  border:1px solid #d5dade!important;
+}
+.trail-profile-side,.trail-stream,.trail-profile-right{
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+.trail-profile-side{border-right:1px solid #e0e4e6!important}
+.trail-profile-right{border-left:1px solid #e0e4e6!important}
+.trail-private-tools{background:transparent!important;border-top:1px solid #eceeef!important}
+.trail-place-row:last-child,.trail-muted-row:last-child{border-bottom:0!important}
+
+.track-layout{
+  gap:0!important;
+  background:#fff!important;
+  border:1px solid #d9dde0!important;
+}
+.track-article,.track-info-side{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.track-info-side{border-left:1px solid #e2e6e8!important}
+.track-points a{color:#176047!important;text-decoration:underline!important;text-underline-offset:2px!important;font-weight:650!important}
+.track-points span{color:#7d878c!important;font-size:.7rem!important}
+.track-side-source{margin:18px 0 0!important;padding-top:12px!important;border-top:1px dotted #d9dddf!important;color:#7a8388!important;font-size:.7rem!important;line-height:1.65!important}
+.track-comment-count{color:#7d858a!important}
+
+/* 青垭门户：推荐线路作为正文推荐，不再是一张单独的卡。 */
+.portal-route__body{
+  border:0!important;
+  border-top:1px solid #b9c8b5!important;
+  border-bottom:1px dotted #b9c8b5!important;
+  background:transparent!important;
+  padding:10px 0 12px!important;
+}
+.portal-route__body a{
+  border:0!important;
+  background:transparent!important;
+  padding:0!important;
+  color:#0f55a3!important;
+  text-decoration:underline!important;
+  text-underline-offset:2px!important;
+}
+
+/* 游客服务：三项服务改为同一条目录，不再像三个可点击功能卡。 */
+.service-shortcuts{
+  gap:0!important;
+  padding:0!important;
+  background:#fff!important;
+  border-bottom:1px solid #bfd0dc!important;
+}
+.service-shortcut{
+  min-height:82px!important;
+  grid-template-columns:36px minmax(0,1fr)!important;
+  gap:2px 10px!important;
+  padding:12px 16px!important;
+  border:0!important;
+  border-right:1px solid #d6e1e7!important;
+  background:transparent!important;
+}
+.service-shortcut:last-child{border-right:0!important}
+.service-shortcut__icon{
+  width:auto!important;
+  height:auto!important;
+  background:transparent!important;
+  color:#0a6db8!important;
+  border-radius:0!important;
+  font-size:17px!important;
+  place-items:start!important;
+  padding-top:1px!important;
+}
+.service-shortcut strong{font-size:12px!important;color:#1b5678!important}
+.service-shortcut span{font-size:10px!important;color:#667d8a!important}
+
+/* 单向互证链的“下一份来源”只保留一个入口，使用网页原生文字链接。 */
+.archive-next-record{margin-top:16px!important;padding-top:12px!important;border-top:1px solid #c8c7b8!important}
+.archive-next-record strong{display:block!important;margin-bottom:4px!important;color:#4b573f!important}
+.archive-next-record p{margin:4px 0 8px!important}
+.archive-next-record a{display:inline!important;color:#0645ad!important;text-decoration:underline!important;text-underline-offset:2px!important;font-weight:700!important}
+.county-related--plain a{display:none!important}
+.memorial-side__context{border-top:1px solid #d9dfdc!important}
+.forum-side-note--next a{display:block!important;margin-top:8px!important;color:#144f27!important;font-weight:700!important;text-decoration:underline!important;text-underline-offset:2px!important}
+.mountain-note blockquote{margin-bottom:7px!important}
+
+/* 世界内通知：只在真正出现新信息时显示，不是“下一步”按钮。 */
+.chat-unread-notice,.trail-cache-notice{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:82;
+  width:min(350px,calc(100vw - 36px));
+  background:#f8f9fa;
+  border:1px solid #b8bec2;
+  box-shadow:0 7px 22px rgba(0,0,0,.17);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;
+  color:#202427;
+}
+.chat-unread-notice__open,.trail-cache-notice__open{
+  width:100%;
+  border:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  cursor:pointer;
+  text-align:left;
+}
+.chat-unread-notice__open{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) auto;
+  gap:9px;
+  align-items:center;
+  padding:10px 11px;
+}
+.chat-unread-notice__avatar{
+  width:36px;height:36px;display:grid;place-items:center;
+  background:#dfe5e7;color:#3f555d;font-weight:700;font-size:.86rem;
+}
+.chat-unread-notice__copy{display:grid;gap:2px;min-width:0}
+.chat-unread-notice__copy strong{font-size:.82rem}
+.chat-unread-notice__copy small{font-size:.7rem;color:#69747a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chat-unread-notice__time{font-size:.62rem;color:#9aa1a5;align-self:start;margin-top:3px}
+.trail-cache-notice__open{display:grid;gap:2px;padding:10px 12px}
+.trail-cache-notice__app{font-size:.64rem;color:#647278}
+.trail-cache-notice__open strong{font-size:.84rem}
+.trail-cache-notice__open small{font-size:.7rem;color:#727c81}
+.chat-unread-notice__open:hover strong,.chat-unread-notice__open:focus-visible strong,
+.trail-cache-notice__open:hover strong,.trail-cache-notice__open:focus-visible strong{text-decoration:underline;text-underline-offset:2px}
+
+@media (max-width:640px){
+  .trail-profile-grid{border-left:0!important;border-right:0!important}
+  .trail-profile-side{border-right:0!important;border-bottom:1px solid #e0e4e6!important}
+  .trail-stream{border:0!important}
+  .track-layout{grid-template-columns:minmax(0,1fr)!important;width:100%!important;border-left:0!important;border-right:0!important}
+  .track-info-side{border-left:0!important;border-top:1px solid #e2e6e8!important}
+  .service-shortcuts{grid-template-columns:1fr!important}
+  .service-shortcut{min-height:58px!important;border-right:0!important;border-bottom:1px solid #dbe5ea!important;grid-template-columns:32px minmax(0,1fr)!important;padding:9px 14px!important}
+  .service-shortcut:last-child{border-bottom:0!important}
+  .service-shortcut span{display:block!important}
+  .chat-unread-notice,.trail-cache-notice,.trail-draft-notice{right:10px!important;bottom:10px!important;width:calc(100vw - 20px)!important}
+}
+.village-nav--portal span{
+  min-width:105px!important;
+  display:grid!important;
+  place-items:center!important;
+  padding:0 14px!important;
+  border-right:1px solid rgba(255,255,255,.18)!important;
+  color:#d8e7da!important;
+  font:11px/34px "Microsoft YaHei",Arial,sans-serif!important;
+  cursor:default!important;
+}
+.chat-back--empty{opacity:.25;pointer-events:none}
+
+
+/* ==========================================================
+   Final hierarchy cleanup
+   Outer site/document frames may keep a border; nested information stops
+   becoming a collection of equal-weight bordered cards.
+   ========================================================== */
+.trail-place-link--secondary{
+  color:#707a80!important;
+  font-weight:500!important;
+  text-decoration:none!important;
+  border-bottom:1px dotted #aeb5b9!important;
+}
+.trail-place-link--secondary:hover,.trail-place-link--secondary:focus-visible{color:#315d4d!important;border-bottom-color:#315d4d!important}
+
+.service-side-directory{
+  margin-top:16px!important;
+  padding-top:10px!important;
+  border-top:1px dotted #b8c8cf!important;
+  display:grid!important;
+  gap:5px!important;
+  font-size:11px!important;
+}
+.service-side-directory>span{color:#82939b!important;font-size:10px!important}
+.service-side-directory a{color:#315d70!important;text-decoration:underline!important;text-underline-offset:2px!important}
+
+.memorial-breadcrumb--provenance{color:#7d8781!important}
+.memorial-breadcrumb--provenance strong{color:#4d5b52!important;font-weight:600!important}
+
+/* Same-platform comment cache: one continuous thread, not thread-card + side-card. */
+.trail-cache-page{
+  grid-template-columns:minmax(0,1fr) 250px!important;
+  gap:0!important;
+  align-items:stretch!important;
+}
+.trail-cache-thread{
+  border:0!important;
+  background:transparent!important;
+}
+.trail-cache-side{
+  border-left:1px solid #e0e4e1!important;
+  padding:18px 20px!important;
+  gap:0!important;
+  align-content:start!important;
+}
+.trail-cache-note{
+  margin:0!important;
+  padding:14px 0!important;
+  border:0!important;
+  border-top:1px solid #dce1dd!important;
+  background:transparent!important;
+}
+.trail-cache-note:first-child{border-top:0!important;padding-top:0!important}
+.lost-attachment{box-shadow:none!important;border-color:#d7ddd8!important}
+
+/* Recovered draft: one document with a ruled metadata margin. */
+.draft-recovery-page{gap:0!important;align-items:stretch!important}
+.recovered-draft{
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+.draft-recovery-side{
+  border-left:1px solid #d9dedb!important;
+  padding:24px 20px!important;
+  align-content:start!important;
+  gap:0!important;
+}
+.recovery-fact{
+  margin:0!important;
+  padding:13px 0!important;
+  border:0!important;
+  border-top:1px solid #dfe3e0!important;
+  background:transparent!important;
+}
+.recovery-fact:first-child{border-top:0!important;padding-top:0!important}
+.recovery-line--emphasis{
+  border:0!important;
+  border-top:1px solid #d2cfc5!important;
+  border-bottom:1px solid #d2cfc5!important;
+  background:#f5f3ec!important;
+  box-shadow:none!important;
+}
+.recovery-public-record{
+  margin-top:18px!important;
+  padding-top:12px!important;
+  border-top:2px solid #53635a!important;
+  display:grid!important;
+  gap:6px!important;
+}
+.recovery-public-record span{color:#7a847e!important;font-size:.66rem!important}
+.recovery-public-record a{color:#315a46!important;font-weight:700!important;text-decoration:underline!important;text-underline-offset:2px!important;line-height:1.6!important}
+
+/* Final rescue report: page itself is the document; sidebar is a margin column. */
+.rescue-report-page{gap:0!important;align-items:stretch!important}
+.rescue-report{
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.rescue-report-side{
+  border-left:1px solid #dce1dd!important;
+  padding:24px 20px!important;
+  gap:0!important;
+  align-content:start!important;
+}
+.rescue-summary{
+  margin:0!important;
+  padding:14px 0!important;
+  border:0!important;
+  border-top:1px solid #dfe4e0!important;
+  background:transparent!important;
+}
+.rescue-summary:first-child{border-top:0!important;padding-top:0!important}
+.rescue-summary--quiet{background:transparent!important}
+
+/* BBS side information reads like a forum sidebar, not two independent cards. */
+.forum-profile,.forum-side-note{
+  border:0!important;
+  border-top:1px solid #aab39f!important;
+  background:transparent!important;
+  padding:12px 0!important;
+}
+.forum-profile:first-of-type{border-top:0!important;padding-top:0!important}
+
+/* Scan viewer metadata is a margin note inside the archive workstation. */
+.mountain-note{
+  border:0!important;
+  border-top:1px solid #bcc5c0!important;
+  background:transparent!important;
+  padding:14px 0!important;
+}
+
+@media (max-width:640px){
+  .trail-cache-page,.draft-recovery-page,.rescue-report-page{grid-template-columns:minmax(0,1fr)!important}
+  .trail-cache-side,.draft-recovery-side,.rescue-report-side{border-left:0!important;border-top:1px solid #dce1dd!important;padding:18px 15px!important}
+}
+
+
+/* ==========================================================
+   FINAL DE-CARD / INFORMATION-HIERARCHY PASS
+   Decorative boxes are reduced to source-authentic tables, notices and
+   document margins. Ambient information stays visibly secondary to the
+   single meaningful source link in each investigation step.
+   ========================================================== */
+
+/* 青垭门户右栏是一条旧式信息栏，不再由四个同权重“小卡”组成。 */
+.portal-side{
+  padding-left:16px!important;
+  border-left:1px solid #aebda9!important;
+  background:transparent!important;
+}
+.portal-side .portal-box{
+  margin:0!important;
+  padding:10px 0 12px!important;
+  border:0!important;
+  border-top:1px dotted #aeb8aa!important;
+  background:transparent!important;
+}
+.portal-side .portal-box:first-child{border-top:0!important;padding-top:0!important}
+.portal-side .portal-box h2{
+  margin:0 0 5px!important;
+  padding:0 0 4px!important;
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid #b9c7b4!important;
+  color:#315c39!important;
+  font:700 12px/1.4 "Microsoft YaHei",Arial,sans-serif!important;
+  letter-spacing:.02em!important;
+}
+.portal-side .portal-box a,.portal-side .portal-box>span,.portal-side .portal-box p{padding:2px 0!important}
+
+/* 推荐线路是门户正文的一条编辑推荐，不是产品卡。 */
+.portal-route__body{
+  grid-template-columns:210px minmax(0,1fr)!important;
+  gap:13px!important;
+  padding:9px 0 11px!important;
+  border:0!important;
+  border-top:1px solid #b9c8b5!important;
+  border-bottom:1px dotted #b9c8b5!important;
+  background:transparent!important;
+}
+.photo--portal-route img{width:210px!important;height:118px!important}
+.portal-route__body a{display:inline!important;padding:0!important;border:0!important;background:transparent!important;color:#0f55a3!important;text-decoration:underline!important}
+
+/* 路迹同步信息以站内备注出现，不再是一块浅色提示卡。 */
+.track-sync-box{
+  margin:18px 0!important;
+  padding:10px 0!important;
+  background:transparent!important;
+  border:0!important;
+  border-top:1px dotted #d4dadd!important;
+  border-bottom:1px dotted #d4dadd!important;
+}
+
+/* 游客中心侧栏保持一个连续办事栏；“周边信息”只作文字说明。 */
+.service-info-side{background:#f5f9fb!important;border-left:1px solid #cfdee5!important}
+.service-info-side h2{padding-bottom:4px!important;border-bottom:1px solid #c6d8e1!important}
+.service-side-directory p{margin:0!important;color:#687d87!important;font-size:10px!important;line-height:1.65!important}
+
+/* 新闻索引侧栏：连续索引栏，而不是两个独立模块。 */
+.county-side{background:#fafafa!important}
+.county-side section{
+  margin:0!important;
+  padding:14px 0!important;
+  border:0!important;
+  border-top:1px dotted #d5d7d8!important;
+  background:transparent!important;
+}
+.county-side section:first-child{border-top:0!important;padding-top:0!important}
+
+/* 2016 旧站把“三项路线参数”表现成一张老式表格，而非三张统计卡。 */
+.archive-route-facts{
+  display:table!important;
+  width:100%!important;
+  border-collapse:collapse!important;
+  margin:10px 0!important;
+  border:1px solid #b6c49e!important;
+  background:#f7faed!important;
+}
+.archive-route-facts>div{display:table-row!important}
+.archive-route-facts>div>span,.archive-route-facts>div>strong{
+  display:table-cell!important;
+  padding:5px 8px!important;
+  border-bottom:1px dotted #bcc9a8!important;
+  vertical-align:top!important;
+}
+.archive-route-facts>div:last-child>span,.archive-route-facts>div:last-child>strong{border-bottom:0!important}
+.archive-route-facts>div>span{width:92px!important;border-right:1px dotted #bcc9a8!important}
+.archive-side section{background:transparent!important;border:0!important;border-top:1px dotted #aebc96!important}
+.archive-side section:first-child{border-top:0!important}
+
+/* 地方论坛只有一个整体侧栏框；个人资料/版主补充不再各自成卡。 */
+.forum-side{
+  gap:0!important;
+  align-content:start!important;
+  background:#f4f1e5!important;
+  border:1px solid #aab39f!important;
+  padding:9px!important;
+}
+.forum-side .photo--yougen{margin:0 0 10px!important}
+.forum-profile,.forum-side-note{
+  border:0!important;
+  border-top:1px solid #b8bead!important;
+  background:transparent!important;
+  padding:11px 2px!important;
+  margin:0!important;
+}
+.forum-profile{border-top:0!important;padding-top:2px!important}
+
+/* 四号扫描系统的侧栏是一列元数据，不是深色卡片堆。 */
+.mountain-record-side{padding:10px 13px!important}
+.mountain-note{
+  margin:0!important;
+  padding:13px 0!important;
+  border:0!important;
+  border-top:1px solid #344149!important;
+  background:transparent!important;
+}
+.mountain-note:first-child{border-top:0!important;padding-top:3px!important}
+
+/* 第二本册子的结尾只保留扫描整理脚注，不替玩家总结“谜底”。 */
+.ledger-conclusion{
+  grid-template-columns:1fr 1fr!important;
+  gap:0!important;
+  padding:15px 26px 20px!important;
+  background:#e9e1ce!important;
+  border:0!important;
+  border-top:2px solid #8f8774!important;
+}
+.ledger-conclusion section{
+  padding:0 18px 0 0!important;
+  border:0!important;
+  border-right:1px solid #b9af99!important;
+  background:transparent!important;
+}
+.ledger-conclusion section:nth-child(2){padding:0 0 0 18px!important;border-right:0!important}
+.ledger-margin-note{
+  margin-top:14px!important;
+  padding:12px 0 0!important;
+  border-top:1px solid #b9af99!important;
+}
+
+/* 地方旧物页的目录保持“书页目录”语义，不做独立容器。 */
+.heritage-side-index{background:transparent!important;border:0!important}
+
+@media(max-width:640px){
+  .portal-side{border-left:0!important;border-top:1px solid #c9d6c3!important;padding:12px 0 0!important}
+  .portal-route__body{grid-template-columns:105px minmax(0,1fr)!important;gap:9px!important}
+  .photo--portal-route img{width:105px!important;height:78px!important}
+  .service-info-side{border-left:0!important;border-top:1px solid #cfdee5!important}
+  .forum-side{border-left:0!important;border-right:0!important}
+  .ledger-conclusion{grid-template-columns:minmax(0,1fr)!important;padding:14px 18px 18px!important}
+  .ledger-conclusion section,.ledger-conclusion section:nth-child(2){padding:10px 0!important;border-right:0!important;border-top:1px solid #b9af99!important}
+  .ledger-conclusion section:first-child{border-top:0!important;padding-top:0!important}
+}
+
+/* ==========================================================
+   Timeline integrity / current-anchor polish
+   ========================================================== */
+.trail-post-edit,.track-edit-note{
+  margin:8px 0 0!important;
+  padding:8px 0 0!important;
+  border-top:1px dotted #d6dcde!important;
+  color:#4e655c!important;
+  font-size:11px!important;
+  line-height:1.7!important;
+}
+.trail-post-row--older{color:#5f676b!important}
+.trail-private-note{
+  margin:0 0 8px!important;
+  color:#8b9499!important;
+  font-size:10px!important;
+  line-height:1.6!important;
+}
+.trail-empty-state{
+  width:min(calc(100% - 24px),760px);
+  margin:54px auto;
+  padding:22px 0;
+  border-top:2px solid #385e52;
+  border-bottom:1px solid #d8dddf;
+  background:transparent;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;
+}
+.trail-empty-state h1{margin:0 0 8px;font-size:1.25rem;color:#2f383c}
+.trail-empty-state p{margin:0 0 12px;color:#737d82;font-size:.82rem;line-height:1.7}
+.trail-empty-state a{color:#176047;text-decoration:underline;text-underline-offset:2px;font-size:.78rem}
+@media(max-width:640px){
+  .trail-empty-state{width:calc(100% - 28px);margin:30px auto}
+}
+.portal-secondary-link{color:#68796a!important;font-weight:400!important;text-decoration:none!important;border-bottom:1px dotted #aab7aa!important;width:max-content;max-width:100%}
+.portal-secondary-link:hover,.portal-secondary-link:focus-visible{color:#2f5c38!important;border-bottom-color:#2f5c38!important}
+
+/* ==========================================================
+   Current-anchor continuity pass
+   ========================================================== */
+/* 路迹是整页社区站，不再把主体本身框成一张悬浮白卡。 */
+.trail-profile-grid,.track-layout{
+  border-left:0!important;
+  border-right:0!important;
+  border-bottom:0!important;
+  box-shadow:none!important;
+}
+.trail-author-link{color:#253239!important;font-weight:700!important;text-decoration:none!important}
+.trail-author-link:hover,.trail-author-link:focus-visible{text-decoration:underline!important;text-underline-offset:2px!important}
+
+/* 聊天里的站内分享属于即时通讯内容，不作为全局“下一步卡片”。 */
+.msg-bubble--route-link{display:grid!important;gap:3px!important;min-width:min(66vw,300px)!important}
+.chat-route-link__app{font-size:.62rem!important;color:#7d8782!important;letter-spacing:.05em!important}
+.chat-route-link__title{color:#205a47!important;font-size:.82rem!important;font-weight:700!important;text-decoration:underline!important;text-underline-offset:2px!important;line-height:1.45!important}
+.msg-bubble--route-link>small{font-size:.64rem!important;color:#8b938f!important}
+
+/* 私密草稿读完后，只给出草稿中刚刚出现的地名资料来源。 */
+.draft-source-followup{
+  margin:22px 0 0!important;
+  padding:11px 0!important;
+  border-top:1px dotted #d4d9d5!important;
+  border-bottom:1px dotted #d4d9d5!important;
+  color:#737d78!important;
+  font-size:.76rem!important;
+  line-height:1.7!important;
+}
+.draft-source-followup a{color:#315d49!important;font-weight:700!important;text-decoration:underline!important;text-underline-offset:2px!important}
+
+@media(max-width:640px){
+  .msg-bubble--route-link{min-width:min(74vw,280px)!important}
+}
+
+/* 私密草稿属于路迹站内编辑页，桌面端也不再悬浮成一张独立白卡。 */
+.trail-private-page{background:#fff!important}
+.draft-page--platform{
+  width:min(calc(100% - 32px),760px)!important;
+  margin:0 auto 70px!important;
+  padding:34px 0 30px!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+@media(max-width:640px){
+  .draft-page--platform{width:100%!important;margin:0!important;padding:20px 16px 28px!important}
+}
+
+/* ==========================================================
+   Continuous-source canvas pass
+   These pages used to read as a centered white rectangle on a tinted body.
+   Keep the source-specific header/columns, but let the document itself become
+   the page instead of a floating "card".
+   ========================================================== */
+
+/* 村志资料：像地方资料站的一页正文，而不是米色背景上的白卡。 */
+.heritage-site{background:#f7f3e8!important}
+.heritage-page{
+  width:min(calc(100% - 24px),980px)!important;
+  margin:0 auto 56px!important;
+  gap:0!important;
+  border-left:1px solid #cfc5b4!important;
+  border-right:1px solid #cfc5b4!important;
+  background:#f9f6ee!important;
+}
+.heritage-article{
+  border:0!important;
+  background:transparent!important;
+  padding:28px 34px 36px!important;
+}
+.heritage-side-index{
+  padding:28px 16px!important;
+  border-left:1px solid #d6cdbc!important;
+  background:#f1ecdf!important;
+}
+.heritage-footer{margin-top:-56px!important}
+
+/* 安全公告：政府站正文直接落在白色页面上，不再悬浮成一张文档卡。 */
+.village-notice-site{background:#fff!important}
+.village-notice-page{
+  width:min(calc(100% - 24px),920px)!important;
+  margin:0 auto 52px!important;
+  padding:20px 40px 36px!important;
+  border:0!important;
+  background:#fff!important;
+}
+.village-notice-breadcrumb{margin:0 0 22px!important;padding:12px 0!important}
+.village-notice-foot{margin:28px 0 0!important;padding:12px 0 0!important}
+
+/* 县融媒体：整页就是新闻站，不再把正文/旧评论分别装进两张白卡。 */
+.county-site{background:#fff!important}
+.county-page{
+  width:min(calc(100% - 18px),1080px)!important;
+  margin:0 auto!important;
+  border:0!important;
+  border-left:1px solid #e1e1df!important;
+  border-right:1px solid #e1e1df!important;
+  background:#fff!important;
+}
+.county-article{border-right:1px solid #e5e5e3!important}
+.old-comments{
+  width:min(calc(100% - 18px),1080px)!important;
+  margin:0 auto 54px!important;
+  padding:18px 28px 26px!important;
+  border:0!important;
+  border-left:1px solid #e1e1df!important;
+  border-right:1px solid #e1e1df!important;
+  border-top:1px solid #d7d7d5!important;
+  background:#fff!important;
+}
+
+/* 周成资料：纪念页是一份连续资料档案，不是灰底上的白卡。 */
+.memorial-site{background:#fff!important}
+.memorial-page{
+  width:min(calc(100% - 24px),980px)!important;
+  margin:0 auto 56px!important;
+  padding:28px 30px 34px!important;
+  border:0!important;
+  border-left:1px solid #d7ded9!important;
+  border-right:1px solid #d7ded9!important;
+  background:#fff!important;
+}
+.memorial-breadcrumb{margin-top:0!important;padding-top:14px!important}
+.memorial-side{border-top:0!important;border-left:1px solid #d7ded9!important;padding-left:20px!important}
+
+/* 同一平台里的评论缓存和草稿恢复延续平台画布，而不是浮动面板。 */
+.trail-cache-site,.draft-recovery-site{background:#fff!important}
+.trail-cache-page,.draft-recovery-page{
+  width:min(calc(100% - 20px),1060px)!important;
+  margin:0 auto 56px!important;
+  border:0!important;
+  border-left:1px solid #e0e4e6!important;
+  border-right:1px solid #e0e4e6!important;
+  background:#fff!important;
+}
+.trail-cache-thread,.recovered-draft{background:#fff!important}
+
+/* 最终搜救通报也属于完整政府信息页，不做居中报告卡。 */
+.rescue-report-site{background:#fff!important}
+.rescue-report-page{
+  width:min(calc(100% - 20px),1040px)!important;
+  margin:0 auto 56px!important;
+  border:0!important;
+  border-left:1px solid #dce1dd!important;
+  border-right:1px solid #dce1dd!important;
+  background:#fff!important;
+}
+
+@media(max-width:640px){
+  .heritage-page,.village-notice-page,.county-page,.old-comments,.memorial-page,
+  .trail-cache-page,.draft-recovery-page,.rescue-report-page{
+    width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    border-left:0!important;
+    border-right:0!important;
+  }
+  .heritage-page{grid-template-columns:minmax(0,1fr)!important}
+  .heritage-article{padding:20px 16px 26px!important}
+  .heritage-side-index{border-left:0!important;border-top:1px solid #d6cdbc!important;padding:16px!important}
+  .heritage-footer{margin-top:-56px!important}
+  .village-notice-page{padding:16px!important}
+  .county-page{grid-template-columns:minmax(0,1fr)!important}
+  .county-article{border-right:0!important}
+  .old-comments{padding:16px 14px 22px!important}
+  .memorial-page{padding:18px 16px 26px!important}
+  .memorial-side{border-left:0!important;border-top:1px solid #d7ded9!important;padding:14px 0 0!important}
+}
+
+/* Main-vs-ambient link weight: background browsing remains possible, but it must
+   not look as important as the one source that answers the current question. */
+.portal-side a{
+  color:#707970!important;
+  font-weight:400!important;
+  text-decoration:none!important;
+  border-bottom:1px dotted #aeb7ad!important;
+  width:max-content!important;
+  max-width:100%!important;
+}
+.portal-side a:hover,.portal-side a:focus-visible{color:#315f47!important;border-bottom-color:#315f47!important}
+.heritage-article>.text-link,.notice-history-links a,.memorial-inline-link,.forum-side-note--next a,.archive-next-record a{
+  font-weight:700!important;
+  text-decoration:underline!important;
+  text-underline-offset:3px!important;
+}

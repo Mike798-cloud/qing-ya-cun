@@ -5,8 +5,9 @@ import { createFlow } from './core/flow.js';
 import { createPasswordSystem } from './core/passwords.js';
 import { createAudioManager } from './core/audio.js';
 import { createInterludePlayer } from './core/interlude.js';
+import { recordContextualDiscovery, backfillLegacyCognition, storyEventDefinitions, getPendingStoryEvent } from './core/cognition.js';
 import { openSettings } from './core/settings.js';
-import { isFinalDraftNoticeEligible, shouldAcknowledgeFinalDraftNotice } from './core/notifications.js';
+import { isCommentCacheNoticeEligible, shouldAcknowledgeCommentCacheNotice, isFinalDraftNoticeEligible, shouldAcknowledgeFinalDraftNotice } from './core/notifications.js';
 import { el, icon, toast } from './core/ui.js';
 import { routeDefinitions, passwordDefinitions, stageRules, gates } from './data/content.js';
 import { renderBoot, renderContact, renderProfile, renderPost, renderDraft1, renderQingya, renderJiuwan } from './pages/stage1.js';
@@ -20,6 +21,7 @@ import { renderRescueResult, renderEnding } from './pages/stage7.js';
 const storage = createStorage();
 const store = createStore(storage.load(), storage);
 const flow = createFlow({ store, gates, stageRules });
+backfillLegacyCognition({ store });
 const passwords = createPasswordSystem({ store, definitions: passwordDefinitions });
 const audio = createAudioManager({ store });
 audio.register('message', './assets/audio/message.wav', { volume: 0.24 });
@@ -70,21 +72,13 @@ function renderTools() {
 }
 
 function syncStoryEvents() {
-  const state = store.getState();
-  const checks = [
-    [2, 'safety', 'stage2MessageReady', 'stage2'],
-    [4, 'zhou-yougen', 'stage4MessageReady', 'stage4'],
-    [5, 'second-book', 'stage5MessageReady', 'stage5'],
-    [6, 'aji-comment', 'stage6MessageReady', 'stage6'],
-  ];
-  for (const [stage, visitedId, flag, choiceKey] of checks) {
+  for (const check of storyEventDefinitions) {
     const now = store.getState();
-    if (now.stage >= stage && now.visited.includes(visitedId) && !now.flags[flag]) {
-      store.dispatch({ type: 'SET_FLAG', key: flag, value: true });
+    if (now.stage >= check.stage && check.ready(now) && !now.flags[check.flag]) {
+      store.dispatch({ type: 'SET_FLAG', key: check.flag, value: true });
       // Legacy/recovered saves may already contain the player's reply but miss
-      // the corresponding ready flag. Backfill the flag silently instead of
-      // replaying several historical "new message" toasts at once.
-      if (!now.choices[choiceKey]) {
+      // the corresponding ready flag. Backfill silently in that case.
+      if (!now.choices[check.choice]) {
         audio.play?.('message');
         toast('周航发来新消息');
       }
@@ -92,7 +86,71 @@ function syncStoryEvents() {
   }
 }
 
+function renderUnreadChatNotice(path) {
+  if (path === 'boot' || path === 'contact') return null;
+  const pending = getPendingStoryEvent(store.getState());
+  if (!pending) return null;
 
+  const notice = el('aside', {
+    class: 'chat-unread-notice',
+    role: 'status',
+    'aria-label': '周航发来未读消息',
+  });
+  const open = el('button', {
+    class: 'chat-unread-notice__open',
+    type: 'button',
+    'aria-label': '打开与周航的聊天',
+  }, [
+    el('span', { class: 'chat-unread-notice__avatar', text: '周' }),
+    el('span', { class: 'chat-unread-notice__copy' }, [
+      el('strong', { text: '周航' }),
+      el('small', { text: pending.preview }),
+    ]),
+    el('span', { class: 'chat-unread-notice__time', text: '刚刚' }),
+  ]);
+  open.addEventListener('click', () => router.navigate('boot'));
+  notice.append(open);
+  return notice;
+}
+
+
+function acknowledgeCommentCacheNoticeForPath(path) {
+  const state = store.getState();
+  if (shouldAcknowledgeCommentCacheNotice(path, state)) {
+    store.dispatch({ type: 'SET_FLAG', key: 'commentCacheNoticeAcknowledged', value: true });
+  }
+}
+
+function renderCommentCacheNotice() {
+  const state = store.getState();
+  if (!isCommentCacheNoticeEligible(state)) return null;
+
+  if (!state.flags.commentCacheNoticeAnnounced) {
+    store.dispatch({ type: 'SET_FLAG', key: 'commentCacheNoticeAnnounced', value: true });
+    audio.play?.('message');
+  }
+
+  const notice = el('aside', {
+    class: 'trail-cache-notice',
+    role: 'status',
+    'aria-label': '路迹评论缓存恢复通知',
+  });
+  const open = el('button', {
+    class: 'trail-cache-notice__open',
+    type: 'button',
+    'aria-label': '打开周航轨迹的评论缓存',
+  }, [
+    el('span', { class: 'trail-cache-notice__app', text: '路迹 · 缓存恢复' }),
+    el('strong', { text: '评论缓存已恢复 10:21–10:33' }),
+    el('small', { text: '“周末别找我”这条轨迹有 4 条可读取回复' }),
+  ]);
+  open.addEventListener('click', () => {
+    store.dispatch({ type: 'SET_FLAG', key: 'commentCacheNoticeAcknowledged', value: true });
+    router.navigate('aji-comment');
+  });
+  notice.append(open);
+  return notice;
+}
 
 function acknowledgeFinalDraftNoticeForPath(path) {
   const state = store.getState();
@@ -146,8 +204,13 @@ function renderFinalDraftNotice() {
 function render() {
   applySettings();
   const { path } = router.resolve();
+  if (!['boot', 'contact'].includes(path) && store.getState().flags.lastPublicPath !== path) {
+    store.dispatch({ type: 'SET_FLAG', key: 'lastPublicPath', value: path });
+  }
+  recordContextualDiscovery({ store, path });
   flow.visit(path);
   syncStoryEvents();
+  acknowledgeCommentCacheNoticeForPath(path);
   acknowledgeFinalDraftNoticeForPath(path);
   const def = routeDefinitions.get(path);
   document.body.dataset.site = def?.kind || '';
@@ -155,6 +218,10 @@ function render() {
   const renderer = pageRenderers.get(path) || renderBoot;
   const shell = el('div', { class: 'immersive-shell' });
   shell.append(renderer({ store, flow, passwords, audio, interludes, router }));
+  const unreadChatNotice = renderUnreadChatNotice(path);
+  if (unreadChatNotice) shell.append(unreadChatNotice);
+  const commentCacheNotice = renderCommentCacheNotice();
+  if (commentCacheNotice) shell.append(commentCacheNotice);
   const finalDraftNotice = renderFinalDraftNotice();
   if (finalDraftNotice) shell.append(finalDraftNotice);
   if (path === 'boot') shell.append(renderTools());
