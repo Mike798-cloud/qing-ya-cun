@@ -13,6 +13,17 @@ const IMG = {
   northTrack: './assets/photos/north-slope-local.jpg',
 };
 
+function qv(query, key, fallback = '') {
+  return query?.get?.(key) || fallback;
+}
+
+function localHref(path, params = {}) {
+  const search = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => { if (value) search.set(key, value); });
+  const suffix = search.toString();
+  return `#/${path}${suffix ? `?${suffix}` : ''}`;
+}
+
 function photo({ src, alt, caption = '', className = '' }) {
   const btn = el('button', { class: `photo ${className}`.trim(), type: 'button', 'aria-label': caption ? `${caption}，打开大图` : '打开图片' });
   const eager = /photo--(?:trail-stream|portal-banner|route-article|track-record)/.test(className);
@@ -50,25 +61,30 @@ function olderTrailPost({ date, place, text, stats = '' }) {
   ]);
 }
 
-function renderTrailHeader(active = '') {
+function renderTrailHeader(active = 'discover') {
   const header = el('header', { class: 'trail-header' });
   const inner = el('div', { class: 'trail-header__inner' });
+  const navItem = (key, label) => el('a', { href: localHref('profile', { site: key }), class: active === key ? 'is-active' : '', text: label });
   inner.append(
     el('a', { href: '#/profile', class: 'trail-logo', text: '路迹' }),
-    el('div', { class: 'trail-search', text: '搜索路线 / 地点 / 用户' }),
+    el('a', { href: localHref('profile', { site: 'search' }), class: 'trail-search trail-search--link', text: '搜索路线 / 地点 / 用户' }),
     el('nav', { class: 'trail-nav', 'aria-label': '路迹站点导航' }, [
-      el('span', { class: active === 'discover' ? 'is-active' : '', text: '发现' }),
-      el('span', { text: '路线' }),
-      el('span', { text: '社区' }),
-      el('span', { text: '装备' }),
+      navItem('discover', '发现'),
+      navItem('routes', '路线'),
+      navItem('community', '社区'),
+      navItem('gear', '装备'),
     ]),
-    el('div', { class: 'trail-utility' }, [el('span', { text: '下载客户端' }), el('span', { text: '路线纠错' }), el('span', { class: 'trail-login', text: '游客浏览' })]),
+    el('div', { class: 'trail-utility' }, [
+      el('a', { href: localHref('profile', { site: 'download' }), text: '下载客户端' }),
+      el('a', { href: localHref('profile', { site: 'correction' }), text: '路线纠错' }),
+      el('span', { class: 'trail-login', text: '游客浏览' }),
+    ]),
   );
   header.append(inner);
   return header;
 }
 
-function renderVillageHeader(active = '', flow) {
+function renderVillageHeader(active = 'home') {
   const header = el('header', { class: 'village-header village-header--portal' });
   const today = el('div', { class: 'village-datebar' }, [
     el('span', { text: '设为首页　|　加入收藏　|　联系我们' }),
@@ -85,17 +101,14 @@ function renderVillageHeader(active = '', flow) {
       el('span', { text: '多云　山脊风大' }),
     ]),
   ]);
-  // Old local portals often displayed a full section bar even when only a few
-  // pages were actually maintained. Keep it as site identity, not six equal
-  // investigation exits; the live pages are linked from their relevant content.
-  const navLabel = (label, key = '') => el('span', { class: active === key ? 'is-active' : '', text: label });
+  const navItem = (key, label) => el('a', { href: key === 'home' ? '#/qingya' : localHref('qingya', { section: key }), class: active === key ? 'is-active' : '', text: label });
   const nav = el('nav', { class: 'village-nav village-nav--portal', 'aria-label': '青垭村站点栏目' }, [
-    navLabel('首页', 'home'),
-    navLabel('走进青垭'),
-    navLabel('旅游线路', 'route'),
-    navLabel('住宿餐饮'),
-    navLabel('游客服务', 'service'),
-    navLabel('通知公告', 'safety'),
+    navItem('home', '首页'),
+    navItem('about', '走进青垭'),
+    navItem('routes', '旅游线路'),
+    navItem('stay', '住宿餐饮'),
+    navItem('services', '游客服务'),
+    navItem('notices', '通知公告'),
   ]);
   const ticker = el('div', { class: 'village-ticker' }, [
     el('b', { text: '站内公告：' }),
@@ -372,7 +385,94 @@ function openFinalDraftPassword({ passwords, router }) {
   setTimeout(() => input.focus(), 0);
 }
 
-export function renderProfile({ store, passwords, router }) {
+function renderTrailSiteSection(section, query) {
+  const labels = { routes: '路线', community: '社区', gear: '装备', search: '搜索', download: '客户端', correction: '路线纠错' };
+  const main = el('main', { id: 'app-main', class: 'trail-site trail-directory-site', tabindex: '-1' });
+  main.append(renderTrailHeader(section === 'search' || section === 'download' || section === 'correction' ? 'discover' : section));
+  const page = el('section', { class: 'trail-directory-page' });
+  page.append(el('p', { class: 'trail-directory-crumb', text: `路迹 > ${labels[section] || '发现'}` }));
+  if (section === 'routes') {
+    const route = qv(query, 'route');
+    const routes = {
+      nanling:['南岭小环线','12.4 km','中等','林间小环线，最近一周有人反馈西侧木桥施工，按现场绕行牌走。'],
+      greenway:['城西绿道','18.6 km','容易','城市绿道，补水点多，夜间部分路段照明一般。'],
+      baishi:['白石坡','9.7 km','中等','短而陡，冬季结冰时平台会标记临时封闭。'],
+    };
+    if (route && routes[route]) {
+      const r=routes[route];
+      page.append(el('h1',{text:r[0]}),el('p',{text:`${r[1]} · ${r[2]}`}),el('p',{text:r[3]}),el('p',{class:'fine-note',text:'公开路线资料仅供出发前参考，临时封闭以现场公告为准。'}),el('a',{href:localHref('profile',{site:'routes'}),text:'‹ 返回热门路线'}));
+    } else {
+      page.append(el('h1', { text: '热门路线' }), el('p', { text: '路线按近期公开记录整理。没有连续底图或状态不明的旧路线不会出现在推荐列表。' }),
+        el('table', { class: 'trail-directory-table' }, [el('tbody', {}, [
+          ['青垭九弯环线','16.0 km','中等','最近 7 天 126 人记录','#/post'],
+          ['南岭小环线','12.4 km','中等','最近 7 天 84 人记录',localHref('profile',{site:'routes',route:'nanling'})],
+          ['城西绿道','18.6 km','容易','最近 7 天 391 人记录',localHref('profile',{site:'routes',route:'greenway'})],
+          ['白石坡','9.7 km','中等','最近 7 天 63 人记录',localHref('profile',{site:'routes',route:'baishi'})],
+        ].map(r=>el('tr',{},[el('td',{},el('a',{href:r[4],text:r[0]})),...r.slice(1,4).map(x=>el('td',{text:x}))])))]));
+    }
+  } else if (section === 'community') {
+    const topic=qv(query,'topic');
+    const topics={
+      rain:['周末下雨，南岭还能走吗？','南岭西侧下雨后泥多，官方入口没有封就能走，但不熟路不要抄林间小径。'],
+      water:['第一次走 15km 带多少水','天气凉也至少按自己平时饮水量准备。路线中有没有补水点要提前查，不要指望路上临时买。'],
+      pole:['登山杖锁扣松了怎么处理','先清泥再锁紧。碳杖有裂纹别硬凑长线，临时胶带不等于修好了。'],
+      night:['城西绿道夜跑照明情况','主路有灯，西河段两处树荫下很暗。夜跑还是自己带灯。'],
+      wind:['九弯秋季风大吗','山脊风比村口大得多。下午更明显，帽子和外套别挂包外面。'],
+    };
+    if(topic && topics[topic]) page.append(el('h1',{text:topics[topic][0]}),el('p',{text:topics[topic][1]}),el('p',{class:'fine-note',text:'普通公开讨论 · 回复内容已折叠'}),el('a',{href:localHref('profile',{site:'community'}),text:'‹ 返回户外圈'}));
+    else page.append(el('h1', { text: '户外圈' }), el('p', { text: '公开讨论按时间排序。请勿把他人的轨迹当作线路开放证明。' }),
+      ...[['rain','周末下雨，南岭还能走吗？','28'],['water','第一次走 15km 带多少水','41'],['pole','登山杖锁扣松了怎么处理','17'],['night','城西绿道夜跑照明情况','63'],['wind','九弯秋季风大吗','22']].map(([id,title,n])=>el('p',{class:'trail-directory-row'},[el('a',{href:localHref('profile',{site:'community',topic:id}),text:title}),el('small',{text:`　回复 ${n}`})])));
+  } else if (section === 'gear') {
+    const article = qv(query, 'article');
+    const gear = {
+      '1':['雨衣比冲锋衣重要的三次经历','三次都是下午突然下雨。结论很普通：便宜雨衣不体面，但真下大雨时比“我应该还能撑一会儿”有用。'],
+      '2':['鞋后跟磨脚到底是不是鞋的问题','先换袜子，再看鞋带，再看尺码。走十公里以后才发现的问题，不要靠创可贴硬撑二十公里。'],
+      '3':['头灯备用电池应该放哪','别跟主灯放同一个湿袋里。长线至少留一组独立备用电池。'],
+      '4':['离线地图下载前先做什么','确认下载的是当前开放路线，不要把旧轨迹截图当作离线地图。'],
+    };
+    if (article && gear[article]) page.append(el('h1',{text:gear[article][0]}),el('p',{text:gear[article][1]}),el('p',{class:'fine-note',text:'普通用户经验帖 · 评论已折叠'}),el('a',{href:localHref('profile',{site:'gear'}),text:'‹ 返回装备讨论'}));
+    else page.append(el('h1', { text: '装备讨论' }), el('p', { text: '这里是普通用户经验，不是平台购买建议。' }),
+      ...['雨衣比冲锋衣重要的三次经历','鞋后跟磨脚到底是不是鞋的问题','头灯备用电池应该放哪','离线地图下载前先做什么'].map((x,i)=>el('p',{class:'trail-directory-row'},[el('a',{href:localHref('profile',{site:'gear',article:String(i+1)}),text:x}),el('small',{text:`　${18+i*7} 条回复`})])));
+  } else if (section === 'search') {
+    page.append(el('h1', { text: '站内搜索' }), el('p', { text: '公开页面搜索示例：青垭、周末别找我、九弯。私密草稿不会出现在站内搜索。' }),
+      el('div',{class:'trail-search-results'},[el('p',{text:'用户：周末别找我 @noweekend'}),el('p',{text:'地点：青垭村'}),el('p',{text:'路线：青垭九弯环线'})]));
+  } else if (section === 'download') {
+    page.append(el('h1',{text:'路迹客户端'}),el('p',{text:'当前网页为游客浏览模式。离线轨迹、草稿和设备恢复记录仅在对应设备本地存在。'}),el('p',{class:'trail-directory-row',text:'Android 8.6.2　2026-08-30 更新'}),el('p',{class:'trail-directory-row',text:'iOS 8.6.1　2026-08-27 更新'}));
+  } else if (section === 'correction') {
+    page.append(el('h1',{text:'路线纠错'}),el('p',{text:'平台只接受公开路线的地图错误、封闭信息和道路变更反馈。未开放区域不会因用户提交而变成推荐路线。'}),el('p',{class:'trail-directory-row',text:'纠错编号示例：路线名称 / 位置 / 现场照片 / 发生时间'}));
+  } else {
+    page.append(el('h1',{text:'发现'}),el('p',{text:'近期公开路线和用户动态。'}));
+  }
+  main.append(page); return main;
+}
+
+function renderTrailProfileView({ store, profileView }) {
+  const main = el('main', { id: 'app-main', class: 'trail-site', tabindex: '-1' });
+  main.append(renderTrailHeader('discover'));
+  const page = el('section',{class:'trail-profile-subpage'});
+  const nav = el('nav',{class:'trail-tabs','aria-label':'用户主页栏目'},[
+    el('a',{href:'#/profile',text:'动态'}),
+    el('a',{href:localHref('profile',{view:'tracks'}),class:profileView==='tracks'?'is-active':'',text:'轨迹'}),
+    el('a',{href:localHref('profile',{view:'favorites'}),class:profileView==='favorites'?'is-active':'',text:'收藏'}),
+    el('a',{href:localHref('profile',{view:'about'}),class:profileView==='about'?'is-active':'',text:'关于'}),
+  ]);
+  page.append(el('header',{class:'trail-profile-subhead'},[avatar('profile-avatar-image'),el('div',{},[el('h1',{text:'周末别找我'}),el('p',{text:'@noweekend'})])]),nav);
+  if (profileView === 'tracks') {
+    const rows = [['青垭九弯 / 北坡旧返程探路','今天','3.2 km'],['城西绿道','2026-07-18','18.6 km'],['南岭小环线','2026-05-02','12.4 km'],['白石坡','2025-11-09','9.7 km']];
+    page.append(el('h2',{text:'公开轨迹'}),...rows.map((r,i)=>el('div',{class:'trail-profile-list-row'},[i===0&&store.getState().choices.stage1?el('a',{href:'#/post',text:r[0]}):el('strong',{text:r[0]}),el('span',{text:r[1]}),el('span',{text:r[2]})])));
+  } else if (profileView === 'favorites') {
+    page.append(el('h2',{text:'公开收藏'}),...['南岭补水点整理','城西绿道夜间入口','白石坡冬季封闭说明'].map(x=>el('p',{class:'trail-profile-list-row',text:x})),el('p',{class:'fine-note',text:'私密收藏仅本人可见。'}));
+  } else {
+    page.append(el('h2',{text:'关于'}),el('p',{text:'普通上班族。周末走路。主要记录补给、岔口、天气和容易走错的地方。'}),el('dl',{class:'trail-user-facts'},[el('dt',{text:'注册'}),el('dd',{text:'2021-03'}),el('dt',{text:'公开轨迹'}),el('dd',{text:'37'}),el('dt',{text:'常用设备'}),el('dd',{text:'手机 + 头灯'})]));
+  }
+  main.append(page); return main;
+}
+
+export function renderProfile({ store, passwords, router, query }) {
+  const siteSection = qv(query, 'site');
+  const profileView = qv(query, 'view', 'activity');
+  if (siteSection && siteSection !== 'discover') return renderTrailSiteSection(siteSection, query);
+  if (profileView !== 'activity') return renderTrailProfileView({ store, profileView });
   const main = el('main', { id: 'app-main', class: 'trail-site', tabindex: '-1' });
   main.append(renderTrailHeader('discover'));
   const grid = el('div', { class: 'trail-profile-grid' });
@@ -389,7 +489,12 @@ export function renderProfile({ store, passwords, router }) {
     el('a', { href: '#/contact', class: 'plain-back-link', text: '‹ 联系人资料' }),
   ]);
   const stream = el('section', { class: 'trail-stream' });
-  stream.append(el('nav', { class: 'trail-tabs' }, [el('span', { class: 'is-active', text: '动态' }), el('span', { text: '轨迹' }), el('span', { text: '收藏' }), el('span', { text: '关于' })]));
+  stream.append(el('nav', { class: 'trail-tabs', 'aria-label': '用户主页栏目' }, [
+    el('a', { href: '#/profile', class: 'is-active', text: '动态' }),
+    el('a', { href: localHref('profile', { view: 'tracks' }), text: '轨迹' }),
+    el('a', { href: localHref('profile', { view: 'favorites' }), text: '收藏' }),
+    el('a', { href: localHref('profile', { view: 'about' }), text: '关于' }),
+  ]));
   if (store.getState().choices.stage1) {
     const post = el('article', { class: 'trail-post-row' }, [
       el('div', { class: 'trail-post-row__head' }, [avatar('trail-post-avatar'), el('div', {}, [el('a', { href: '#/profile', class: 'trail-author-link', text: '周末别找我' }), el('span', { text: '今天 10:18 · 10:25 编辑 · 青垭村' })])]),
@@ -534,9 +639,73 @@ export function renderDraft1({ store }) {
   main.append(wrap); return main;
 }
 
-export function renderQingya({ flow }) {
+const VILLAGE_NOTICES = [
+  { id:'20260912', date:'2026-09-12', title:'关于村口自来水管网检修的通知', body:['9月13日 08:00—12:00，村口东侧自来水支管进行检修。游客中心一层卫生间不受影响，老街东头两户民宿可能短时停水。','施工完成后如出现短时水质浑浊，请放水数分钟后再使用。'] },
+  { id:'20260910', date:'2026-09-10', title:'青垭村秋季森林防火值班表', body:['9月10日起进入秋季森林防火值班期。村口、九弯起点和老杉林口安排轮值巡查。','游客进入开放徒步路线请勿携带明火，吸烟后请确认烟头完全熄灭。'] },
+  { id:'20260908', date:'2026-09-08', title:'丰收节摊位报名截至本周五', body:['本月丰收节摊位报名截至9月11日17:00。农产品、手工食品和村民自制物件均可到村委会登记。','游客摊位暂不接受现场报名。'] },
+  { id:'20260905', date:'2026-09-05', title:'村卫生室九月坐诊时间', body:['周一、周三、周五 08:30—17:00 坐诊；周末仅处理简单外伤和常用药咨询。','严重外伤请直接联系县医院或拨打急救电话。'] },
+  { id:'20260901', date:'2026-09-01', title:'秋季徒步与降雨天气安全提示', body:['九弯开放主线雨后木阶、石阶较滑，请根据天气调整行程。历史游记中出现的北坡旧返程不属于当前开放线路。','游客中心只提供当前开放路线信息，不提供旧路线方向指引。'], related:'safety' },
+  { id:'20260828', date:'2026-08-28', title:'九弯环线雨后安全提醒', body:['连续降雨后九弯山脊风大，南侧下坡泥泞。建议穿防滑鞋并预留返程时间。','下午出现雷雨时请按现有主线尽快下撤。'] },
+  { id:'20260823', date:'2026-08-23', title:'本周六村口篮球场暂停使用', body:['村口篮球场本周六用于丰收节舞台搭建，全天暂停使用。','周日早上恢复。'] },
+  { id:'20260815', date:'2026-08-15', title:'2026 年秋季民宿联系电话汇总', body:['青垭人家、山腰客栈、老街民宿等经营户秋季电话已重新核对。','周末房间紧张，建议提前电话确认，不建议只看旧网页价格。'] },
+  { id:'20260731', date:'2026-07-31', title:'关于游客车辆停放的说明', body:['游客车辆统一停放村口停车场，不要进入老街窄巷。','夜间停车请勿堵住消防通道。'] },
+  { id:'20260718', date:'2026-07-18', title:'村口公交站候车点临时调整', body:['道路修补期间，原候车点向县城方向移动约80米。','末班车时间仍为18:20。'] },
+  { id:'20260629', date:'2026-06-29', title:'九弯沿线饮水点维护完成', body:['游客中心和九弯起点两处饮水点已完成清洗维护。','山脊途中没有固定补水点，请出发前备足饮水。'] },
+  { id:'20260512', date:'2026-05-12', title:'关于文明采摘野果的提醒', body:['村边果树和茶地大多有经营户，请勿自行采摘。','山里不认识的果子也不要尝。'] },
+];
+
+function renderVillageArticle(notice) {
+  const main=el('main',{id:'app-main',class:'village-site village-portal-site',tabindex:'-1'});
+  main.append(renderVillageHeader('notices'));
+  const page=el('article',{class:'village-local-article'},[
+    el('p',{class:'village-local-crumb'},[el('a',{href:'#/qingya',text:'首页'}),el('span',{text:' ＞ '}),el('a',{href:localHref('qingya',{section:'notices'}),text:'通知公告'}),el('span',{text:' ＞ 正文'})]),
+    el('h1',{text:notice.title}),
+    el('p',{class:'village-local-meta',text:`发布时间：${notice.date}　来源：青垭村村民委员会　浏览：${260 + Number(notice.id.slice(-2))*7}`}),
+    ...notice.body.map(x=>el('p',{text:x})),
+    notice.related ? el('p',{class:'village-local-related'},[el('strong',{text:'相关详细资料：'}),el('a',{href:`#/${notice.related}`,text:'北坡旧返程线路安全提醒'})]) : null,
+    el('div',{class:'village-local-tools'},[el('a',{href:localHref('qingya',{section:'notices'}),text:'返回公告列表'}),el('button',{type:'button',text:'打印本页','aria-label':'打印本页'})]),
+  ].filter(Boolean));
+  page.querySelector('button')?.addEventListener('click',()=>globalThis.print?.());
+  main.append(page, el('footer',{class:'village-footer',text:'青垭村村民委员会　网页维护：游客服务中心'})); return main;
+}
+
+function renderVillageSection(section, query) {
+  const titles={about:'走进青垭',routes:'旅游线路',stay:'住宿餐饮',services:'游客服务',notices:'通知公告'};
+  const main=el('main',{id:'app-main',class:'village-site village-portal-site',tabindex:'-1'});
+  main.append(renderVillageHeader(section));
+  const page=el('section',{class:'village-local-section'});
+  page.append(el('p',{class:'village-local-crumb'},[el('a',{href:'#/qingya',text:'首页'}),el('span',{text:` ＞ ${titles[section]||''}`})]),el('h1',{text:titles[section]||'青垭村'}));
+  if(section==='about'){
+    page.append(el('p',{text:'青垭村位于群山之间，常住人口不多。村里主要经营茶、笋干、蜂蜜和季节性乡村旅游。游客中心、村卫生室和公交候车点都在村口。'}),
+      el('h2',{text:'村情资料'}),el('table',{class:'village-local-table'},[el('tbody',{},[['海拔','约980米'],['常住人口','约620人'],['村内公交','每日4班（节假日另行调整）'],['开放徒步','青垭九弯环线']].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]})])))]),
+      el('h2',{text:'村志旧物'}),el('p',{},[el('span',{text:'旧石料场、水泥“看路人”、老广播喇叭等资料由村志小组单独整理。'}),el('a',{href:'#/watchmen',text:'查看村志旧物资料 ›'})]));
+  } else if(section==='routes'){
+    const route=qv(query,'route');
+    if(route){ const data={river:['溪谷散步线','约3.5公里','村口—小桥—溪边茶地—村口，适合半日散步。雨后溪边石头滑。'],tea:['茶田短线','约2.8公里','村口向东经过茶田和老供销社旧址，不进入山脊区域。'],ridge:['南坡观景短线','约6.2公里','只到南坡观景点后原路返回。下午风大时不建议上去。']}[route]; page.append(el('h2',{text:data?.[0]||'线路资料'}),el('p',{text:data?.[1]||''}),el('p',{text:data?.[2]||''}),el('a',{href:localHref('qingya',{section:'routes'}),text:'返回线路列表'})); }
+    else page.append(el('table',{class:'village-local-table village-route-list'},[el('tbody',{},[
+      ['青垭九弯环线','约16公里 / 5–7小时',el('a',{href:'#/jiuwan',text:'查看详情'})],['溪谷散步线','约3.5公里 / 1–2小时',el('a',{href:localHref('qingya',{section:'routes',route:'river'}),text:'查看详情'})],['茶田短线','约2.8公里 / 1小时',el('a',{href:localHref('qingya',{section:'routes',route:'tea'}),text:'查看详情'})],['南坡观景短线','约6.2公里 / 2–3小时',el('a',{href:localHref('qingya',{section:'routes',route:'ridge'}),text:'查看详情'})],
+    ].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]}),el('td',{},r[2])])))]),el('p',{class:'village-local-note',text:'历史旧路线不列入当前旅游线路目录。'}));
+  } else if(section==='stay'){
+    const stay=qv(query,'stay');
+    if(stay){ const data={hillside:['山腰客栈','8间客房，周末需提前电话确认。早餐07:00起。'],oldstreet:['老街民宿','5间客房，老屋改造，无电梯。晚上22:30后请轻声。'],teahouse:['茶田小院','3间客房，只接受电话预订。'] }[stay]; page.append(el('h2',{text:data?.[0]||'经营户资料'}),el('p',{text:data?.[1]||''}),el('p',{text:'联系电话以村口游客中心登记本为准。'}),el('a',{href:localHref('qingya',{section:'stay'}),text:'返回住宿餐饮'})); }
+    else page.append(el('table',{class:'village-local-table'},[el('tbody',{},[
+      ['青垭人家农家乐','柴火饭 / 简单住宿',el('a',{href:'#/food',text:'经营户网站'})],['山腰客栈','住宿 / 早餐',el('a',{href:localHref('qingya',{section:'stay',stay:'hillside'}),text:'查看'})],['老街民宿','住宿',el('a',{href:localHref('qingya',{section:'stay',stay:'oldstreet'}),text:'查看'})],['茶田小院','住宿 / 茶',el('a',{href:localHref('qingya',{section:'stay',stay:'teahouse'}),text:'查看'})],
+    ].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]}),el('td',{},r[2])])))]),el('p',{text:'价格和空房以经营户当天电话回复为准，本站不提供在线订房。'}));
+  } else if(section==='services'){
+    page.append(el('h2',{text:'村口便民服务'}),el('table',{class:'village-local-table'},[el('tbody',{},[['游客咨询','游客服务中心一层'],['公共卫生间','游客服务中心一层'],['公交候车','村口站牌'],['停车','村口停车场'],['简单外伤','村卫生室']].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]})])))]),el('p',{},[el('span',{text:'详细班次、失物登记和公共设施信息请到游客服务中心网站查询。'}),el('a',{href:'#/service',text:'打开游客服务中心 ›'})]));
+  } else if(section==='notices'){
+    page.append(el('div',{class:'village-notice-index'},VILLAGE_NOTICES.map(n=>el('div',{class:'portal-news-row'},[el('time',{text:n.date}),el('a',{href:localHref('qingya',{notice:n.id}),text:n.title})]))));
+  }
+  main.append(page,el('footer',{class:'village-footer',text:'青垭村村民委员会　网页维护：游客服务中心　资料如有变动以现场公告为准'})); return main;
+}
+
+export function renderQingya({ flow, query }) {
+  const noticeId=qv(query,'notice');
+  if(noticeId){ const notice=VILLAGE_NOTICES.find(n=>n.id===noticeId); if(notice) return renderVillageArticle(notice); }
+  const section=qv(query,'section');
+  if(section && section!=='home') return renderVillageSection(section, query);
   const main = el('main', { id: 'app-main', class: 'village-site village-portal-site', tabindex: '-1' });
-  main.append(renderVillageHeader('home', flow));
+  main.append(renderVillageHeader('home'));
   const shell = el('div', { class: 'village-portal' });
   const banner = el('div', { class: 'village-portal-banner' }, [
     photo({ src: IMG.village, alt: '青垭村山谷与村落', className: 'photo--portal-banner' }),
@@ -544,24 +713,10 @@ export function renderQingya({ flow }) {
   ]);
   const columns = el('div', { class: 'village-portal-columns' });
   const news = el('section', { class: 'portal-news' }, [el('h2', { text: '最新公告' })]);
-  const notices = [
-    ['09-12','关于村口自来水管网检修的通知','',''],
-    ['09-10','青垭村秋季森林防火值班表','',''],
-    ['09-08','丰收节摊位报名截至本周五','','新'],
-    ['09-05','村卫生室九月坐诊时间','',''],
-    ['09-01','秋季徒步与降雨天气安全提示','','新'],
-    ['08-28','九弯环线雨后安全提醒','',''],
-    ['08-23','本周六村口篮球场暂停使用','',''],
-    ['08-15','2026 年秋季民宿联系电话汇总','',''],
-    ['07-31','关于游客车辆停放的说明','',''],
-    ['07-18','村口公交站候车点临时调整','',''],
-    ['06-29','九弯沿线饮水点维护完成','',''],
-    ['05-12','关于文明采摘野果的提醒','',''],
-  ];
-  notices.forEach(([date,title,id,badge]) => {
-    const row = el('div', { class: 'portal-news-row' }, [el('time', { text: `2026-${date}` })]);
-    if (id) row.append(el('a', { href: `#/${id}`, text: title })); else row.append(el('span', { text: title }));
-    if (badge) row.append(el('em', { class: 'portal-new', text: badge }));
+  VILLAGE_NOTICES.forEach(n => {
+    const row = el('div', { class: 'portal-news-row' }, [el('time', { text: n.date })]);
+    row.append(el('a', { href: localHref('qingya', { notice: n.id }), text: n.title }));
+    if (['20260908','20260901'].includes(n.id)) row.append(el('em', { class: 'portal-new', text: '新' }));
     news.append(row);
   });
   const route = el('section', { class: 'portal-route' }, [
@@ -587,7 +742,7 @@ export function renderQingya({ flow }) {
       el('a', { href: '#/food', class: 'portal-secondary-link', text: '餐饮：青垭人家农家乐（今日营业）' }),
       el('span', { text: '村口停车：小车 38 位' }), el('span', { text: '末班公交：18:20' })]),
     el('section', { class: 'portal-box' }, [el('h2', { text: '常用电话' }), el('p', { text: '游客服务　0836-7XXXXXX' }), el('p', { text: '村卫生室　0836-7XXXX12' }), el('p', { text: '公交问询　0836-7XXXX35' })]),
-    el('section', { class: 'portal-box' }, [el('h2', { text: '村志资料' }), el('span', { text: '旧建筑、老照片与村史口述资料由村志小组另行整理。' })]),
+    el('section', { class: 'portal-box' }, [el('h2', { text: '村志资料' }), el('span', { text: '旧建筑、老照片与村史口述资料由村志小组另行整理。' }), el('a',{href:'#/watchmen',text:'旧物资料入口 ›'})]),
   ].filter(Boolean));
   columns.append(left, side);
   shell.append(banner, el('div', { class: 'portal-welcome' }, [el('strong', { text: '青垭村 · 山与人的相遇' }), el('p', { text: '青垭村位于群山之间，海拔约 980 米。村里有农田、溪谷、老杉树林，以及一条沿山脊绕行的九弯环线。' })]), columns,
@@ -602,7 +757,7 @@ export function renderQingya({ flow }) {
 
 export function renderJiuwan({ flow }) {
   const main = el('main', { id: 'app-main', class: 'village-site route-guide-site', tabindex: '-1' });
-  main.append(renderVillageHeader('route', flow));
+  main.append(renderVillageHeader('routes'));
   const wrap = el('article', { class: 'route-guide route-guide--portal' });
   wrap.append(
     el('p', { class: 'route-guide__crumb', text: '首页 ＞ 旅游线路 ＞ 徒步线路 ＞ 青垭九弯环线' }),

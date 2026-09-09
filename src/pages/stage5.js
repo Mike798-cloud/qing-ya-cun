@@ -28,7 +28,7 @@ function photo({ src, alt, caption, className = '' }) {
 function mountainHeader() {
   return el('header', { class: 'mountain-archive-header mountain-archive-header--dir' }, [
     el('div',{class:'archive-window-title',text:'青垭村资料整理盘 - D:\\巡查资料\\北坡\\四号'}),
-    el('div',{class:'archive-window-menu'},[el('span',{text:'文件(F)'}),el('span',{text:'编辑(E)'}),el('span',{text:'查看(V)'}),el('span',{text:'收藏夹(A)'}),el('span',{text:'帮助(H)'})]),
+    el('div',{class:'archive-window-menu'},[['文件(F)','只读目录：不能新建、移动或删除文件。'],['编辑(E)','当前目录为只读，编辑命令不可用。'],['查看(V)','当前视图：详细信息。'],['收藏夹(A)','本机没有保存收藏夹。'],['帮助(H)','双击文件名可查看公开资料；目录中内容按原文件名保留。']].map(([label,msg])=>{const b=el('button',{type:'button',class:'archive-window-menu__button',text:label});b.addEventListener('click',()=>toast(msg));return b;})),
     el('div',{class:'archive-addressbar'},[el('b',{text:'地址(D)'}),el('code',{text:'D:\\青垭巡查\\QY-BP-04\\'})]),
   ]);
 }

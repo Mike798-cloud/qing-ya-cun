@@ -8,6 +8,9 @@ const IMG = {
   trail:'./assets/photos/jiuwan-trail.jpg',
 };
 
+function qv(query,key,fallback=''){ return query?.get?.(key)||fallback; }
+function localHref(path,params={}){ const q=new URLSearchParams(); Object.entries(params).forEach(([k,v])=>{if(v)q.set(k,v)}); const s=q.toString(); return `#/${path}${s?`?${s}`:''}`; }
+
 function photo(src, alt, caption='', cls=''){
   const b=el('button',{class:`photo ${cls}`.trim(),type:'button','aria-label':caption?`${caption}，打开大图`:'打开图片'});
   const image=el('img',{src,alt,loading:'lazy',decoding:'async'});
@@ -17,7 +20,8 @@ function photo(src, alt, caption='', cls=''){
 }
 function textLink(href,label,note=''){ const a=el('a',{class:'text-link',href:`#/${href}`}); a.append(el('span',{text:label})); if(note)a.append(el('small',{text:note})); return a; }
 
-function restaurantHeader(){
+function restaurantHeader(active='home'){
+  const nav=(key,label)=>el('a',{href:key==='home'?'#/food':localHref('food',{section:key}),class:active===key?'is-active':'',text:label});
   return el('header',{class:'restaurant-header restaurant-header--homemade'},[
     el('div',{class:'restaurant-strip',text:'青垭人家农家乐　　订桌电话：13X-XXXX-2876　　公交站往里约120米'}),
     el('div',{class:'restaurant-header__inner'},[
@@ -25,45 +29,88 @@ function restaurantHeader(){
       el('div',{class:'restaurant-contact'},[el('b',{text:'今天开灶'}),el('small',{text:'10:30–20:00'})]),
     ]),
     el('nav',{class:'restaurant-nav','aria-label':'青垭人家页面导航'},[
-      el('span',{class:'is-active',text:'首页'}),
-      (()=>{const b=el('button',{class:'restaurant-nav-button',type:'button',text:'菜单价目'});b.addEventListener('click',()=>document.getElementById('menu')?.scrollIntoView({behavior:'smooth',block:'start'}));return b;})(),
-      (()=>{const b=el('button',{class:'restaurant-nav-button',type:'button',text:'游客留言'});b.addEventListener('click',()=>document.getElementById('guestbook')?.scrollIntoView({behavior:'smooth',block:'start'}));return b;})(),
-      el('span',{text:'住宿照片'}), el('a',{href:'#/qingya',text:'青垭村网站'}),
+      nav('home','首页'),nav('menu','菜单价目'),nav('rooms','住宿照片'),nav('guestbook','游客留言'),nav('directions','交通指引'),el('a',{href:localHref('qingya',{section:'stay'}),text:'青垭村网站'}),
     ])
   ]);
 }
 
-function serviceHeader(){
+function serviceHeader(active='home'){
+  const nav=(key,label)=>el('a',{href:key==='home'?'#/service':localHref('service',{section:key}),class:active===key?'is-active':'',text:label});
   return el('header',{class:'public-service-header'},[
     el('div',{class:'public-service-header__top'},[
       el('a',{href:'#/service',class:'public-service-brand'},[el('strong',{text:'青垭村游客服务中心'}),el('span',{text:'QINGYA VILLAGE TOURIST SERVICE CENTER'})]),
       el('div',{class:'public-service-tel'},[el('span',{text:'服务游客　服务村民'}),el('strong',{text:'0836-7XXXXXX'})]),
     ]),
     el('nav',{class:'public-service-nav','aria-label':'游客服务中心栏目'},[
-      el('span',{class:'is-active',text:'首页'}), el('span',{text:'景区介绍'}), el('span',{text:'交通指南'}), el('span',{text:'公共设施'}), el('span',{text:'应急服务'}), el('a',{href:'#/qingya',text:'青垭村'}),
+      nav('home','首页'),nav('intro','景区介绍'),nav('transport','交通指南'),nav('facilities','公共设施'),nav('emergency','应急服务'),el('a',{href:localHref('qingya',{section:'services'}),text:'青垭村'}),
     ])
   ]);
 }
 
-function heritageHeader(){
+function heritageHeader(active='watchmen'){
+  const nav=(key,label)=>el('a',{href:key==='watchmen'?'#/watchmen':localHref('watchmen',{section:key}),class:active===key?'is-active':'',text:label});
   return el('header',{class:'heritage-header'},[
     el('div',{class:'heritage-header__inner'},[
       el('a',{href:'#/watchmen',class:'heritage-brand'},[el('strong',{text:'青垭村志资料'}),el('span',{text:'旧物 · 老照片 · 口述记录'})]),
       el('span',{class:'heritage-update',text:'资料整理：2025 年冬'}),
     ]),
-    el('nav',{class:'heritage-nav'},[el('span',{text:'村史'}),el('span',{text:'旧建筑'}),el('span',{class:'is-active',text:'看路人'}),el('span',{text:'老照片'}),el('a',{href:'#/qingya',text:'旅游服务网'})])
+    el('nav',{class:'heritage-nav'},[nav('history','村史'),nav('buildings','旧建筑'),nav('watchmen','看路人'),nav('photos','老照片'),el('a',{href:localHref('qingya',{section:'about'}),text:'旅游服务网'})])
   ]);
 }
 
-function villageNoticeHeader(){
+function villageNoticeHeader(active='safety'){
+  const nav=(key,label)=>el('a',{href:key==='safety'?'#/safety':localHref('safety',{section:key}),class:active===key?'is-active':'',text:label});
   return el('header',{class:'notice-gov-header'},[
-    el('div',{class:'notice-gov-top'},[el('a',{href:'#/qingya',text:'青垭村旅游服务信息网'}),el('span',{text:'通知公告'})]),
-    el('div',{class:'notice-gov-brand'},[el('strong',{text:'青垭村游客服务中心'}),el('span',{text:'信息公开 / 徒步安全'})]),
-    el('nav',{class:'notice-gov-nav'},[el('span',{text:'首页'}),el('span',{text:'服务动态'}),el('span',{class:'is-active',text:'安全提醒'}),el('span',{text:'便民电话'})])
+    el('div',{class:'notice-gov-top'},[el('a',{href:localHref('qingya',{section:'notices'}),text:'青垭村旅游服务信息网'}),el('span',{text:'通知公告'})]),
+    el('div',{class:'notice-gov-brand'},[el('strong',{text:'青垭村通知公告'}),el('span',{text:'QINGYA VILLAGE NOTICE'})]),
+    el('nav',{class:'notice-gov-nav'},[nav('home','首页'),nav('service','服务动态'),nav('safety','安全提醒'),nav('contacts','便民电话')])
   ]);
 }
 
-export function renderService(){
+function renderServiceSection(section){
+  const main=el('main',{id:'app-main',class:'public-service-site',tabindex:'-1'}); main.append(serviceHeader(section));
+  const page=el('section',{class:'service-local-page'});
+  const titles={intro:'景区介绍',transport:'交通指南',facilities:'公共设施',emergency:'应急服务'};
+  page.append(el('div',{class:'service-old-tools'},[el('span',{text:`当前位置：首页 > ${titles[section]||'便民服务'}`}),el('span',{text:'加入收藏　|　打印本页　|　服务台意见簿'})]),el('h1',{text:titles[section]||'游客服务中心'}));
+  if(section==='intro') page.append(el('p',{text:'游客服务中心位于村口公交站上行约80米，提供路线问询、补水、充电、失物登记和简单应急联络。工作人员只提供当前开放线路信息。'}),el('table',{class:'public-service-table'},[el('tbody',{},[['开放时间','07:00–19:00'],['节假日','根据末班公交和客流延长'],['咨询电话','0836-7XXXXXX'],['村卫生室','步行约4分钟']].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]})])))]));
+  else if(section==='transport') page.append(el('h2',{text:'村口公交'}),el('table',{class:'public-service-table'},[el('tbody',{},[['06:40','县城→青垭'],['09:20','县城→青垭'],['13:10','青垭→县城'],['18:20','青垭→县城']].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]})])))]),el('h2',{text:'停车'}),el('p',{text:'小车请停村口停车场，老街内道路窄，不建议游客车辆驶入。节假日满位后听从现场引导。'}));
+  else if(section==='facilities') page.append(el('h2',{text:'公共设施'}),el('table',{class:'public-service-table'},[el('tbody',{},[['公共卫生间','游客中心一层 / 开放时间内'],['饮水','一层服务台旁'],['充电','服务台插座，数量有限'],['洗鞋水龙头','外墙北侧'],['失物登记','服务台登记簿']].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]})])))]),el('p',{},[el('span',{text:'卫生间详细情况见游客中心首页。'}),el('a',{href:'#/service',text:'返回首页'})]));
+  else if(section==='emergency') page.append(el('h2',{text:'紧急情况'}),el('ol',{class:'service-emergency-list'},[el('li',{text:'能返回开放主线时，优先沿现有路牌返回。'}),el('li',{text:'无法判断位置时，停止继续深入并联系救援。'}),el('li',{text:'提供最后确认位置、同行人数、衣着和手机电量。'})]),el('table',{class:'public-service-table'},[el('tbody',{},[['游客服务','0836-7XXXXXX'],['村卫生室','0836-7XXXX12'],['应急联络','0836-7XXXX19']].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]})])))]));
+  main.append(page,el('footer',{class:'public-service-footer',text:'青垭村游客服务中心　本站只提供当前开放区域便民信息'})); return main;
+}
+
+function renderRestaurantSection(section){
+  const main=el('main',{id:'app-main',class:'restaurant-site',tabindex:'-1'}); main.append(restaurantHeader(section));
+  const page=el('section',{class:'restaurant-local-page'}); const titles={menu:'菜单价目',rooms:'住宿照片',guestbook:'游客留言',directions:'交通指引'}; page.append(el('h1',{text:titles[section]||'青垭人家'}));
+  if(section==='menu') page.append(el('table',{class:'restaurant-menu-table'},[el('thead',{},el('tr',{},[el('th',{text:'菜名'}),el('th',{text:'份量'}),el('th',{text:'价格'})])),el('tbody',{},[['柴火土鸡','半只','88元'],['农家腊肉','一盘','58元'],['山笋炒肉','一盘','48元'],['野菜炒蛋','一盘','28元'],['家常豆腐','一盘','22元']].map(r=>el('tr',{},r.map((x,i)=>el(i===0?'th':'td',{text:x})))))]),el('p',{text:'当天没买到的菜不会上。周末土鸡建议提前电话说。'}));
+  else if(section==='rooms') page.append(el('p',{text:'楼上共有4间简单客房。2017年以后没有再更新在线相册，房间情况以电话为准。'}),el('table',{class:'restaurant-menu-table'},[el('tbody',{},[['201','双床 / 独立卫生间'],['202','大床 / 独立卫生间'],['203','双床 / 公共阳台'],['205','三人间 / 靠楼梯']].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]})])))]),el('p',{class:'restaurant-menu-note',text:'旧相册链接已失效。老板说“反正房间现在跟照片也不完全一样”。'}));
+  else if(section==='guestbook') page.append(el('p',{text:'留言板旧功能只保留近三个月内容。'}),...['山野小熊：小锅三个人够吃。','成都周末跑：老板家狗不咬人。','远山：早餐住宿客人可以提前吃。','膝盖已废：九弯走完以后什么都觉得好吃。'].map(x=>el('p',{class:'restaurant-comment',text:x})),el('a',{href:'#/food',text:'返回首页查看完整留言'}));
+  else if(section==='directions') page.append(el('p',{text:'从村口公交站沿老街往里约120米，看到红色“青垭人家”旧招牌即到。不要把车开进巷子。'}),el('table',{class:'restaurant-menu-table'},[el('tbody',{},[['公交站','步行约2分钟'],['游客中心','步行约3分钟'],['九弯起点','步行约8分钟'],['停车','村口停车场']].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]})])))]));
+  main.append(page,el('footer',{class:'restaurant-footer',text:'订桌电话：13X-XXXX-2876　网页有问题请直接跟老板说'})); return main;
+}
+
+function renderHeritageSection(section){
+  const main=el('main',{id:'app-main',class:'heritage-site',tabindex:'-1'}); main.append(heritageHeader(section)); const page=el('section',{class:'heritage-local-page'});
+  const titles={history:'村史',buildings:'旧建筑',photos:'老照片'}; page.append(el('p',{class:'heritage-crumb',text:`首页 ＞ ${titles[section]||'村志资料'}`}),el('h1',{text:titles[section]||'村志资料'}));
+  if(section==='history') page.append(el('p',{text:'现有村志资料主要来自1980年代后村委会登记、老人访谈和家庭旧照片。石料场停工后，北坡旧便道逐渐停止日常使用。'}),el('h2',{text:'资料年份'}),...['1987　村口木桥改建','1998　老供销社搬迁','2006　石料场完全停用','2013　九弯旅游线路整理'].map(x=>el('p',{class:'heritage-index-row',text:x})));
+  else if(section==='buildings') page.append(el('h2',{text:'仍可辨认的旧设施'}),...['老供销社木牌','村口旧广播喇叭','旧石料场铁牌','1987年修桥纪念碑'].map(x=>el('p',{class:'heritage-index-row',text:x})),el('p',{text:'这些设施只作村史记录，不等于开放参观点。'}));
+  else page.append(el('p',{text:'部分家庭旧照没有取得公开授权，只登记照片年份和拍摄地点。可公开的村景照片会陆续补充。'}),...['1996　村口晒谷场','2003　老公交站','2008　九弯雨后云海','2011　旧石料场远景'].map(x=>el('p',{class:'heritage-index-row',text:x})));
+  main.append(page,el('footer',{class:'heritage-footer',text:'青垭村志资料　如有旧照片可联系游客服务中心'})); return main;
+}
+
+function renderSafetySection(section,query){
+  const main=el('main',{id:'app-main',class:'village-notice-site',tabindex:'-1'}); main.append(villageNoticeHeader(section)); const page=el('section',{class:'notice-local-page'});
+  const titles={home:'通知公告首页',service:'服务动态',contacts:'便民电话'}; const article=qv(query,'article');
+  if(article){ const data={rain:['九弯环线雨后木阶湿滑提醒','连续降雨后木阶、石阶和南侧下坡泥泞。请穿防滑鞋并预留返程时间。'],storm:['山区雷雨天气临时避让说明','下午雷雨发展较快时请停止进入山脊，已经在山上的游客沿开放主线尽快下撤。'],parking:['暑期游客车辆停放与夜间进山提醒','游客车辆统一停村口停车场。夜间不要临时进入不熟悉的山路。'],fire:['森林防火期禁止携带明火进山','开放路线沿线禁止生火、烧烤和乱丢烟头。']}[article]; page.append(el('h1',{text:data?.[0]||'安全提醒'}),el('p',{class:'village-local-meta',text:'来源：青垭村游客服务中心'}),el('p',{text:data?.[1]||''}),el('a',{href:localHref('safety',{section:'service'}),text:'返回服务动态'})); }
+  else if(section==='home') page.append(el('h1',{text:'通知公告'}),...['九弯雨后路况提醒','游客中心节假日延时开放','村口公交候车点调整','秋季森林防火值班'].map((x,i)=>el('p',{class:'notice-index-row'},[el('span',{text:`2026-09-${String(12-i*2).padStart(2,'0')}`}),el('span',{text:x})])));
+  else if(section==='service') page.append(el('h1',{text:'服务动态'}),...[["rain","九弯环线雨后木阶湿滑提醒"],["storm","山区雷雨天气临时避让说明"],["parking","暑期游客车辆停放与夜间进山提醒"],["fire","森林防火期禁止携带明火进山"]].map(([id,title])=>el('p',{class:'notice-index-row'},[el('a',{href:localHref('safety',{article:id}),text:title})])));
+  else page.append(el('h1',{text:'便民电话'}),el('table',{class:'notice-contact-table'},[el('tbody',{},[['游客服务','0836-7XXXXXX'],['村卫生室','0836-7XXXX12'],['公交问询','0836-7XXXX35'],['应急联络','0836-7XXXX19']].map(r=>el('tr',{},[el('th',{text:r[0]}),el('td',{text:r[1]})])))]));
+  main.append(page); return main;
+}
+
+export function renderService({query}={}){
+  const section=qv(query,'section');
+  if(section && section!=='home') return renderServiceSection(section);
   const main=el('main',{id:'app-main',class:'public-service-site public-service-site--old',tabindex:'-1'}); main.append(serviceHeader());
   const wrap=el('div',{class:'public-service-page'});
   wrap.append(
@@ -126,8 +173,10 @@ function foodComment(name,date,text,reply=''){
   ].filter(Boolean));
 }
 
-export function renderFood(){
-  const main=el('main',{id:'app-main',class:'restaurant-site',tabindex:'-1'}); main.append(restaurantHeader());
+export function renderFood({query}={}){
+  const section=qv(query,'section');
+  if(section && section!=='home') return renderRestaurantSection(section);
+  const main=el('main',{id:'app-main',class:'restaurant-site',tabindex:'-1'}); main.append(restaurantHeader('home'));
   const shell=el('div',{class:'restaurant-page'});
   shell.append(
     el('div',{class:'restaurant-flash-line'},[el('b',{text:'★ 今日正常营业 ★'}),el('span',{text:'土鸡要现烧，赶时间的请先电话说。'})]),
@@ -177,8 +226,10 @@ export function renderFood(){
   main.append(shell); return main;
 }
 
-export function renderWatchmen(){
-  const main=el('main',{id:'app-main',class:'heritage-site',tabindex:'-1'}); main.append(heritageHeader());
+export function renderWatchmen({query}={}){
+  const section=qv(query,'section');
+  if(section && section!=='watchmen') return renderHeritageSection(section);
+  const main=el('main',{id:'app-main',class:'heritage-site',tabindex:'-1'}); main.append(heritageHeader('watchmen'));
   const page=el('div',{class:'heritage-page'});
   const article=el('article',{class:'heritage-article'});
   article.append(
@@ -202,8 +253,11 @@ export function renderWatchmen(){
   page.append(article,side); main.append(page,el('footer',{class:'heritage-footer',text:'青垭村志资料　仅作地方旧物记录　如有旧照片可联系游客服务中心'})); return main;
 }
 
-export function renderSafety({store,audio}){
-  const main=el('main',{id:'app-main',class:'village-notice-site',tabindex:'-1'}); main.append(villageNoticeHeader());
+export function renderSafety({store,audio,query}){
+  const section=qv(query,'section');
+  const article=qv(query,'article');
+  if((section && section!=='safety') || article) return renderSafetySection(section||'service',query);
+  const main=el('main',{id:'app-main',class:'village-notice-site',tabindex:'-1'}); main.append(villageNoticeHeader('safety'));
   const wrap=el('article',{class:'village-notice-page'});
   wrap.append(
     el('p',{class:'village-notice-breadcrumb',text:'首页 ＞ 通知公告 ＞ 徒步安全'}),
@@ -221,9 +275,9 @@ export function renderSafety({store,audio}){
       el('a',{href:'#/news-2017',text:'2017-08-20　北坡户外事故搜救工作结束'}),
       el('span',{text:'2018-05-11　旧返程线路停止推荐说明（原链接已失效）'})
     ]),
-    el('section',{class:'notice-normal-list'},[el('strong',{text:'近期安全提醒'}),el('span',{text:'2026-08-28　九弯环线雨后木阶湿滑提醒'}),el('span',{text:'2026-08-19　山区雷雨天气临时避让说明'}),el('span',{text:'2026-07-31　暑期游客车辆停放与夜间进山提醒'}),el('span',{text:'2026-07-09　森林防火期禁止携带明火进山'})]),
+    el('section',{class:'notice-normal-list'},[el('strong',{text:'近期安全提醒'}),el('a',{href:localHref('safety',{article:'rain'}),text:'2026-08-28　九弯环线雨后木阶湿滑提醒'}),el('a',{href:localHref('safety',{article:'storm'}),text:'2026-08-19　山区雷雨天气临时避让说明'}),el('a',{href:localHref('safety',{article:'parking'}),text:'2026-07-31　暑期游客车辆停放与夜间进山提醒'}),el('a',{href:localHref('safety',{article:'fire'}),text:'2026-07-09　森林防火期禁止携带明火进山'})]),
     el('p',{class:'notice-signature',text:'青垭村游客服务中心\n2026年9月1日'}),
-    el('footer',{class:'village-notice-foot'},[el('span',{text:'返回通知列表'}),el('span',{text:'打印本页'}),el('span',{text:'关闭窗口'})])
+    el('footer',{class:'village-notice-foot'},[el('a',{href:localHref('qingya',{section:'notices'}),text:'返回通知列表'}),(()=>{const b=el('button',{type:'button',text:'打印本页'});b.addEventListener('click',()=>globalThis.print?.());return b;})(),(()=>{const b=el('button',{type:'button',text:'关闭窗口'});b.addEventListener('click',()=>history.length>1?history.back():location.hash=localHref('qingya',{section:'notices'}).slice(1));return b;})()])
   );
   main.append(wrap);
   return main;

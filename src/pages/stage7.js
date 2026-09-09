@@ -12,18 +12,15 @@ const IMG = {
   village: './assets/photos/qingya-village.jpg',
 };
 
-function rescueHeader() {
+function qv(query,key,fallback=''){ return query?.get?.(key)||fallback; }
+function localHref(path,params={}){ const q=new URLSearchParams(); Object.entries(params).forEach(([k,v])=>{if(v)q.set(k,v)}); const t=q.toString(); return `#/${path}${t?`?${t}`:''}`; }
+
+function rescueHeader(active='report') {
+  const nav=(key,label)=>el('a',{href:key==='report'?'#/rescue-result':localHref('rescue-result',{section:key}),class:active===key?'is-active':'',text:label});
   return el('header', { class: 'rescue-header' }, [
     el('div', { class: 'rescue-header__inner' }, [
-      el('a', { class: 'rescue-brand', href: '#/rescue-result' }, [
-        el('strong', { text: '青垭县应急信息公开' }),
-        el('span', { text: '山地搜救联合信息' }),
-      ]),
-      el('nav', { class: 'rescue-nav', 'aria-label': '应急信息栏目' }, [
-        el('span', { text: '信息公开' }),
-        el('span', { class: 'is-active', text: '搜救通报' }),
-        el('span', { text: '安全提醒' }),
-      ]),
+      el('a', { class: 'rescue-brand', href: localHref('rescue-result',{section:'public'}) }, [el('strong', { text: '青垭县应急信息公开' }),el('span', { text: '山地搜救联合信息' })]),
+      el('nav', { class: 'rescue-nav', 'aria-label': '应急信息栏目' }, [nav('public','信息公开'),nav('report','搜救通报'),nav('safety','安全提醒')]),
       el('span', { class: 'rescue-status', text: '已结束' }),
     ]),
   ]);
@@ -106,9 +103,20 @@ async function goToEnding({ interludes, audio, router }) {
   router.navigate('ending');
 }
 
-export function renderRescueResult({ store, interludes, audio, router }) {
+function renderRescueSection(section,query){
+  const main=el('main',{id:'app-main',class:'rescue-report-site',tabindex:'-1'}); main.append(rescueHeader(section)); const page=el('section',{class:'rescue-local-page'}); const entry=qv(query,'entry');
+  const publicEntries={contact:['山地搜救联合值守联系方式','县应急联络组值守电话、村口游客中心和村卫生室联系方式汇总。非紧急咨询请优先联系游客中心。'],patrol:['秋季重点林区安全巡查安排','秋季巡查以开放步道入口、森林防火和游客集中区域为重点，不发布未开放区域路线图。'],jiuwan:['九弯开放线路安全提示','九弯主线路牌连续。雨后木阶湿滑，山脊风大时应缩短停留并沿开放主线返回。'],supplies:['村口应急物资点位说明','游客中心备有基础保温毯、饮水和简单外伤用品。专业救援装备不对游客借用。']};
+  if(entry && publicEntries[entry]) page.append(el('h1',{text:publicEntries[entry][0]}),el('p',{text:publicEntries[entry][1]}),el('p',{class:'fine-note',text:'青垭县应急信息公开 · 普通公开条目'}),el('a',{href:localHref('rescue-result',{section:'public'}),text:'‹ 返回信息公开'}));
+  else if(section==='public') page.append(el('h1',{text:'信息公开'}),...[[ '09-17','contact','山地搜救联合值守联系方式'],['09-15','patrol','秋季重点林区安全巡查安排'],['09-13','jiuwan','九弯开放线路安全提示'],['09-11','supplies','村口应急物资点位说明']].map(([d,id,x])=>el('p',{class:'rescue-index-row'},[el('span',{text:d}),el('a',{href:localHref('rescue-result',{section:'public',entry:id}),text:x})])),el('p',{class:'rescue-index-row'},[el('span',{text:'09-17'}),el('a',{href:'#/rescue-result',text:'北坡失联人员搜救工作结束'})]));
+  else page.append(el('h1',{text:'山地安全提醒'}),el('p',{text:'公开轨迹、旧路条和他人近期记录都不能代替开放线路标识。山区信号不稳定，上传时间也不能作为实时位置证明。'}),el('ul',{class:'rescue-safety-list'},[el('li',{text:'只按当前开放路线标识通行。'}),el('li',{text:'遇到天气变化及时下撤。'}),el('li',{text:'失联求助时提供最后确认位置和同行人数。'})]));
+  main.append(page); return main;
+}
+
+export function renderRescueResult({ store, interludes, audio, router, query }) {
+  const section=qv(query,'section');
+  if(section && section!=='report') return renderRescueSection(section,query);
   const main = el('main', { id: 'app-main', class: 'rescue-report-site', tabindex: '-1' });
-  main.append(rescueHeader());
+  main.append(rescueHeader('report'));
 
   const page = el('div', { class: 'rescue-report-page' });
   const article = el('article', { class: 'rescue-report' });

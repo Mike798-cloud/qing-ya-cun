@@ -203,11 +203,13 @@ function renderFinalDraftNotice() {
 
 function render() {
   applySettings();
-  const { path } = router.resolve();
-  if (!['boot', 'contact'].includes(path) && store.getState().flags.lastPublicPath !== path) {
-    store.dispatch({ type: 'SET_FLAG', key: 'lastPublicPath', value: path });
+  const { path, query } = router.resolve();
+  const queryString = query?.toString?.() || '';
+  const publicPath = queryString ? `${path}?${queryString}` : path;
+  if (!['boot', 'contact'].includes(path) && store.getState().flags.lastPublicPath !== publicPath) {
+    store.dispatch({ type: 'SET_FLAG', key: 'lastPublicPath', value: publicPath });
   }
-  recordContextualDiscovery({ store, path });
+  recordContextualDiscovery({ store, path, query });
   flow.visit(path);
   syncStoryEvents();
   acknowledgeCommentCacheNoticeForPath(path);
@@ -217,7 +219,7 @@ function render() {
   document.title = def?.title || '返程线';
   const renderer = pageRenderers.get(path) || renderBoot;
   const shell = el('div', { class: 'immersive-shell' });
-  shell.append(renderer({ store, flow, passwords, audio, interludes, router }));
+  shell.append(renderer({ store, flow, passwords, audio, interludes, router, query }));
   const unreadChatNotice = renderUnreadChatNotice(path);
   if (unreadChatNotice) shell.append(unreadChatNotice);
   const commentCacheNotice = renderCommentCacheNotice();

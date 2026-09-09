@@ -13,9 +13,9 @@ function cacheHeader() {
         el('span', { text: '公开动态缓存' }),
       ]),
       el('div', { class: 'trail-cache-tabs' }, [
-        el('span', { text: '动态' }),
+        el('a', { href: '#/profile', text: '动态' }),
         el('span', { class: 'is-active', text: '评论' }),
-        el('span', { text: '轨迹' }),
+        el('a', { href: '#/post', text: '轨迹' }),
       ]),
       el('span', { class: 'trail-cache-state', text: '只读缓存' }),
     ]),

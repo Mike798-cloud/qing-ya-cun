@@ -1,64 +1,90 @@
 {
-  "artifact": "返程线-旧网站真实感去设计师痕迹-2026-09-09",
-  "generated_at": "2026-09-09T12:25:00Z",
-  "mode": "BAT-equivalent production patch; only production files changed from 旧互联网生态与单锚点认知链 baseline",
-  "goal": "在不新增调查分支、不恢复门控的前提下，继续降低现代设计师感：村站、政务站、县媒体、BBS、农家乐和巡查资料分别加入符合自身维护者/年代的粗糙工具条、公告、旧页脚、访问计数和文件目录行为；主线单锚点与认知状态保持不变。",
+  "artifact": "返程线-全伪网站导航真实性与单锚点保护-2026-09-09",
+  "generated_at": "2026-09-09T14:15:42Z",
+  "mode": "BAT-equivalent production patch; only files changed from currently deployed reconstruction baseline",
+  "goal": "让所有看起来像网站导航、栏目、公告、新闻、论坛主题和站内资料的元素都有符合该网站身份的真实站内反馈，同时把普通内容限制在同站查询参数内，避免重新制造跨站多线跳转；主线仍由认知状态而不是“点过页面”推进。",
   "changes": [
-    "青垭村：增加老站公告条与更随手的访问/维护信息；右栏取消残余独立盒子边框，改为栏目条+点线分隔。",
-    "游客服务中心：增加当前位置/打印/意见簿式旧政务工具条；宣传横幅缩小并改成笨重图文横幅。",
-    "青垭人家：增加旧访问计数、失效功能说明和维护人碎碎念，强化亲友维护小商户站感。",
-    "县融媒体：增加当前位置、值班电话和旧CMS版权页脚；历史搜索取消独立卡片感，仍只作为工具。",
-    "地方BBS：增加游客状态、论坛搜索/帮助/RSS/在线人数等普通工具行，不新增主线链接。",
-    "四号资料：front/side/base/txt/look_back 全部进入同一真实目录列表；普通文件可打开或滚动查看，look_back 不再被单独做成提示按钮。"
+    "青垭村：顶栏六栏目全部可用；最新公告12条全部可打开正文；旅游线路、住宿餐饮、游客服务、村志资料形成真实站内栏目与短页，普通内容不参与主线推进。",
+    "路迹：发现/路线/社区/装备/搜索/客户端/路线纠错及用户动态/轨迹/收藏/关于全部有站内页面；普通路线与普通讨论补齐可打开详情，不把所有项目导向青垭主线。",
+    "游客中心、农家乐、村志、通知公告：顶栏全部具有站内行为；菜单、住宿、留言、交通、公共设施、应急、村史、旧建筑、老照片和普通安全提醒均能打开真实内容。",
+    "县融媒体：九个频道全部可浏览；普通新闻和频道补充稿全部可打开；历史搜索返回的普通结果也能查看，只有历史检索动作本身建立NOBACK发现条件。",
+    "2016旧站：网站首页、徒步线路、农家乐、住宿电话、游客留言、联系我们全部可打开；普通旧线路条目均为站内历史内容，主线镜像仍保持唯一自然向前出口。",
+    "救援资料与BBS：救援记录/安全资料和论坛全部版块、普通帖子、搜索/帮助/注册/登录均有真实反馈；普通论坛主题全部可打开，但只在论坛内部活动。",
+    "应急公开站：信息公开、搜救通报、安全提醒均可访问；普通公开条目可以打开，不新增故事分支。",
+    "认知保护：recordContextualDiscovery读取query并区分主页面与普通栏目/文章；提前浏览普通栏目、新闻或论坛主题不会被计入主线认知。",
+    "返回路径：聊天返回保存完整path+query，玩家从站内子页面收到消息后返回时能回到原来的栏目/文章位置。"
   ],
   "verification": {
-    "javascript": "PASS: all src JS node --check.",
+    "javascript": "PASS: every src/**/*.js passes node --check.",
     "css": "PASS: 4 stylesheets, 0 tinycss2 parse errors.",
-    "module_imports": "PASS: 45 relative ES-module imports, 0 missing.",
-    "runtime_assets": "PASS: 35 runtime asset references / 20 unique paths, 0 missing.",
-    "routes": "PASS: 21 route definitions; literal internal hash destinations all valid.",
-    "cognitive_flow": "PASS: early future browsing creates no cognition; full contextual chain reaches Stage 7.",
-    "directory_actions": "PASS: normal archive files do not navigate; look_back sets lookbackFound and navigates second-book.",
-    "browser_matrix": "PASS: 21 routes × desktop 1440 + mobile 390 + mobile 390 at 1.2x text = 63 in-memory Chromium states; 0 horizontal overflow, 0 duplicate IDs, 0 unnamed controls, 0 page errors.",
+    "module_imports": "PASS: relative ES-module imports, 0 missing.",
+    "runtime_assets": "PASS: all literal local runtime asset references exist.",
+    "routes": "PASS: 21 base routes; 114 literal/localHref internal route references, 0 invalid base destinations.",
+    "render_crawl": "PASS: recursive in-memory DOM crawl reached 221 distinct base/query states, 2183 anchor instances, 59 buttons, 72 images; 0 render exceptions, 0 bad internal hrefs, 0 duplicate IDs, 0 unnamed buttons, 0 images without alt.",
+    "cognitive_flow": "PASS: early ordinary subsections do not leak cognition; contextual core chain reaches Stage 7; historical cache still requires in-world archive search flag.",
     "runtime_cards": "PASS: no runtime .card/.card--/.card__ selectors/classes.",
     "inline_route_svg": "PASS: no page-level inline SVG route drawings.",
     "known_reproducible_bugs": 0
   },
   "files": [
     {
+      "path": "src/core/cognition.js",
+      "bytes": 4706,
+      "sha256": "ea63926727e0fbb619120809da579e6cd9c608f75fa7f8107a8a24678543a8d1",
+      "status": "modified"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 10197,
+      "sha256": "a7ef04fe150dcf5cd40a5d3ae2740155540c17f3a74f94ccd23158e48bc0b2dd",
+      "status": "modified"
+    },
+    {
       "path": "src/pages/stage1.js",
-      "bytes": 40530,
-      "sha256": "8891adacf27f711df6e2fd7e743552541ec078c457488c1a06dee55f3dc91938",
+      "bytes": 59476,
+      "sha256": "a97b8c5a4f503346c9acfb9e94bd97016a38145ec391f1733756d05bbafe14f3",
       "status": "modified"
     },
     {
       "path": "src/pages/stage2.js",
-      "bytes": 20993,
-      "sha256": "b79597ebe4474dc2fea74135edb06596fb841bb35c915affc1c1917e7bfaa353",
+      "bytes": 31829,
+      "sha256": "eedd06fd29ca807160ebb871da5cf14dbd662e2b5aaeeadbcbef869d800a9796",
       "status": "modified"
     },
     {
       "path": "src/pages/stage3.js",
-      "bytes": 16662,
-      "sha256": "0aef652021f528b6d286fee9ef02a714c03b9e181ddb6e73be05052d792159df",
+      "bytes": 28220,
+      "sha256": "ad15c12d0bb0c2e874834b2b66ddafc7d4fc6d39fcb742b739e4465779d84b9a",
       "status": "modified"
     },
     {
       "path": "src/pages/stage4.js",
-      "bytes": 12910,
-      "sha256": "c5597e7fe9aee21e54f6c570a1bad39d0cb05d66930465554f84ab856124b1d3",
+      "bytes": 22599,
+      "sha256": "32243e5b87ab777c07f904bf07e3b77675495e2c93fd0c7ed97e0ac2a984b007",
       "status": "modified"
     },
     {
       "path": "src/pages/stage5.js",
-      "bytes": 13848,
-      "sha256": "73f52aef23b672b857260d474d0f923e01d52148c23993c6ad87835013fe341e",
+      "bytes": 14182,
+      "sha256": "1a569bf6d498bc88ad145ed36a1813771959f1415485da7d7c1d4d6abfbb611c",
+      "status": "modified"
+    },
+    {
+      "path": "src/pages/stage6.js",
+      "bytes": 9372,
+      "sha256": "892320c02c1a4c2a9ad421d571a95eac2a9729bb7a11a34669aa457ede7f075c",
+      "status": "modified"
+    },
+    {
+      "path": "src/pages/stage7.js",
+      "bytes": 12222,
+      "sha256": "32d66b21b77d67c28747bc1e4a7ee688b390899477d80bd76493dd78b94fa5ed",
       "status": "modified"
     },
     {
       "path": "src/styles/immersive-web.css",
-      "bytes": 171605,
-      "sha256": "ea6dabfa3d12dbc15b0c2c5194cce71b48a7671dc157f96e0f34fcbff3cee013",
+      "bytes": 181443,
+      "sha256": "6fc15f184baa7affc3b5dc7e8249228c38306a7aab4ae903fa238af1bfbcbe18",
       "status": "modified"
     }
   ]

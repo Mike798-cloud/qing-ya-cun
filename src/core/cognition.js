@@ -3,8 +3,19 @@ function markFlag(store, key) {
   if (!state.flags[key]) store.dispatch({ type: 'SET_FLAG', key, value: true });
 }
 
-export function recordContextualDiscovery({ store, path }) {
+export function recordContextualDiscovery({ store, path, query }) {
   const state = store.getState();
+  const section = query?.get?.('section') || '';
+  const topic = query?.get?.('topic') || '';
+  const article = query?.get?.('article') || '';
+  const coreView = {
+    watchmen: !section || section === 'watchmen',
+    safety: (!section || section === 'safety') && !article,
+    'news-2017': !section && !article,
+    'cache-2017': !section,
+    'zhou-cheng': !section || section === '2017',
+    'zhou-yougen': !section && !topic,
+  };
   // Discovery eligibility follows what the player can already understand,
   // not the hidden chapter number. This matters when a player opens a public
   // source while a chat reply is still pending: if the prerequisite facts are
@@ -13,12 +24,12 @@ export function recordContextualDiscovery({ store, path }) {
   const rules = [
     ['post', Boolean(state.choices.stage1), 'cogLocationPost'],
     ['draft-1', Boolean(state.passwords.noweekend), 'cogLocationDraft'],
-    ['watchmen', Boolean(state.flags.cogLocationPost) && Boolean(state.flags.cogLocationDraft), 'cogWatchmen'],
-    ['safety', Boolean(state.flags.cogWatchmen), 'cogSafety'],
-    ['news-2017', Boolean(state.flags.cogSafety), 'cogNews2017'],
-    ['cache-2017', Boolean(state.flags.cogNews2017) && Boolean(state.flags.nobackFound), 'cogCache2016'],
-    ['zhou-cheng', Boolean(state.flags.cogCache2016), 'cogZhouCheng'],
-    ['zhou-yougen', Boolean(state.flags.cogZhouCheng), 'cogZhouYougen'],
+    ['watchmen', Boolean(coreView.watchmen) && Boolean(state.flags.cogLocationPost) && Boolean(state.flags.cogLocationDraft), 'cogWatchmen'],
+    ['safety', Boolean(coreView.safety) && Boolean(state.flags.cogWatchmen), 'cogSafety'],
+    ['news-2017', Boolean(coreView['news-2017']) && Boolean(state.flags.cogSafety), 'cogNews2017'],
+    ['cache-2017', Boolean(coreView['cache-2017']) && Boolean(state.flags.cogNews2017) && Boolean(state.flags.nobackFound), 'cogCache2016'],
+    ['zhou-cheng', Boolean(coreView['zhou-cheng']) && Boolean(state.flags.cogCache2016), 'cogZhouCheng'],
+    ['zhou-yougen', Boolean(coreView['zhou-yougen']) && Boolean(state.flags.cogZhouCheng), 'cogZhouYougen'],
     ['watchman-04-detail', Boolean(state.flags.cogZhouYougen), 'cogWatchmanArchive'],
     ['second-book', Boolean(state.flags.cogWatchmanArchive) && Boolean(state.flags.lookbackFound), 'cogSecondBook'],
     ['aji-comment', state.stage >= 6, 'cogAjiComment'],
