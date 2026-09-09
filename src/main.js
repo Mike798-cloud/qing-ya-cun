@@ -7,6 +7,7 @@ import { createAudioManager } from './core/audio.js';
 import { createInterludePlayer } from './core/interlude.js';
 import { recordContextualDiscovery, backfillLegacyCognition, storyEventDefinitions, getPendingStoryEvent } from './core/cognition.js';
 import { openSettings } from './core/settings.js';
+import { createPaywall } from './core/paywall.js';
 import { isCommentCacheNoticeEligible, shouldAcknowledgeCommentCacheNotice, isFinalDraftNoticeEligible, shouldAcknowledgeFinalDraftNotice } from './core/notifications.js';
 import { el, icon, toast } from './core/ui.js';
 import { routeDefinitions, passwordDefinitions, stageRules, gates } from './data/content.js';
@@ -29,6 +30,7 @@ audio.register('interlude-1', './assets/audio/interlude-1.wav', { volume: 0.22 }
 audio.register('interlude-2', './assets/audio/interlude-2.wav', { volume: 0.2 });
 audio.register('interlude-3', './assets/audio/interlude-3.wav', { volume: 0.18 });
 const interludes = createInterludePlayer({ store, audio });
+const paywall = createPaywall();
 
 const pageRenderers = new Map([
   ['boot', renderBoot], ['contact', renderContact], ['profile', renderProfile], ['post', renderPost],
@@ -219,7 +221,7 @@ function render() {
   document.title = def?.title || '返程线';
   const renderer = pageRenderers.get(path) || renderBoot;
   const shell = el('div', { class: 'immersive-shell' });
-  shell.append(renderer({ store, flow, passwords, audio, interludes, router, query }));
+  shell.append(renderer({ store, flow, passwords, audio, interludes, router, query, paywall }));
   const unreadChatNotice = renderUnreadChatNotice(path);
   if (unreadChatNotice) shell.append(unreadChatNotice);
   const commentCacheNotice = renderCommentCacheNotice();
@@ -228,9 +230,10 @@ function render() {
   if (finalDraftNotice) shell.append(finalDraftNotice);
   if (path === 'boot') shell.append(renderTools());
   app.replaceChildren(shell);
+  paywall.maybeAutoShow({ stage: store.getState().stage, path });
   requestAnimationFrame(() => document.getElementById('app-main')?.focus({ preventScroll: true }));
 }
 
 const router = createRouter({ routes: routeDefinitions, canAccess: id => !gates[id] || flow.isUnlocked(id), fallback: 'boot', onNavigate: render });
 router.start();
-window.__RETURN_ROUTE__ = { store, flow, passwords, audio, interludes, router };
+window.__RETURN_ROUTE__ = { store, flow, passwords, audio, interludes, router, paywall };

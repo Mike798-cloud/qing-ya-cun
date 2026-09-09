@@ -1,0 +1,84 @@
+/** 自愿支持浮层：沿用《松涛粮站》的视觉与交互。 */
+.paywall-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(6px);
+  z-index:10000; display:flex; align-items:center; justify-content:center; opacity:0;
+  transition:opacity .4s ease; padding:16px; box-sizing:border-box;
+}
+.paywall-overlay.paywall-show { opacity:1; }
+.paywall-overlay.paywall-closing { opacity:0; }
+.paywall-card {
+  background:linear-gradient(145deg,#f4ead0,#e3d5aa); border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3),0 0 0 1px rgba(255,200,150,.2);
+  max-width:460px; width:min(90vw,460px); max-height:90vh; overflow-y:auto; position:relative;
+  transform:scale(.9) translateY(20px); transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  color:#39402f; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+}
+.paywall-overlay.paywall-show .paywall-card { transform:scale(1) translateY(0); }
+.paywall-close {
+  position:absolute; top:12px; right:16px; background:none; border:0; font-size:1.8rem;
+  color:#aaa092; cursor:pointer; z-index:10; transition:color .2s,transform .2s; line-height:1; padding:4px 8px;
+}
+.paywall-close:hover { color:#665f55; transform:rotate(90deg); }
+.paywall-close:focus-visible,.paywall-btn:focus-visible { outline:2px solid #5e7840; outline-offset:2px; }
+.paywall-card-inner { padding:30px 28px 24px; }
+.paywall-header { text-align:center; margin-bottom:20px; }
+.paywall-title-row { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:6px; }
+.paywall-heart { font-size:1.3rem; color:#7c9251; animation:paywallHeartbeat 1.5s ease-in-out infinite; }
+@keyframes paywallHeartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+.paywall-title { font-size:1.4rem; font-weight:700; color:#2b3b28; letter-spacing:1px; }
+.paywall-subtitle { font-size:.82rem; color:#7a744d; letter-spacing:.5px; }
+.paywall-body { display:flex; flex-direction:column; align-items:center; gap:18px; }
+.paywall-qr-wrapper {
+  position:relative; width:120px; height:120px; border-radius:10px; overflow:hidden;
+  box-shadow:0 4px 16px rgba(0,0,0,.1); background:#f9f7f0;
+}
+.paywall-qr-img { width:100%; height:100%; object-fit:contain; border-radius:10px; }
+.paywall-qr-glow { position:absolute; inset:0; border-radius:10px; box-shadow:inset 0 0 0 2px rgba(255,200,150,.2); pointer-events:none; }
+.paywall-qr-fallback { height:100%; padding:18px 12px; box-sizing:border-box; display:grid; place-items:center; text-align:center; color:#7e725f; font-size:.72rem; line-height:1.6; }
+.paywall-qr-fallback[hidden] { display:none; }
+.paywall-qr-tip { font-size:.72rem; color:#9c8d7d; margin-top:6px; text-align:center; line-height:1.5; }
+.paywall-qr-tip strong { color:#1677ff; }
+.paywall-message { text-align:center; width:100%; }
+.paywall-msg-warm { font-size:.95rem; color:#394b31; font-weight:600; margin:0 0 10px; }
+.paywall-msg-body { font-size:.84rem; color:#5c6044; line-height:1.9; margin:0 0 10px; }
+.paywall-msg-body strong { color:#8d5f23; }
+.paywall-msg-cute { font-size:.82rem; color:#746c48; line-height:1.8; padding:8px 14px; background:rgba(124,146,81,.12); border-radius:10px; margin:0 0 10px; }
+.paywall-msg-warm2 { font-size:.82rem; color:#6a6649; line-height:1.7; margin:0; }
+.paywall-footer { margin-top:20px; padding-top:16px; border-top:1px dashed rgba(120,100,80,.25); }
+.paywall-hint { display:flex; align-items:flex-start; gap:6px; font-size:.72rem; color:#918373; line-height:1.6; margin-bottom:14px; padding:0 4px; }
+.paywall-hint-icon { flex-shrink:0; }
+.paywall-btns { display:flex; gap:10px; }
+.paywall-btn { flex:1; padding:11px 16px; border-radius:10px; border:0; font-size:.88rem; font-weight:600; cursor:pointer; transition:all .25s; font-family:inherit; }
+.paywall-btn-support { background:linear-gradient(135deg,#6f8d43,#c7a64b); color:#fff; box-shadow:0 4px 14px rgba(111,141,67,.3); }
+.paywall-btn-support:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(111,141,67,.4); }
+.paywall-btn-later { background:#f0ebe5; color:#806f62; border:1px solid rgba(120,100,80,.18); }
+.paywall-btn-later:hover { background:#e8e0d8; }
+.paywall-studio { text-align:center; font-size:.8rem; font-weight:700; color:#a99b8c; margin-top:14px; letter-spacing:1px; }
+.paywall-toast {
+  position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:rgba(111,141,67,.96); color:#fff; padding:12px 24px; border-radius:12px;
+  font-size:.9rem; z-index:10001; opacity:0; transition:all .4s; box-shadow:0 6px 20px rgba(0,0,0,.15); white-space:nowrap;
+}
+.paywall-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.chat-support-button { border:0; background:transparent; color:#4b6650; font:600 1.35rem/1 ui-sans-serif,system-ui; padding:5px 4px; cursor:pointer; text-decoration:none; }
+.chat-support-button:hover { color:#7b934f; }
+.chat-support-button:focus-visible { outline:2px solid #6d844b; outline-offset:3px; }
+@media (max-width:480px) {
+  .paywall-overlay { align-items:flex-end; padding:10px; }
+  .paywall-card { width:100%; max-height:92vh; border-radius:16px; }
+  .paywall-card-inner { padding:24px 18px 18px; }
+  .paywall-qr-wrapper { width:110px; height:110px; }
+  .paywall-btns { flex-direction:column; }
+  .paywall-message { font-size:.8rem; }
+  .paywall-toast { max-width:calc(100vw - 24px); white-space:normal; text-align:center; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .paywall-overlay,.paywall-card,.paywall-close,.paywall-btn,.paywall-toast { transition:none !important; }
+  .paywall-heart { animation:none !important; }
+}
+html[data-reduced-motion="true"] .paywall-overlay,
+html[data-reduced-motion="true"] .paywall-card,
+html[data-reduced-motion="true"] .paywall-close,
+html[data-reduced-motion="true"] .paywall-btn,
+html[data-reduced-motion="true"] .paywall-toast { transition:none !important; }
+html[data-reduced-motion="true"] .paywall-heart { animation:none !important; }

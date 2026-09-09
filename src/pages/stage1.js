@@ -185,7 +185,7 @@ function chooseActiveReply(state) {
   return null;
 }
 
-export function renderBoot({ store, flow, audio, router }) {
+export function renderBoot({ store, flow, audio, router, paywall }) {
   const main = el('main', { id: 'app-main', class: 'chat-page', tabindex: '-1' });
   const app = el('section', { class: 'messenger-app', 'aria-label': '与周航的聊天' });
   const state = store.getState();
@@ -203,9 +203,20 @@ export function renderBoot({ store, flow, audio, router }) {
     ]),
     el('div', { class: 'chat-top-actions' }, [
       el('span', { class: 'chat-top-icon', text: '⌕', 'aria-hidden': 'true' }),
+      el('button', { class: 'chat-support-button', type: 'button', 'aria-label': '支持《返程线》1元', text: '♡' }),
       el('a', { href: '#/contact', class: 'chat-top-icon', 'aria-label': '联系人详情', text: '•••' }),
     ]),
   ]);
+  const supportButton = top.querySelector('.chat-support-button');
+  supportButton?.addEventListener('click', () => {
+    if (!paywall) return;
+    if (paywall.hasPaid()) {
+      toast('已记录你的支持，感谢！');
+      return;
+    }
+    paywall.markAutoShown();
+    paywall.show();
+  });
 
   const list = el('div', { class: 'chat-list' });
   chatDay(list, '今天 08:41');
