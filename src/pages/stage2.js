@@ -36,11 +36,11 @@ function restaurantHeader(){
 function serviceHeader(){
   return el('header',{class:'public-service-header'},[
     el('div',{class:'public-service-header__top'},[
-      el('a',{href:'#/service',class:'public-service-brand'},[el('strong',{text:'青垭村游客服务中心'}),el('span',{text:'公共服务信息'})]),
-      el('div',{class:'public-service-tel'},[el('span',{text:'值班电话'}),el('strong',{text:'0836-7XXXXXX'})]),
+      el('a',{href:'#/service',class:'public-service-brand'},[el('strong',{text:'青垭村游客服务中心'}),el('span',{text:'QINGYA VILLAGE TOURIST SERVICE CENTER'})]),
+      el('div',{class:'public-service-tel'},[el('span',{text:'服务游客　服务村民'}),el('strong',{text:'0836-7XXXXXX'})]),
     ]),
     el('nav',{class:'public-service-nav','aria-label':'游客服务中心栏目'},[
-      el('span',{class:'is-active',text:'公共服务'}), el('span',{text:'公交问询'}), el('span',{text:'失物招领'}), el('span',{text:'应急联系'}), el('a',{href:'#/qingya',text:'返回青垭村'}),
+      el('span',{class:'is-active',text:'首页'}), el('span',{text:'景区介绍'}), el('span',{text:'交通指南'}), el('span',{text:'公共设施'}), el('span',{text:'应急服务'}), el('a',{href:'#/qingya',text:'青垭村'}),
     ])
   ]);
 }
@@ -66,7 +66,16 @@ function villageNoticeHeader(){
 export function renderService(){
   const main=el('main',{id:'app-main',class:'public-service-site',tabindex:'-1'}); main.append(serviceHeader());
   const wrap=el('div',{class:'public-service-page'});
-  wrap.append(el('p',{class:'public-service-breadcrumb',text:'首页 ＞ 公共服务 ＞ 公共卫生间'}));
+  const hero=el('section',{class:'service-home-hero'},[
+    photo(IMG.trail,'青垭村远山与九弯山脊','','photo--service-hero'),
+    el('div',{class:'service-home-hero__copy'},[el('strong',{text:'山可以野，厕所不能野'}),el('span',{text:'文明出行 · 保护环境 · 安全第一'})])
+  ]);
+  const shortcuts=el('section',{class:'service-shortcuts','aria-label':'游客服务快捷入口'},[
+    el('div',{class:'service-shortcut'},[el('b',{class:'service-shortcut__icon',text:'▣'}),el('strong',{text:'公交问询'}),el('span',{text:'发车时间 / 线路信息 / 票价查询'})]),
+    el('div',{class:'service-shortcut'},[el('b',{class:'service-shortcut__icon',text:'WC'}),el('strong',{text:'公共厕所'}),el('span',{text:'位置指引 / 开放时间 / 卫生情况'})]),
+    el('div',{class:'service-shortcut'},[el('b',{class:'service-shortcut__icon',text:'☎'}),el('strong',{text:'应急联系'}),el('span',{text:'遇到困难 / 紧急求助 / 相关电话'})])
+  ]);
+  wrap.append(hero,shortcuts,el('p',{class:'public-service-breadcrumb',text:'首页 ＞ 公共设施 ＞ 公共卫生间'}));
   const title=el('header',{class:'service-article-head'},[el('h1',{text:'青垭村游客服务中心公共卫生间'}),el('p',{text:'更新：2026-08-30　位置：村口游客中心一层'})]);
   const body=el('div',{class:'service-article-layout'});
   const article=el('article',{class:'public-service-article'});

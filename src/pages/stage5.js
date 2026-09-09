@@ -29,10 +29,10 @@ function mountainHeader() {
   return el('header', { class: 'mountain-archive-header' }, [
     el('div', { class: 'mountain-archive-header__top' }, [
       el('a', { class: 'mountain-archive-brand', href: '#/watchman-04-detail' }, [
-        el('strong', { text: '青垭村 · 山地环境资料库' }),
-        el('span', { text: '公开资料 / 旧设施 / 巡查记录' }),
+        el('strong', { text: '四号_巡查资料' }),
+        el('span', { text: 'QINGYA FIELD ARCHIVE / SCAN INDEX' }),
       ]),
-      el('span', { class: 'mountain-archive-search', text: '资料检索' }),
+      el('span', { class: 'mountain-archive-search', text: '只读目录' }),
     ]),
     el('nav', { class: 'mountain-archive-nav', 'aria-label': '山地环境资料库栏目' }, [
       el('span', { text: '首页' }),

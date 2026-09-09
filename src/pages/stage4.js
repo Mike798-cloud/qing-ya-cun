@@ -42,15 +42,17 @@ function memorialHeader() {
 function forumHeader() {
   return el('header', { class: 'local-forum-header' }, [
     el('div', { class: 'local-forum-header__hero' }, [
-      el('strong', { text: '青垭村民交流板' }),
-      el('span', { text: '以前的帖子还在，账号有些已经不用了' }),
+      el('div',{class:'forum-logo-lockup'},[el('strong', { text: '周有根的山里论坛' }),el('small',{text:'bbs.qyshan.com'})]),
+      el('span', { text: '本地人 · 本地事 · 本地话' }),
     ]),
     el('nav', { class: 'local-forum-nav', 'aria-label': '村民交流板栏目' }, [
-      el('span', { text: '全部' }),
-      el('span', { text: '村里事' }),
-      el('span', { class: 'is-active', text: '徒步和路' }),
-      el('span', { text: '吃住' }),
-      el('span', { text: '旧帖' }),
+      el('span', { text: '论坛首页' }),
+      el('span', { text: '山里天地' }),
+      el('span', { class: 'is-active', text: '户外徒步' }),
+      el('span', { text: '家乡风物' }),
+      el('span', { text: '闲聊杂谈' }),
+      el('span', { text: '注册' }),
+      el('span', { text: '登录' }),
     ]),
   ]);
 }

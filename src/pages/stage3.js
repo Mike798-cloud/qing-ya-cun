@@ -29,15 +29,16 @@ function photo({ src, alt, caption, className = '' }) {
 function renderCountyHeader() {
   return el('header', { class: 'county-header' }, [
     el('div', { class: 'county-header__top' }, [
-      el('a', { href: '#/news-2017', class: 'county-brand', text: '青垭县融媒体资料库' }),
-      el('span', { text: '历史公开稿件 · 只读' }),
+      el('a', { href: '#/news-2017', class: 'county-brand' }, [el('strong',{text:'青垭县融媒体中心'}),el('small',{text:'QINGYA COUNTY MEDIA CENTER'})]),
+      el('span', { text: '2024年6月14日　星期五' }),
     ]),
     el('nav', { class: 'county-nav', 'aria-label': '资料库栏目' }, [
+      el('span', { text: '首页' }),
       el('span', { text: '要闻' }),
-      el('span', { text: '社会' }),
-      el('span', { text: '应急' }),
-      el('span', { text: '乡镇' }),
-      el('span', { class: 'is-active', text: '旧稿查询' }),
+      el('span', { class: 'is-active', text: '社会' }),
+      el('span', { text: '旅游' }),
+      el('span', { text: '文化' }),
+      el('span', { text: '视频' }),
     ]),
   ]);
 }
