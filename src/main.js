@@ -31,7 +31,6 @@ audio.register('interlude-2', './assets/audio/interlude-2.wav', { volume: 0.2 })
 audio.register('interlude-3', './assets/audio/interlude-3.wav', { volume: 0.18 });
 const interludes = createInterludePlayer({ store, audio });
 const paywall = createPaywall();
-
 const pageRenderers = new Map([
   ['boot', renderBoot], ['contact', renderContact], ['profile', renderProfile], ['post', renderPost],
   ['draft-1', renderDraft1], ['qingya', renderQingya], ['jiuwan', renderJiuwan],
@@ -44,12 +43,72 @@ const pageRenderers = new Map([
 ]);
 const app = document.getElementById('app');
 
+const INVESTIGATION_PROGRESS = Object.freeze([0, 12, 27, 42, 57, 72, 86, 96]);
+
+function investigationProgress(state) {
+  if (state?.meta?.endingReached) return 100;
+  const stage = Number.isInteger(state?.stage) ? Math.max(0, Math.min(7, state.stage)) : 0;
+  return INVESTIGATION_PROGRESS[stage] ?? 0;
+}
+
+function attachInvestigationProgress(page, path) {
+  if (!['boot', 'ending'].includes(path)) return page;
+  const messenger = page?.querySelector?.('.messenger-app');
+  const topbar = messenger?.querySelector?.('.chat-topbar');
+  if (!messenger || !topbar) return page;
+
+  const state = store.getState();
+  const percent = path === 'ending' ? 100 : investigationProgress(state);
+  const complete = percent >= 100;
+  const status = el('section', {
+    class: `investigation-progress${complete ? ' investigation-progress--complete' : ''}`,
+    role: 'status',
+    'aria-label': complete ? '调查已结束，调查进度百分之百' : `调查进度 ${percent}%`,
+    style: [
+      'padding:8px 16px 9px',
+      'background:#f8f9fa',
+      'border-bottom:1px solid #d9dde0',
+      'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif',
+      complete ? 'opacity:0' : 'opacity:1',
+      'transition:opacity .45s ease',
+    ].join(';'),
+  });
+  const meta = el('div', {
+    style: 'display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:5px;color:#7b8287;font-size:.66rem;line-height:1.2;',
+  }, [
+    el('span', { text: complete ? '调查记录' : '调查进度' }),
+    el('strong', { text: `${percent}%`, style: 'color:#646c71;font-size:.68rem;font-weight:650;' }),
+  ]);
+  const track = el('div', {
+    'aria-hidden': 'true',
+    style: 'height:3px;overflow:hidden;background:#dde1e3;',
+  }, [
+    el('span', {
+      style: `display:block;width:${percent}%;height:100%;background:${complete ? '#5f6b63' : '#7a858b'};transition:width .35s ease;`,
+    }),
+  ]);
+  status.append(meta, track);
+  if (complete) {
+    status.append(el('p', {
+      text: '调查已结束',
+      style: 'margin:6px 0 0;text-align:right;color:#626b65;font-size:.68rem;letter-spacing:.08em;',
+    }));
+  }
+  topbar.insertAdjacentElement('afterend', status);
+
+  if (complete) {
+    const reveal = () => { if (status.isConnected) status.style.opacity = '1'; };
+    if (state.settings?.reducedMotion) requestAnimationFrame(reveal);
+    else setTimeout(reveal, 900);
+  }
+  return page;
+}
+
 function applySettings() {
   const { settings } = store.getState();
   document.documentElement.style.fontSize = `${16 * settings.textScale}px`;
   document.documentElement.dataset.reducedMotion = settings.reducedMotion ? 'true' : 'false';
 }
-
 function renderTools() {
   const tools = el('div', { class: 'game-tools', 'aria-label': '阅读设置' });
   const sound = el('button', { class: 'icon-button tool-button', type: 'button', 'aria-label': store.getState().settings.audioEnabled ? '关闭声音' : '开启声音' });
@@ -72,7 +131,6 @@ function renderTools() {
   tools.append(sound, settings);
   return tools;
 }
-
 function syncStoryEvents() {
   for (const check of storyEventDefinitions) {
     const now = store.getState();
@@ -87,12 +145,10 @@ function syncStoryEvents() {
     }
   }
 }
-
 function renderUnreadChatNotice(path) {
   if (path === 'boot' || path === 'contact') return null;
   const pending = getPendingStoryEvent(store.getState());
   if (!pending) return null;
-
   const notice = el('aside', {
     class: 'chat-unread-notice',
     role: 'status',
@@ -115,7 +171,6 @@ function renderUnreadChatNotice(path) {
   return notice;
 }
 
-
 function acknowledgeCommentCacheNoticeForPath(path) {
   const state = store.getState();
   if (shouldAcknowledgeCommentCacheNotice(path, state)) {
@@ -126,12 +181,10 @@ function acknowledgeCommentCacheNoticeForPath(path) {
 function renderCommentCacheNotice() {
   const state = store.getState();
   if (!isCommentCacheNoticeEligible(state)) return null;
-
   if (!state.flags.commentCacheNoticeAnnounced) {
     store.dispatch({ type: 'SET_FLAG', key: 'commentCacheNoticeAnnounced', value: true });
     audio.play?.('message');
   }
-
   const notice = el('aside', {
     class: 'trail-cache-notice',
     role: 'status',
@@ -153,7 +206,6 @@ function renderCommentCacheNotice() {
   notice.append(open);
   return notice;
 }
-
 function acknowledgeFinalDraftNoticeForPath(path) {
   const state = store.getState();
   if (shouldAcknowledgeFinalDraftNotice(path, state)) {
@@ -164,12 +216,10 @@ function acknowledgeFinalDraftNoticeForPath(path) {
 function renderFinalDraftNotice() {
   const state = store.getState();
   if (!isFinalDraftNoticeEligible(state)) return null;
-
   if (!state.flags.finalDraftNoticeAnnounced) {
     store.dispatch({ type: 'SET_FLAG', key: 'finalDraftNoticeAnnounced', value: true });
     audio.play?.('message');
   }
-
   const notice = el('aside', {
     class: 'trail-draft-notice',
     role: 'status',
@@ -190,7 +240,6 @@ function renderFinalDraftNotice() {
     text: '忽略',
     'aria-label': '忽略这条草稿通知',
   });
-
   copy.addEventListener('click', () => {
     store.dispatch({ type: 'SET_FLAG', key: 'finalDraftNoticeAcknowledged', value: true });
     router.navigate('profile');
@@ -202,7 +251,6 @@ function renderFinalDraftNotice() {
   notice.append(copy, dismiss);
   return notice;
 }
-
 function render() {
   applySettings();
   const { path, query } = router.resolve();
@@ -221,7 +269,8 @@ function render() {
   document.title = def?.title || '返程线';
   const renderer = pageRenderers.get(path) || renderBoot;
   const shell = el('div', { class: 'immersive-shell' });
-  shell.append(renderer({ store, flow, passwords, audio, interludes, router, query, paywall }));
+  const page = renderer({ store, flow, passwords, audio, interludes, router, query, paywall });
+  shell.append(attachInvestigationProgress(page, path));
   const unreadChatNotice = renderUnreadChatNotice(path);
   if (unreadChatNotice) shell.append(unreadChatNotice);
   const commentCacheNotice = renderCommentCacheNotice();
@@ -233,7 +282,6 @@ function render() {
   paywall.maybeAutoShow({ stage: store.getState().stage, path });
   requestAnimationFrame(() => document.getElementById('app-main')?.focus({ preventScroll: true }));
 }
-
 const router = createRouter({ routes: routeDefinitions, canAccess: id => !gates[id] || flow.isUnlocked(id), fallback: 'boot', onNavigate: render });
 router.start();
 window.__RETURN_ROUTE__ = { store, flow, passwords, audio, interludes, router, paywall };
